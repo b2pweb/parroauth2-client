@@ -3,15 +3,24 @@
     "description": "B2P OAuth 2 client implementation",
     "type": "library",
     "license": "proprietary",
+    "config": {
+        "secure-http": false
+    },
     "repositories": [
         {
             "type": "composer",
             "url": "http://packagist.b2pweb.com"
         }
     ],
+
     "autoload": {
         "psr-4": {
-            "Parroauth2\\Client\\": "src"
+            "Parroauth2\\Client\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kangaroo\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",
@@ -19,15 +28,14 @@
         "php": ">=5.4",
         "b2p/bdf-config": "~1.0",
         "b2p/bdf-session": "~1.0",
-        "b2p/kangaroo": "master"
+        "b2p/kangaroo": "dev-master"
+    },
+    "require-dev": {
+        "b2p/bdf-phpunit": "~1.0"
     },
     "extra": {
         "branch-alias": {
-            "dev-dev": "1.2.x-dev"
+            "dev-dev": "1.0-dev"
         }
-    },
-
-    "require-dev": {
-        "b2p/bdf-phpunit": "~1.0"
     }
 }
