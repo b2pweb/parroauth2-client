@@ -9,9 +9,15 @@
             "url": "http://packagist.b2pweb.com"
         }
     ],
+
     "autoload": {
         "psr-4": {
-            "Parroauth2\\Client\\": "src"
+            "Parroauth2\\Client\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kangaroo\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",
