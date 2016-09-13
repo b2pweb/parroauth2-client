@@ -2,230 +2,130 @@
 
 namespace Parroauth2\Client;
 
-use Bdf\Config\Config;
-use DateTime;
-use Kangaroo\Client as BaseClient;
-use Kangaroo\Response;
+use Parroauth2\Client\Adapter\AdapterInterface;
 use Parroauth2\Client\Exception\ConnectionException;
-use Parroauth2\Client\Exception\InternalErrorException;
+use Parroauth2\Client\Storage\StorageInterface;
 
 /**
  * Class Client
  *
- * @package Parroauth2\Client\Client
+ * @package Parroauth2\Client
  */
 class Client
 {
     /**
-     * @var BaseClient
+     * @var StorageInterface
      */
-    protected $client;
-
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected $storage;
 
     /**
      * Client constructor.
      *
-     * @param BaseClient $client
-     * @param Config $config
+     * @param AdapterInterface $adapter
+     * @param StorageInterface $storage
      */
-    public function __construct(BaseClient $client, Config $config)
+    public function __construct(AdapterInterface $adapter, StorageInterface $storage)
     {
-        $this->client = $client;
-        $this->config = $config;
+        $this->adapter = $adapter;
+        $this->storage = $storage;
+    }
+
+    /**
+     * @todo Refresh if expired
+     * 
+     * @return string
+     */
+    public function getAccessToken()
+    {
+        if ($this->storage->exists()) {
+            if ($this->storage->retrieve()->isExpired()) {
+                $this->refresh();
+            }
+
+            return $this->storage->retrieve()->getAccess();
+        }
+
+        return '';
     }
 
     /**
      * @param string $username
      * @param string $password
      *
-     * @return Token
-     *
-     * @throws ConnectionException
-     * @throws InternalErrorException
+     * @return $this
      */
-    public function token($username, $password)
+    public function login($username, $password)
     {
-        $response = $this->client->api($this->config->get('path', '/'))->post('token', [
-            'grant_type'    => 'password',
-            'client_id'     => $this->config->get('clientId'),
-            'client_secret' => $this->config->get('clientSecret'),
-            'username'      => $username,
-            'password'      => $password,
-        ]);
+        $grant = $this->adapter->token($username, $password);
 
-        if ($response->isError()) {
-            // @see https://tools.ietf.org/html/rfc6749#section-5.2
-            if ($response->getStatusCode() == 400 && $response->getBody()->error == 'invalid_grant') {
-                throw new ConnectionException('Invalid credentials');
-            }
+        $this->storage->store($grant);
 
-            throw $this->internalError($response);
-        }
-
-        return $this->createToken($response);
+        return $this;
     }
 
     /**
-     * @param Token|string $token
-     *
-     * @return Token
-     *
-     * @throws ConnectionException
-     * @throws InternalErrorException
-     */
-    public function refresh($token)
-    {
-        if ($token instanceof Token) {
-            $token = $token->getRefresh();
-        }
-
-        $response = $this->client->api($this->config->get('path', '/'))->post('token', [
-            'grant_type'    => 'refresh_token',
-            'client_id'     => $this->config->get('clientId'),
-            'client_secret' => $this->config->get('clientSecret'),
-            'refresh_token' => $token,
-        ]);
-
-        if ($response->isError()) {
-            // @see https://tools.ietf.org/html/rfc6749#section-5.2
-            if ($response->getStatusCode() == 400 && $response->getBody()->error == 'invalid_grant') {
-                throw new ConnectionException('Invalid token');
-            }
-
-            throw $this->internalError($response);
-        }
-
-        return $this->createToken($response);
-    }
-
-    /**
-     * @param Token|string $token
-     *
-     * @return array
-     *
-     * @throws InternalErrorException
-     */
-    public function userinfo($token)
-    {
-        $response = $this->client->api($this->config->get('path', '/'))->post('userinfo', []);
-
-        if ($response->isError()) {
-            throw $this->internalError($response);
-        }
-
-        return (array)$response->getBody();
-    }
-
-    /**
-     * @param Token|string $token
-     *
-     * @return array
-     *
-     * @throws InternalErrorException
-     */
-    public function introspect($token)
-    {
-        if ($token instanceof Token) {
-            $token = $token->getAccess();
-        }
-
-        $response = $this->client->api($this->config->get('path', '/'))->post('introspect', [
-            'client_id'     => $this->config->get('clientId'),
-            'client_secret' => $this->config->get('clientSecret'),
-            'token'         => $token,
-        ]);
-
-        if ($response->isError()) {
-            // @see https://tools.ietf.org/html/rfc7662#section-2.3
-            throw $this->internalError($response);
-        }
-
-        return (array)$response->getBody();
-    }
-
-    /**
-     * @param Token|string $token
-     *
      * @return $this
      *
-     * @throws InternalErrorException
+     * @throws ConnectionException
      */
-    public function revoke($token)
+    public function refresh()
     {
-        if ($token instanceof Token) {
-            $token = $token->getAccess();
+        if (!$this->storage->exists()) {
+            throw new ConnectionException('Not connected to service');
         }
 
-        $response = $this->client->api($this->config->get('path', '/'))->post('revoke', [
-            'client_id'     => $this->config->get('clientId'),
-            'client_secret' => $this->config->get('clientSecret'),
-            'token'         => $token,
-        ]);
+        try {
+            $grant = $this->adapter->refresh($this->storage->retrieve());
+            $this->storage->store($grant);
 
-        if ($response->isError()) {
-            // @see https://tools.ietf.org/html/rfc7009#section-2.2
-            throw $this->internalError($response);
+        } catch (ConnectionException $exception) {
+            $this->storage->clear();
         }
 
         return $this;
     }
 
     /**
-     * @param Response $response
+     * @return array
      *
-     * @return Token
+     * @throws ConnectionException
      */
-    protected function createToken(Response $response)
+    public function userinfo()
     {
-        if ($response->isError()) {
-            return null;
+        if (!$this->storage->exists()) {
+            throw new ConnectionException('Not connected to service');
         }
 
-        $body = $response->getBody();
-
-        return new Token(
-            $body->access_token,
-            (new DateTime())->setTimestamp(time() + (int)($body->expires_in * 0.9)),
-            $body->refresh_token
-        );
+        return $this->adapter->userinfo($this->storage->retrieve());
     }
 
     /**
-     * @param Response $response
+     * @return array
      *
-     * @return InternalErrorException
+     * @throws ConnectionException
      */
-    protected function internalError($response)
+    public function introspect()
     {
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-        ];
-
-        if ($body = $response->getBody()) {
-            if (is_object($body)) {
-                if (is_object($body->error)) {
-                    $messageData[] = 'Error: ' . print_r($body->error, true);
-                } else {
-                    $messageData[] = 'Error: ' . $body->error;
-
-                    if (isset($body->error_description)) {
-                        $messageData[] = 'Error description: ' . $body->error_description;
-                    }
-
-                    if (isset($body->error_uri)) {
-                        $messageData[] = 'Error URI: ' . $body->error_uri;
-                    }
-                }
-            } else {
-                $messageData[] = 'Error: ' . $body;
-            }
+        if (!$this->storage->exists()) {
+            throw new ConnectionException('Not connected to service');
         }
 
-        return new InternalErrorException(implode(PHP_EOL, $messageData), 500);
+        return $this->adapter->introspect($this->storage->retrieve());
+    }
+
+    /**
+     * @return $this
+     */
+    public function logout()
+    {
+        if (!$this->storage->exists()) {
+            return $this;
+        }
+
+        $this->adapter->revoke($this->storage->retrieve());
+
+        $this->storage->clear();
+
+        return $this;
     }
 }

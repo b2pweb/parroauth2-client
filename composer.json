@@ -16,18 +16,21 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4",
-        "b2p/bdf-config": "~1.0",
-        "b2p/bdf-session": "~1.0",
-        "b2p/kangaroo": "master"
+        "php": ">=5.4"
     },
     "extra": {
         "branch-alias": {
             "dev-dev": "1.2.x-dev"
         }
     },
+    "suggest": {
+        "b2p/bdf-session": "Allows the use of the Bdf session storage",
+        "b2p/kangaroo": "Allows the use of the Kangaroo adapter"
+    },
 
     "require-dev": {
-        "b2p/bdf-phpunit": "~1.0"
+        "b2p/bdf-phpunit": "~1.0",
+        "b2p/bdf-session": "~1.0",
+        "b2p/kangaroo": "dev-master"
     }
 }

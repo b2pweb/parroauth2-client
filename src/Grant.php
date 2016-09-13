@@ -5,11 +5,11 @@ namespace Parroauth2\Client;
 use DateTime;
 
 /**
- * Class Token
+ * Class Grant
  *
  * @package Parroauth2\Client
  */
-class Token
+class Grant
 {
     /**
      * @var string
@@ -27,7 +27,7 @@ class Token
     protected $refresh;
 
     /**
-     * Token constructor.
+     * Grant constructor.
      *
      * @param string $access
      * @param DateTime $validityEndpoint

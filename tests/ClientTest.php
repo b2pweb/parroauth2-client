@@ -2,307 +2,222 @@
 
 namespace Parroauth2\Client;
 
-require_once __DIR__ . '/_files/TestableClientAdapter.php';
-
-use Bdf\Config\Config;
 use Bdf\PHPUnit\TestCase;
 use DateTime;
-use Kangaroo\Client as KangarooClient;
-use Kangaroo\ClientAdapter\TestableClientAdapter;
-use Kangaroo\Response;
-use Parroauth2\Client\Client as ParroauthClient;
-use Parroauth2\Client\Exception\InternalErrorException;
-use ReflectionClass;
+use Parroauth2\Client\Adapter\AdapterInterface;
+use Parroauth2\Client\Storage\MemoryStorage;
 
 /**
  * Class ClientTest
  * 
- * @package OAuth
+ * @package Parroauth2\Client
  *
- * @group OAuth
- * @group OAuth/Client
+ * @group Parroauth2
+ * @group Parroauth2/Client
+ * @group Parroauth2/Client/Client
  */
 class ClientTest extends TestCase
 {
     /**
-     * @var TestableClientAdapter
+     * @var AdapterInterface
      */
     protected $adapter;
 
     /**
-     * @var ParroauthClient
+     * @var MemoryStorage
+     */
+    protected $storage;
+
+    /**
+     * @var Client
      */
     protected $client;
 
     /**
-     *
+     * 
      */
     public function setUp()
     {
-        $this->adapter = new TestableClientAdapter();
+        $this->adapter = $this->getMock('Parroauth2\Client\Adapter\AdapterInterface', ['token', 'refresh', 'userinfo', 'introspect', 'revoke']);
+        
+        $this->storage = new MemoryStorage();
 
-        $this->client = new ParroauthClient(
-            new KangarooClient('http://localhost', $this->adapter),
-            new Config([
-                'path'         => '/oauth',
-                'clientId'     => 'clientId',
-                'clientSecret' => 'clientSecret',
-            ])
+        $this->client = new Client(
+            $this->adapter,
+            $this->storage
         );
     }
 
     /**
      *
      */
-    public function test_token_throws_connection_exception_if_credentials_are_invalid()
+    public function test_getAccessToken_returns_an_empty_string_no_token_is_stored()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Invalid credentials');
-
-        $this->adapter->setResponse(
-            (new Response())
-                ->setStatusCode(400)
-                ->setBody((object)['error' => 'invalid_grant'])
-        );
-
-        $this->client->token('invalid', 'credentials');
+        $this->assertEquals('', $this->client->getAccessToken());
     }
 
     /**
      *
      */
-    public function test_token_throws_internal_exception_if_an_error_occurs()
+    public function test_getAccessToken_returns_access_token()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
+        $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token');
 
-        $this->adapter->setResponse((new Response())->setStatusCode(401));
+        $this->storage->store($grant);
 
-        $this->client->token('invalid', 'credentials');
+        $this->assertEquals($grant->getAccess(), $this->client->getAccessToken());
     }
 
     /**
      *
      */
-    public function test_token_creates_token_properly()
+    public function test_getAccessToken_refreshes_his_token_before_returning_access_if_needed()
     {
-        $tokenValidity = 3600;
-        $expectedToken = new Token('access_token', (new DateTime())->setTimestamp(time() + ($tokenValidity * 0.9)), 'refresh_token');
+        $outdatedGrant = new Grant('outdated_access_token', new DateTime('yesterday'), 'refresh_token');
+        $grant = new Grant('access_token', new DateTime('tomorrow'), 'updated_refresh_token');
 
-        $this->adapter->setResponse(
-            (new Response())
-                ->setStatusCode(200)
-                ->setBody((object)[
-                    'access_token'  => $expectedToken->getAccess(),
-                    'expires_in'    => $tokenValidity,
-                    'refresh_token' => $expectedToken->getRefresh(),
-                ])
-        );
+        $this->storage->store($outdatedGrant);
+        $this->adapter
+            ->expects($this->once())
+            ->method('refresh')
+            ->with($outdatedGrant)
+            ->will($this->returnValue($grant))
+        ;
 
-        $token = $this->client->token('valid', 'credentials');
-
-        $this->assertEquals($expectedToken->getAccess(), $token->getAccess(), 'Error on access token');
-        $this->assertEquals($expectedToken->getValidityEndpoint(), $token->getValidityEndpoint(), 'Error on token validity endpoint', 1);
-        $this->assertEquals($expectedToken->getRefresh(), $token->getRefresh(), 'Error on refresh token');
+        $this->assertEquals($grant->getAccess(), $this->client->getAccessToken());
     }
 
     /**
      *
      */
-    public function test_refresh_throws_invalid_token_if_an_error_occurs()
+    public function test_login_stores_token()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Invalid token');
+        $expectedGrant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token');
 
-        $this->adapter->setResponse(
-            (new Response())
-                ->setStatusCode(400)
-                ->setBody((object)['error' => 'invalid_grant'])
-        );
+        $this->adapter
+            ->expects($this->once())
+            ->method('token')
+            ->with('invalid', 'credentials')
+            ->will($this->returnValue($expectedGrant))
+        ;
 
-        $this->client->refresh('access_token');
+        $this->client->login('invalid', 'credentials');
+
+        $this->assertSame($expectedGrant, $this->storage->retrieve());
     }
 
     /**
      *
      */
-    public function test_refresh_throws_internal_exception_if_an_error_occurs()
+    public function test_refresh_throws_connection_exception_if_no_token_is_set()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
+        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Not connected to service');
 
-        $this->adapter->setResponse((new Response())->setStatusCode(401));
-
-        $this->client->refresh('refresh_token');
+        $this->client->refresh();
     }
 
     /**
      *
      */
-    public function test_refresh_renew_token_properly()
+    public function test_refresh_updates_stored_token()
     {
-        $tokenValidity = 3600;
-        $expectedToken = new Token('updated_access_token', (new DateTime())->setTimestamp(time() + ($tokenValidity * 0.9)), 'updated_refresh_token');
+        $outdatedGrant = new Grant('outdated_access_token', new DateTime('yesterday'), 'refresh_token');
+        $grant = new Grant('access_token', new DateTime('tomorrow'), 'updated_refresh_token');
 
-        $this->adapter->setResponse(
-            (new Response())
-                ->setStatusCode(200)
-                ->setBody((object)[
-                    'access_token'  => $expectedToken->getAccess(),
-                    'expires_in'    => $tokenValidity,
-                    'refresh_token' => $expectedToken->getRefresh(),
-                ])
-        );
+        $this->storage->store($outdatedGrant);
+        $this->adapter
+            ->expects($this->once())
+            ->method('refresh')
+            ->will($this->returnValue($grant))
+        ;
 
-        $token = $this->client->refresh(new Token('access_token', new DateTime(), 'refresh_token'));
+        $this->client->refresh();
 
-        $this->assertEquals($expectedToken->getAccess(), $token->getAccess(), 'Error on access token');
-        $this->assertEquals($expectedToken->getValidityEndpoint(), $token->getValidityEndpoint(), 'Error on token validity endpoint', 1);
-        $this->assertEquals($expectedToken->getRefresh(), $token->getRefresh(), 'Error on refresh token');
+        $this->assertSame($grant, $this->storage->retrieve());
     }
 
     /**
      *
      */
-    public function test_userinfo_throws_internal_exception_if_an_error_occurs()
+    public function test_userinfo_throws_connection_exception_if_no_token_is_set()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
+        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Not connected to service');
 
-        $this->adapter->setResponse((new Response())->setStatusCode(400));
-
-        $this->client->userinfo('access_token');
+        $this->client->userinfo();
     }
 
     /**
      *
      */
-    public function test_userinfo_returns_data_properly()
+    public function test_userinfo_returns_the_token_data()
     {
+        $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token');
         $expectedUserinfo = [
             'id'   => 123,
             'name' => 'Phpunit Instance',
             'role' => 'tester',
         ];
 
-        $this->adapter->setResponse(
-            (new Response())
-                ->setStatusCode(200)
-                ->setBody((object)$expectedUserinfo)
-        );
+        $this->storage->store($grant);
+        $this->adapter
+            ->expects($this->once())
+            ->method('userinfo')
+            ->with($grant)
+            ->will($this->returnValue($expectedUserinfo))
+        ;
 
-        $userinfo = $this->client->userinfo('access_token');
-
-        $this->assertEquals($expectedUserinfo, $userinfo);
+        $this->assertEquals($expectedUserinfo, $this->client->userinfo());
     }
 
     /**
      *
      */
-    public function test_introspect_throws_internal_exception_if_an_error_occurs()
+    public function test_introspect_throws_connection_exception_if_no_token_is_set()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
+        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Not connected to service');
 
-        $this->adapter->setResponse((new Response())->setStatusCode(401));
-
-        $this->client->introspect('access_token');
+        $this->client->introspect();
     }
 
     /**
      *
      */
-    public function test_introspect_returns_data_properly()
+    public function test_introspect_returns_the_token_data()
     {
+        $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token');
         $expectedIntrospection = [
             'id'   => 123,
             'name' => 'Phpunit Instance',
             'role' => 'tester',
         ];
 
-        $this->adapter->setResponse(
-            (new Response())
-                ->setStatusCode(200)
-                ->setBody((object)$expectedIntrospection)
-        );
+        $this->storage->store($grant);
+        $this->adapter
+            ->expects($this->once())
+            ->method('introspect')
+            ->with($grant)
+            ->will($this->returnValue($expectedIntrospection))
+        ;
 
-        $introspection = $this->client->introspect('access_token');
-
-        $this->assertEquals($expectedIntrospection, $introspection);
+        $this->assertEquals($expectedIntrospection, $this->client->introspect());
     }
 
     /**
      *
      */
-    public function test_internalError_generates_exception_from_valid_minimal_rfc_error()
+    public function test_logout_clears_token()
     {
-        $response = (new Response())
-            ->setStatusCode(400)
-            ->setBody((object)['error' => 'invalid_request'])
+        $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token');
+
+        $this->storage->store($grant);
+        $this->adapter
+            ->expects($this->once())
+            ->method('revoke')
+            ->with($grant)
         ;
 
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-            'Error: ' . $response->getBody()->error,
-        ];
+        $this->client->logout();
 
-        $expectedException = new InternalErrorException(implode(PHP_EOL, $messageData), 500);
-
-        $class = new ReflectionClass('Parroauth2\Client\Client');
-        $method = $class->getMethod('internalError');
-        $method->setAccessible(true);
-
-        $this->assertEquals($expectedException, $method->invokeArgs($this->client, [$response]));
-    }
-
-    /**
-     *
-     */
-    public function test_internalError_generates_exception_from_valid_rfc_error()
-    {
-        $response = (new Response())
-            ->setStatusCode(400)
-            ->setBody((object)[
-                'error' => 'invalid_request',
-                'error_description' => 'Unable to find token or client not authenticated.',
-                'error_uri' => 'http://localhost/error',
-            ])
-        ;
-
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-            'Error: ' . $response->getBody()->error,
-            'Error description: ' . $response->getBody()->error_description,
-            'Error URI: ' . $response->getBody()->error_uri,
-        ];
-
-        $expectedException = new InternalErrorException(implode(PHP_EOL, $messageData), 500);
-
-        $class = new ReflectionClass('Parroauth2\Client\Client');
-        $method = $class->getMethod('internalError');
-        $method->setAccessible(true);
-
-        $this->assertEquals($expectedException, $method->invokeArgs($this->client, [$response]));
-    }
-
-    /**
-     *
-     */
-    public function test_internalError_generates_exception_from_body_as_string()
-    {
-        $response = (new Response())
-            ->setStatusCode(404)
-            ->setBody('Page not found')
-        ;
-
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-            'Error: ' . $response->getBody(),
-        ];
-
-        $expectedException = new InternalErrorException(implode(PHP_EOL, $messageData), 500);
-
-        $class = new ReflectionClass('Parroauth2\Client\Client');
-        $method = $class->getMethod('internalError');
-        $method->setAccessible(true);
-
-        $this->assertEquals($expectedException, $method->invokeArgs($this->client, [$response]));
+        $this->assertFalse($this->storage->exists(), 'Grant still present in storage');
     }
 }
