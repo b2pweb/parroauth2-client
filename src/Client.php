@@ -14,6 +14,11 @@ use Parroauth2\Client\Storage\StorageInterface;
 class Client
 {
     /**
+     * @var AdapterInterface
+     */
+    protected $adapter;
+
+    /**
      * @var StorageInterface
      */
     protected $storage;
@@ -31,8 +36,6 @@ class Client
     }
 
     /**
-     * @todo Refresh if expired
-     * 
      * @return string
      */
     public function getAccessToken()
