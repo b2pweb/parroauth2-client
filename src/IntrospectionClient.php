@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client;
 
-use Parroauth2\Client\Exception\ConnectionException;
+use Parroauth2\Client\Exception\InternalErrorException;
 use Parroauth2\Client\Strategy\Introspection\IntrospectionStrategyInterface;
 
 /**
@@ -30,16 +30,22 @@ class IntrospectionClient
     /**
      * @param Grant|string $grant
      *
-     * @return mixed
+     * @return Introspection
      *
-     * @throws ConnectionException
+     * @throws InternalErrorException
      */
     public function introspect($grant)
     {
-        if (!$grant || ($grant instanceof Grant && !$grant->getAccess())) {
-            throw new ConnectionException('Client is not connected');
+        if ($grant instanceof Grant) {
+            $token = $grant->getAccess();
+        } else {
+            $token = $grant;
         }
 
-        return $this->introspectionStrategy->introspect($grant);
+        if (!$token) {
+            throw new InternalErrorException('Unable to introspect empty token', 500);
+        }
+
+        return $this->introspectionStrategy->introspect($token);
     }
 }

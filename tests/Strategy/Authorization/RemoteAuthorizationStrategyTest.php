@@ -21,7 +21,7 @@ use ReflectionClass;
  * @group Parroauth2/Client
  * @group Parroauth2/Client/Strategy
  * @group Parroauth2/Client/Strategy/Authorization
- * @group Parroauth2/Client/Strategy/Authorization/RemoteAuthorizationStrategyTest
+ * @group Parroauth2/Client/Strategy/Authorization/RemoteAuthorizationStrategy
  */
 class RemoteAuthorizationStrategyTest extends TestCase
 {

@@ -4,6 +4,7 @@ namespace Parroauth2\Client\Tests;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
+use Parroauth2\Client\Introspection;
 use Parroauth2\Client\IntrospectionClient;
 use Parroauth2\Client\Grant;
 use Parroauth2\Client\Strategy\Introspection\IntrospectionStrategyInterface;
@@ -44,7 +45,7 @@ class IntrospectionClientTest extends TestCase
      */
     public function test_introspect_throws_connection_exception_if_no_token_is_set()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Client is not connected');
+        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException', 'Unable to introspect empty token');
 
         $this->client->introspect('');
     }
@@ -52,22 +53,18 @@ class IntrospectionClientTest extends TestCase
     /**
      *
      */
-    public function test_introspect_returns_the_token_data()
+    public function test_introspect_returns_the_token_introspection()
     {
         $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token', 'Bearer');
-        $expectedIntrospection = [
-            'id'   => 123,
-            'name' => 'Phpunit Instance',
-            'role' => 'tester',
-        ];
+        $introspection = new Introspection();
 
         $this->strategy
             ->expects($this->once())
             ->method('introspect')
-            ->with($grant)
-            ->will($this->returnValue($expectedIntrospection))
+            ->with($grant->getAccess())
+            ->will($this->returnValue($introspection))
         ;
 
-        $this->assertEquals($expectedIntrospection, $this->client->introspect($grant));
+        $this->assertSame($introspection, $this->client->introspect($grant));
     }
 }

@@ -3,7 +3,7 @@
 namespace Parroauth2\Client\Strategy\Introspection;
 
 use Parroauth2\Client\Exception\InternalErrorException;
-use Parroauth2\Client\Grant;
+use Parroauth2\Client\Introspection;
 use Parroauth2\Client\Strategy\AbstractRemoteStrategy;
 
 /**
@@ -18,16 +18,12 @@ class RemoteIntrospectionStrategy extends AbstractRemoteStrategy implements Intr
      *
      * @throws InternalErrorException
      */
-    public function introspect($grant)
+    public function introspect($token)
     {
-        if ($grant instanceof Grant) {
-            $grant = $grant->getAccess();
-        }
-
         $response = $this->client->api($this->config['path'])->post('introspect', [
             'client_id'     => $this->config['clientId'],
             'client_secret' => $this->config['clientSecret'],
-            'token'         => $grant,
+            'token'         => $token,
         ]);
 
         if ($response->isError()) {
@@ -35,6 +31,19 @@ class RemoteIntrospectionStrategy extends AbstractRemoteStrategy implements Intr
             throw $this->internalError($response);
         }
 
-        return (array)$response->getBody();
+        $body = $response->getBody();
+
+        $introspection = new Introspection();
+        $introspection->setActive($body->active);
+
+        if (isset($body->scope)) {
+            $introspection->setScopes(explode(' ', $body->scope));
+        }
+
+        if (isset($body->metadata)) {
+            $introspection->setMetadata($body->metadata);
+        }
+
+        return $introspection;
     }
 }

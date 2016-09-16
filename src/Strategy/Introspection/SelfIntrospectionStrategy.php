@@ -2,8 +2,9 @@
 
 namespace Parroauth2\Client\Strategy\Introspection;
 
-use Parroauth2\Client\Grant;
-use Parroauth2\Client\Parser\ParserInterface;
+use Parroauth2\Client\Decoder\DecoderInterface;
+use Parroauth2\Client\Exception\ParsingException;
+use Parroauth2\Client\Introspection;
 
 /**
  * Class SelfIntrospectionStrategy
@@ -13,31 +14,47 @@ use Parroauth2\Client\Parser\ParserInterface;
 class SelfIntrospectionStrategy implements IntrospectionStrategyInterface
 {
     /**
-     * @var ParserInterface
+     * @var DecoderInterface
      */
-    protected $parser;
+    protected $decoder;
 
     /**
      * SelfIntrospectionStrategy constructor.
      *
-     * @param ParserInterface $parser
+     * @param DecoderInterface $decoder
      */
-    public function __construct(ParserInterface $parser)
+    public function __construct(DecoderInterface $decoder)
     {
-        $this->parser = $parser;
+        $this->decoder = $decoder;
     }
 
     /**
-     * @param Grant|string $grant
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function introspect($grant)
+    public function introspect($token)
     {
-        if ($grant instanceof Grant) {
-            $grant = $grant->getAccess();
+        $introspection = new Introspection();
+
+        try {
+            $data = $this->decoder->decode($token);
+            
+            if ($data['exp']) {
+                $introspection->setActive(0 > (time() - $data['exp']));
+            } else {
+                $introspection->setActive(true);
+            }
+
+            if (isset($data['scope'])) {
+                $introspection->setScopes(explode(' ', $data['scope']));
+            }
+
+            if (isset($data['metadata'])) {
+                $introspection->setMetadata((array)$data['metadata']);
+            }
+
+        } catch (ParsingException $e) {
         }
 
-        return $this->parser->parse($grant);
+        return $introspection;
     }
 }

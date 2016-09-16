@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Strategy\Introspection;
 
-use Parroauth2\Client\Grant;
+use Parroauth2\Client\Introspection;
 
 /**
  * Interface IntrospectionStrategyInterface
@@ -12,9 +12,9 @@ use Parroauth2\Client\Grant;
 interface IntrospectionStrategyInterface
 {
     /**
-     * @param Grant|string $grant
+     * @param string $token
      *
-     * @return mixed
+     * @return Introspection
      */
-    public function introspect($grant);
+    public function introspect($token);
 }

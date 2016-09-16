@@ -5,6 +5,7 @@ namespace Parroauth2\Client\Tests\Strategy\Introspection;
 use Bdf\PHPUnit\TestCase;
 use Kangaroo\Client;
 use Kangaroo\Response;
+use Parroauth2\Client\Introspection;
 use Parroauth2\Client\Strategy\Introspection\RemoteIntrospectionStrategy;
 use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
 
@@ -17,7 +18,7 @@ use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
  * @group Parroauth2/Client
  * @group Parroauth2/Client/Strategy
  * @group Parroauth2/Client/Strategy/Introspection
- * @group Parroauth2/Client/Strategy/Introspection/RemoteIntrospectionStrategyTest
+ * @group Parroauth2/Client/Strategy/Introspection/RemoteIntrospectionStrategy
  */
 class RemoteIntrospectionStrategyTest extends TestCase
 {
@@ -65,20 +66,28 @@ class RemoteIntrospectionStrategyTest extends TestCase
      */
     public function test_introspect_returns_data_properly()
     {
-        $expectedIntrospection = [
-            'id'   => 123,
-            'name' => 'Phpunit Instance',
-            'role' => 'tester',
+        $scopes = ['scope1', 'scope2'];
+        $metadata = [
+            'id' => 123,
+            'name' => 'Phpunit',
         ];
 
         $this->adapter->setResponse(
             (new Response())
                 ->setStatusCode(200)
-                ->setBody((object)$expectedIntrospection)
+                ->setBody((object)[
+                    'active' => true,
+                    'scope' => implode(' ', $scopes),
+                    'metadata' => $metadata,
+                ])
         );
 
-        $introspection = $this->strategy->introspect('access_token');
+        $introspection = (new Introspection())
+            ->setActive(true)
+            ->setScopes($scopes)
+            ->setMetadata($metadata)
+        ;
 
-        $this->assertEquals($expectedIntrospection, $introspection);
+        $this->assertEquals($introspection, $this->strategy->introspect('access_token'));
     }
 }
