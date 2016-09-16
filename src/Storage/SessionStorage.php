@@ -27,7 +27,7 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function exists()
     {
@@ -35,7 +35,7 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function retrieve()
     {
@@ -47,7 +47,7 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function store($grant)
     {
@@ -55,7 +55,7 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {

@@ -27,17 +27,23 @@ class Grant
     protected $refresh;
 
     /**
+     * @var string
+     */
+    protected $type;
+
+    /**
      * Grant constructor.
      *
      * @param string $access
      * @param DateTime $validityEndpoint
-     * @param string $refresh
+     * @param string $type
      */
-    public function __construct($access, $validityEndpoint, $refresh)
+    public function __construct($access, $validityEndpoint, $refresh, $type)
     {
         $this->access = $access;
         $this->validityEndpoint = $validityEndpoint;
         $this->refresh = $refresh;
+        $this->type = $type;
     }
 
     /**
@@ -94,5 +100,21 @@ class Grant
     public function isExpired()
     {
         return time() >= $this->validityEndpoint->getTimestamp();
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

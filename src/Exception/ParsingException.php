@@ -5,11 +5,11 @@ namespace Parroauth2\Client\Exception;
 use Exception;
 
 /**
- * Class ConnectionException
+ * Class ParsingException
  *
  * @package Parroauth2\Client\Exception
  */
-class ConnectionException extends Exception
+class ParsingException extends Exception
 {
-    
+
 }

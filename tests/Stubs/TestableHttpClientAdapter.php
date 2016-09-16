@@ -1,14 +1,15 @@
 <?php
 
-namespace Kangaroo\ClientAdapter;
+namespace Parroauth2\Client\Tests\Stubs;
 
+use Kangaroo\ClientAdapter\ClientAdapterInterface;
 use Kangaroo\Request;
 use Kangaroo\Response;
 
 /**
  * Class TestableHttpClientAdapter
  *
- * @package Kangaroo\ClientAdapter
+ * @package Parroauth2\Client\Tests\Stubs
  */
 class TestableHttpClientAdapter implements ClientAdapterInterface
 {

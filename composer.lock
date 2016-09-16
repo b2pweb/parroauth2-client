@@ -4,31 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "28d5a1f16b6bb463b0718a72c64114fb",
-    "content-hash": "bbf8af51e3e7cc1543cdee0cb7207168",
+    "hash": "cab3eae9049d3ddb634cc6160cb84c6a",
+    "content-hash": "72147b80a14bb4ae22993ba6356a37b2",
     "packages": [
         {
-            "name": "b2p/bdf-config",
+            "name": "b2p/bdf-di",
             "version": "1.2.x-dev",
             "source": {
                 "type": "git",
-                "url": "git@redmine:bdf-config.git",
-                "reference": "27c88d7f5424b33736d85344013394166a003f2d"
+                "url": "git@redmine:bdf-di.git",
+                "reference": "ad86b28785b605a389895ccda8f3c963c61ce2bf"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-config-1.2.x-dev-1c96fc.tar",
-                "reference": "27c88d7f5424b33736d85344013394166a003f2d",
-                "shasum": "1c8d7d1cf7bc242f2b8af9bdf555eff7f3dbb292"
+                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-di-1.2.x-dev-2b14e0.tar",
+                "reference": "ad86b28785b605a389895ccda8f3c963c61ce2bf",
+                "shasum": "aa39478095e8f15ef0ec6858e975ef32329ac018"
             },
             "require": {
                 "b2p/bdf-exception": "~1.0",
-                "b2p/bdf-file": "~1.0",
-                "php": ">=5.4",
-                "symfony/yaml": "~2.7|~3.0"
+                "php": ">=5.4"
             },
             "suggest": {
-                "b2p/bdf-console": "required to use config commands (~1.0)"
+                "b2p/bdf-console": "required to use di commands (~1.0)"
             },
             "type": "library",
             "extra": {
@@ -38,14 +36,58 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Bdf\\Config\\": ""
+                    "Bdf\\DI\\": ""
                 }
             },
             "license": [
                 "proprietary"
             ],
             "description": "Bdf framework components",
-            "time": "2016-07-15 12:01:04"
+            "time": "2016-07-15 15:06:23"
+        },
+        {
+            "name": "b2p/bdf-event",
+            "version": "1.2.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@redmine:bdf-event.git",
+                "reference": "408851b9b8686eeb603a1decd49ce09207622d46"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-event-1.2.x-dev-85b09d.tar",
+                "reference": "408851b9b8686eeb603a1decd49ce09207622d46",
+                "shasum": "e63b4a50730a6d114dddeaf226f2a0319fddc59d"
+            },
+            "require": {
+                "b2p/bdf-di": "~1.0",
+                "php": ">=5.4",
+                "symfony/event-dispatcher": "~2.7|~3.0"
+            },
+            "suggest": {
+                "b2p/bdf-console": "required to use di commands (~1.0)",
+                "b2p/bdf-queue": "required to use differed domain events (~1.0)",
+                "b2p/bdf-serializer": "required to use broadcaster (~1.0)",
+                "b2p/bdf-web": "required to use service provider (~1.0)",
+                "php-amqplib/php-amqplib": "Required to use the RabbitMQ broadcaster (~2.6)",
+                "repejota/nats": "Required to use the Nats broadcaster (~0.7|~1.0)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-dev": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bdf\\Event\\": ""
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Bdf framework components",
+            "time": "2016-07-27 08:09:36"
         },
         {
             "name": "b2p/bdf-exception",
@@ -88,106 +130,38 @@
             "time": "2016-08-25 10:39:49"
         },
         {
-            "name": "b2p/bdf-file",
-            "version": "1.2.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@redmine:bdf-file.git",
-                "reference": "b9411a0a7009c1b0a6587b147c11bab814010da1"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-file-1.2.x-dev-05799c.tar",
-                "reference": "b9411a0a7009c1b0a6587b147c11bab814010da1",
-                "shasum": "04353b2f0a387d62526c148c8f38057f00341e8d"
-            },
-            "require": {
-                "b2p/bdf-exception": "~1.0",
-                "php": ">=5.4",
-                "symfony/filesystem": "~2.7|~3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-dev": "1.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Bdf\\File\\": ""
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "Bdf framework components",
-            "time": "2016-07-20 12:19:32"
-        },
-        {
-            "name": "b2p/bdf-session",
-            "version": "1.2.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@redmine:bdf-session.git",
-                "reference": "5357254f1a1c1c4405e09b61ce998de84182e8e0"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-session-1.2.x-dev-af8960.tar",
-                "reference": "5357254f1a1c1c4405e09b61ce998de84182e8e0",
-                "shasum": "6cc81f4c19c05d9017227e1412d947952206bd27"
-            },
-            "require": {
-                "b2p/bdf-exception": "~1.0",
-                "php": ">=5.4",
-                "symfony/http-foundation": "~2.7|~3.0"
-            },
-            "suggest": {
-                "b2p/bdf-prime": "required to use db handler (~1.0)",
-                "b2p/bdf-web": "required to use service provider (~1.0)"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-dev": "1.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Bdf\\Session\\": ""
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "Bdf framework components",
-            "time": "2016-07-15 12:01:04"
-        },
-        {
             "name": "b2p/kangaroo",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@redmine:kangaroo.git",
-                "reference": "70b730968ad7083b2d0c18bb7f77798b8f5903b4"
+                "reference": "794a48052df629ca5e63a8da9b5d59593a4534a6"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/b2p-kangaroo-dev-master-80f244.tar",
-                "reference": "70b730968ad7083b2d0c18bb7f77798b8f5903b4",
-                "shasum": "a4f4793bcf2f5ec1c432e7cbe3fd1dc278cba563"
+                "url": "http://packagist.b2pweb.com/dist/b2p-kangaroo-dev-master-f37cd3.tar",
+                "reference": "794a48052df629ca5e63a8da9b5d59593a4534a6",
+                "shasum": "d343d1582e6a8ef13eacd5ce301cc0db0bf7ccae"
             },
             "require": {
+                "b2p/bdf-event": "~1.0",
                 "mashape/unirest-php": "^3.0"
             },
             "require-dev": {
                 "b2p/bdf-phpunit": "~1.0",
+                "b2p/parroauth2-client": "dev-master",
                 "doctrine/cache": "~1.4"
             },
             "suggest": {
-                "doctrine/cache": "Required to use doctrine cache in cache plugin"
+                "b2p/parroauth2-client": "Required to use oauth plugin (dev-master)",
+                "doctrine/cache": "Required to use doctrine cache in cache plugin (~1.4)"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Kangaroo\\": "src/"
@@ -202,7 +176,7 @@
                 "proprietary"
             ],
             "description": "Kangaroo is a REST client library",
-            "time": "2016-09-12 10:40:40"
+            "time": "2016-09-13 14:17:47"
         },
         {
             "name": "filp/whoops",
@@ -263,46 +237,62 @@
             "time": "2015-06-29 05:42:04"
         },
         {
-            "name": "ircmaxell/password-compat",
-            "version": "1.0.x-dev",
+            "name": "lcobucci/jwt",
+            "version": "3.2.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ircmaxell/password_compat.git",
-                "reference": "9b99377557a33a4129c9194e60a97a685fab21e0"
+                "url": "https://github.com/lcobucci/jwt.git",
+                "reference": "7668cb045296f290588d04c391569c7b7fc1f899"
             },
             "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/ircmaxell-password-compat-9b99377557a33a4129c9194e60a97a685fab21e0-zip-d59d6c.tar",
-                "reference": "9b99377557a33a4129c9194e60a97a685fab21e0",
-                "shasum": "d7fcb3e3469c2564e8c1b7416088a6c8fdf762c1"
+                "type": "zip",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/7668cb045296f290588d04c391569c7b7fc1f899",
+                "reference": "7668cb045296f290588d04c391569c7b7fc1f899",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": ">=5.5"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*"
+                "mdanter/ecc": "~0.3.1",
+                "mikey179/vfsstream": "~1.5",
+                "phpmd/phpmd": "~2.2",
+                "phpunit/php-invoker": "~1.1",
+                "phpunit/phpunit": "~4.5",
+                "squizlabs/php_codesniffer": "~2.3"
+            },
+            "suggest": {
+                "mdanter/ecc": "Required to use Elliptic Curves based algorithms."
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
             "autoload": {
-                "files": [
-                    "lib/password.php"
-                ]
+                "psr-4": {
+                    "Lcobucci\\JWT\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Anthony Ferrara",
-                    "email": "ircmaxell@php.net",
-                    "homepage": "http://blog.ircmaxell.com"
+                    "name": "Luís Otávio Cobucci Oblonczyk",
+                    "email": "lcobucci@gmail.com",
+                    "role": "Developer"
                 }
             ],
-            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
-            "homepage": "https://github.com/ircmaxell/password_compat",
+            "description": "A simple library to work with JSON Web Token and JSON Web Signature",
             "keywords": [
-                "hashing",
-                "password"
+                "JWS",
+                "jwt"
             ],
-            "time": "2014-11-20 19:18:42"
+            "time": "2016-08-13 23:12:58"
         },
         {
             "name": "mashape/unirest-php",
@@ -399,33 +389,33 @@
         },
         {
             "name": "symfony/debug",
-            "version": "2.8.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "8c29235936a47473af16fb91c7c4b7b193c5693c"
+                "reference": "122391f69203b96b0c92b4a4b58c89ed9961c2ea"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-debug-8c29235936a47473af16fb91c7c4b7b193c5693c-zip-7f6358.tar",
-                "reference": "8c29235936a47473af16fb91c7c4b7b193c5693c",
-                "shasum": "66e9cb0e35b166dc9d4fdd9f84c0847d2f9b2405"
+                "url": "http://packagist.b2pweb.com/dist/symfony-debug-122391f69203b96b0c92b4a4b58c89ed9961c2ea-zip-cebaca.tar",
+                "reference": "122391f69203b96b0c92b4a4b58c89ed9961c2ea",
+                "shasum": "e4bd0ecbc01be3beb74742b8981ba3ddab7baf9a"
             },
             "require": {
-                "php": ">=5.3.9",
+                "php": ">=5.5.9",
                 "psr/log": "~1.0"
             },
             "conflict": {
                 "symfony/http-kernel": ">=2.3,<2.3.24|~2.4.0|>=2.5,<2.5.9|>=2.6,<2.6.2"
             },
             "require-dev": {
-                "symfony/class-loader": "~2.2|~3.0.0",
-                "symfony/http-kernel": "~2.3.24|~2.5.9|~2.6,>=2.6.2|~3.0.0"
+                "symfony/class-loader": "~2.8|~3.0",
+                "symfony/http-kernel": "~2.8|~3.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -452,311 +442,45 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-06 10:55:00"
+            "time": "2016-09-14 19:22:10"
         },
         {
-            "name": "symfony/filesystem",
-            "version": "2.8.x-dev",
+            "name": "symfony/event-dispatcher",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/filesystem.git",
-                "reference": "44b499521defddf2eae17a18c811bbdae4f98bdf"
+                "url": "https://github.com/symfony/event-dispatcher.git",
+                "reference": "20dc18ee3f12a956681dc91f126c2f39b3054dd9"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-filesystem-44b499521defddf2eae17a18c811bbdae4f98bdf-zip-39489a.tar",
-                "reference": "44b499521defddf2eae17a18c811bbdae4f98bdf",
-                "shasum": "73fda18cbeafc2dd7cf17e09f37e6e65c8c727a1"
+                "url": "http://packagist.b2pweb.com/dist/symfony-event-dispatcher-20dc18ee3f12a956681dc91f126c2f39b3054dd9-zip-d7d3fd.tar",
+                "reference": "20dc18ee3f12a956681dc91f126c2f39b3054dd9",
+                "shasum": "943b8c8c074623b37b3ba0d9c9fa5cdd7d3b3490"
             },
             "require": {
-                "php": ">=5.3.9"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Filesystem\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Filesystem Component",
-            "homepage": "https://symfony.com",
-            "time": "2016-09-06 10:55:00"
-        },
-        {
-            "name": "symfony/http-foundation",
-            "version": "2.8.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "1d4ab8de2215e44e57fddc1e6b5d122546769e7d"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-http-foundation-1d4ab8de2215e44e57fddc1e6b5d122546769e7d-zip-823a3a.tar",
-                "reference": "1d4ab8de2215e44e57fddc1e6b5d122546769e7d",
-                "shasum": "9b647299f15130c0b14e484b9b4da5367ef37fd4"
-            },
-            "require": {
-                "php": ">=5.3.9",
-                "symfony/polyfill-mbstring": "~1.1",
-                "symfony/polyfill-php54": "~1.0",
-                "symfony/polyfill-php55": "~1.0"
+                "php": ">=5.5.9"
             },
             "require-dev": {
-                "symfony/expression-language": "~2.4|~3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\HttpFoundation\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony HttpFoundation Component",
-            "homepage": "https://symfony.com",
-            "time": "2016-09-06 10:55:00"
-        },
-        {
-            "name": "symfony/polyfill-mbstring",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "53ad9faffe141fbe8f98cd6a7fd9a5e84513f56c"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-polyfill-mbstring-53ad9faffe141fbe8f98cd6a7fd9a5e84513f56c-zip-56a1bb.tar",
-                "reference": "53ad9faffe141fbe8f98cd6a7fd9a5e84513f56c",
-                "shasum": "67bc27c99d217044fa7398fc185f18ee2b2a05b5"
-            },
-            "require": {
-                "php": ">=5.3.3"
+                "psr/log": "~1.0",
+                "symfony/config": "~2.8|~3.0",
+                "symfony/dependency-injection": "~2.8|~3.0",
+                "symfony/expression-language": "~2.8|~3.0",
+                "symfony/stopwatch": "~2.8|~3.0"
             },
             "suggest": {
-                "ext-mbstring": "For best performance"
+                "symfony/dependency-injection": "",
+                "symfony/http-kernel": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Symfony\\Polyfill\\Mbstring\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill for the Mbstring extension",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "mbstring",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "time": "2016-08-30 17:06:17"
-        },
-        {
-            "name": "symfony/polyfill-php54",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php54.git",
-                "reference": "34d761992f6f2cc6092cc0e5e93f38b53ba5e4f1"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-polyfill-php54-34d761992f6f2cc6092cc0e5e93f38b53ba5e4f1-zip-329959.tar",
-                "reference": "34d761992f6f2cc6092cc0e5e93f38b53ba5e4f1",
-                "shasum": "3c5f3c705139e2b0ce056c08c3d10e71b76e6550"
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php54\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ],
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 5.4+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "time": "2016-05-18 14:26:46"
-        },
-        {
-            "name": "symfony/polyfill-php55",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php55.git",
-                "reference": "bf2ff9ad6be1a4772cb873e4eea94d70daa95c6d"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-polyfill-php55-bf2ff9ad6be1a4772cb873e4eea94d70daa95c6d-zip-59971c.tar",
-                "reference": "bf2ff9ad6be1a4772cb873e4eea94d70daa95c6d",
-                "shasum": "16c77c9fd70bd8aeeef7af153d29f952c759e770"
-            },
-            "require": {
-                "ircmaxell/password-compat": "~1.0",
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php55\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 5.5+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "time": "2016-05-18 14:26:46"
-        },
-        {
-            "name": "symfony/yaml",
-            "version": "2.8.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/yaml.git",
-                "reference": "e7540734bad981fe59f8ef14b6fc194ae9df8d9c"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-yaml-e7540734bad981fe59f8ef14b6fc194ae9df8d9c-zip-c17009.tar",
-                "reference": "e7540734bad981fe59f8ef14b6fc194ae9df8d9c",
-                "shasum": "23306dd946b4641acae1fcc824195a2460efa307"
-            },
-            "require": {
-                "php": ">=5.3.9"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Yaml\\": ""
+                    "Symfony\\Component\\EventDispatcher\\": ""
                 },
                 "exclude-from-classmap": [
                     "/Tests/"
@@ -776,12 +500,52 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony Yaml Component",
+            "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-02 01:57:56"
+            "time": "2016-09-06 23:13:31"
         }
     ],
     "packages-dev": [
+        {
+            "name": "b2p/bdf-config",
+            "version": "1.2.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@redmine:bdf-config.git",
+                "reference": "27c88d7f5424b33736d85344013394166a003f2d"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-config-1.2.x-dev-1c96fc.tar",
+                "reference": "27c88d7f5424b33736d85344013394166a003f2d",
+                "shasum": "1c8d7d1cf7bc242f2b8af9bdf555eff7f3dbb292"
+            },
+            "require": {
+                "b2p/bdf-exception": "~1.0",
+                "b2p/bdf-file": "~1.0",
+                "php": ">=5.4",
+                "symfony/yaml": "~2.7|~3.0"
+            },
+            "suggest": {
+                "b2p/bdf-console": "required to use config commands (~1.0)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-dev": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bdf\\Config\\": ""
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Bdf framework components",
+            "time": "2016-07-15 12:01:04"
+        },
         {
             "name": "b2p/bdf-console",
             "version": "1.2.x-dev",
@@ -827,69 +591,23 @@
             "time": "2016-07-15 12:01:04"
         },
         {
-            "name": "b2p/bdf-di",
+            "name": "b2p/bdf-file",
             "version": "1.2.x-dev",
             "source": {
                 "type": "git",
-                "url": "git@redmine:bdf-di.git",
-                "reference": "ad86b28785b605a389895ccda8f3c963c61ce2bf"
+                "url": "git@redmine:bdf-file.git",
+                "reference": "b9411a0a7009c1b0a6587b147c11bab814010da1"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-di-1.2.x-dev-2b14e0.tar",
-                "reference": "ad86b28785b605a389895ccda8f3c963c61ce2bf",
-                "shasum": "aa39478095e8f15ef0ec6858e975ef32329ac018"
+                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-file-1.2.x-dev-05799c.tar",
+                "reference": "b9411a0a7009c1b0a6587b147c11bab814010da1",
+                "shasum": "04353b2f0a387d62526c148c8f38057f00341e8d"
             },
             "require": {
                 "b2p/bdf-exception": "~1.0",
-                "php": ">=5.4"
-            },
-            "suggest": {
-                "b2p/bdf-console": "required to use di commands (~1.0)"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-dev": "1.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Bdf\\DI\\": ""
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "Bdf framework components",
-            "time": "2016-07-15 15:06:23"
-        },
-        {
-            "name": "b2p/bdf-event",
-            "version": "1.2.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@redmine:bdf-event.git",
-                "reference": "408851b9b8686eeb603a1decd49ce09207622d46"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-event-1.2.x-dev-85b09d.tar",
-                "reference": "408851b9b8686eeb603a1decd49ce09207622d46",
-                "shasum": "e63b4a50730a6d114dddeaf226f2a0319fddc59d"
-            },
-            "require": {
-                "b2p/bdf-di": "~1.0",
                 "php": ">=5.4",
-                "symfony/event-dispatcher": "~2.7|~3.0"
-            },
-            "suggest": {
-                "b2p/bdf-console": "required to use di commands (~1.0)",
-                "b2p/bdf-queue": "required to use differed domain events (~1.0)",
-                "b2p/bdf-serializer": "required to use broadcaster (~1.0)",
-                "b2p/bdf-web": "required to use service provider (~1.0)",
-                "php-amqplib/php-amqplib": "Required to use the RabbitMQ broadcaster (~2.6)",
-                "repejota/nats": "Required to use the Nats broadcaster (~0.7|~1.0)"
+                "symfony/filesystem": "~2.7|~3.0"
             },
             "type": "library",
             "extra": {
@@ -899,14 +617,14 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Bdf\\Event\\": ""
+                    "Bdf\\File\\": ""
                 }
             },
             "license": [
                 "proprietary"
             ],
             "description": "Bdf framework components",
-            "time": "2016-07-27 08:09:36"
+            "time": "2016-07-20 12:19:32"
         },
         {
             "name": "b2p/bdf-http",
@@ -978,6 +696,46 @@
             "autoload": {
                 "psr-4": {
                     "Bdf\\PHPUnit\\": ""
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Bdf framework components",
+            "time": "2016-07-15 12:01:04"
+        },
+        {
+            "name": "b2p/bdf-session",
+            "version": "1.2.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@redmine:bdf-session.git",
+                "reference": "5357254f1a1c1c4405e09b61ce998de84182e8e0"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/b2p-bdf-session-1.2.x-dev-af8960.tar",
+                "reference": "5357254f1a1c1c4405e09b61ce998de84182e8e0",
+                "shasum": "6cc81f4c19c05d9017227e1412d947952206bd27"
+            },
+            "require": {
+                "b2p/bdf-exception": "~1.0",
+                "php": ">=5.4",
+                "symfony/http-foundation": "~2.7|~3.0"
+            },
+            "suggest": {
+                "b2p/bdf-prime": "required to use db handler (~1.0)",
+                "b2p/bdf-web": "required to use service provider (~1.0)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-dev": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bdf\\Session\\": ""
                 }
             },
             "license": [
@@ -1064,6 +822,57 @@
             "time": "2016-07-21 07:00:53"
         },
         {
+            "name": "b2p/parroauth2-server",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@redmine:parroauth2-server.git",
+                "reference": "8fba433e35c31c99a345fcf361c10e4e774ef32e"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/b2p-parroauth2-server-dev-master-6ac134.tar",
+                "reference": "8fba433e35c31c99a345fcf361c10e4e774ef32e",
+                "shasum": "22c4b8f5ba14640158dd6de45f98190ba785c2f1"
+            },
+            "require": {
+                "b2p/bdf-http": "~1.0",
+                "lcobucci/jwt": "^3.2",
+                "php": ">=5.4",
+                "symfony/http-foundation": "~2.7"
+            },
+            "require-dev": {
+                "b2p/bdf-phpunit": "~1.0",
+                "b2p/bdf-prime": "~1.0",
+                "paragonie/random_compat": "^1.1 || ^2.0"
+            },
+            "suggest": {
+                "b2p/bdf-prime": "Required to use default entities (~1.0)",
+                "paragonie/random_compat": "Required to generate unique identifier before PHP 7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Parroauth2\\Server\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Parroauth2\\Server\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "B2P OAuth 2 server implementation",
+            "time": "2016-09-15 10:34:46"
+        },
+        {
             "name": "doctrine/instantiator",
             "version": "dev-master",
             "source": {
@@ -1118,38 +927,129 @@
             "time": "2016-03-31 10:24:22"
         },
         {
-            "name": "phpdocumentor/reflection-docblock",
-            "version": "2.0.4",
+            "name": "ircmaxell/password-compat",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "d68dbdc53dc358a816f00b300704702b2eaff7b8"
+                "url": "https://github.com/ircmaxell/password_compat.git",
+                "reference": "9b99377557a33a4129c9194e60a97a685fab21e0"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/phpdocumentor-reflection-docblock-d68dbdc53dc358a816f00b300704702b2eaff7b8-zip-b8dbaa.tar",
-                "reference": "d68dbdc53dc358a816f00b300704702b2eaff7b8",
-                "shasum": "e7b72e716c313639b4b554a171102fe0e2db3d90"
-            },
-            "require": {
-                "php": ">=5.3.3"
+                "url": "http://packagist.b2pweb.com/dist/ircmaxell-password-compat-9b99377557a33a4129c9194e60a97a685fab21e0-zip-d59d6c.tar",
+                "reference": "9b99377557a33a4129c9194e60a97a685fab21e0",
+                "shasum": "d7fcb3e3469c2564e8c1b7416088a6c8fdf762c1"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "4.*"
             },
-            "suggest": {
-                "dflydev/markdown": "~1.0",
-                "erusev/parsedown": "~1.0"
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/password.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net",
+                    "homepage": "http://blog.ircmaxell.com"
+                }
+            ],
+            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
+            "homepage": "https://github.com/ircmaxell/password_compat",
+            "keywords": [
+                "hashing",
+                "password"
+            ],
+            "time": "2014-11-20 19:18:42"
+        },
+        {
+            "name": "phpdocumentor/reflection-common",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
+                "reference": "144c307535e82c8fdcaacbcfc1d6d8eeb896687c"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/phpdocumentor-reflection-common-144c307535e82c8fdcaacbcfc1d6d8eeb896687c-zip-c3be2d.tar",
+                "reference": "144c307535e82c8fdcaacbcfc1d6d8eeb896687c",
+                "shasum": "ab42e2c06ed88b8bae75bc442d369309b28544f9"
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.6"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.0.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "phpDocumentor": [
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
+                        "src"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "opensource@ijaap.nl"
+                }
+            ],
+            "description": "Common reflection classes used by phpdocumentor to reflect the code structure",
+            "homepage": "http://www.phpdoc.org",
+            "keywords": [
+                "FQSEN",
+                "phpDocumentor",
+                "phpdoc",
+                "reflection",
+                "static analysis"
+            ],
+            "time": "2015-12-27 11:43:31"
+        },
+        {
+            "name": "phpdocumentor/reflection-docblock",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
+                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/phpdocumentor-reflection-docblock-9270140b940ff02e58ec577c237274e92cd40cdd-zip-550863.tar",
+                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd",
+                "shasum": "25bf00898d427c4180a159078c07d27d6ba5d207"
+            },
+            "require": {
+                "php": ">=5.5",
+                "phpdocumentor/reflection-common": "^1.0@dev",
+                "phpdocumentor/type-resolver": "^0.2.0",
+                "webmozart/assert": "^1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
                         "src/"
                     ]
                 }
@@ -1161,10 +1061,58 @@
             "authors": [
                 {
                     "name": "Mike van Riel",
-                    "email": "mike.vanriel@naenius.com"
+                    "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2015-02-03 12:10:50"
+            "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
+            "time": "2016-06-10 09:48:41"
+        },
+        {
+            "name": "phpdocumentor/type-resolver",
+            "version": "0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/TypeResolver.git",
+                "reference": "b39c7a5b194f9ed7bd0dd345c751007a41862443"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/phpdocumentor-type-resolver-b39c7a5b194f9ed7bd0dd345c751007a41862443-zip-e34c86.tar",
+                "reference": "b39c7a5b194f9ed7bd0dd345c751007a41862443",
+                "shasum": "b327d18aaa9deb97c367ed2698ff297ea0ee6ed9"
+            },
+            "require": {
+                "php": ">=5.5",
+                "phpdocumentor/reflection-common": "^1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^5.2||^4.8.24"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "me@mikevanriel.com"
+                }
+            ],
+            "time": "2016-06-10 07:14:17"
         },
         {
             "name": "phpspec/prophecy",
@@ -1973,25 +1921,25 @@
         },
         {
             "name": "symfony/browser-kit",
-            "version": "2.8.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/browser-kit.git",
-                "reference": "165bf6d1e72cd72f2fe170a070aa2a1f17f2d744"
+                "reference": "9e1c476e63d2add135b426b129f22c048f907432"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-browser-kit-165bf6d1e72cd72f2fe170a070aa2a1f17f2d744-zip-339a76.tar",
-                "reference": "165bf6d1e72cd72f2fe170a070aa2a1f17f2d744",
-                "shasum": "c59911c1793d24336be73035aecdedd056e7ff9f"
+                "url": "http://packagist.b2pweb.com/dist/symfony-browser-kit-9e1c476e63d2add135b426b129f22c048f907432-zip-0179dc.tar",
+                "reference": "9e1c476e63d2add135b426b129f22c048f907432",
+                "shasum": "a5069314b30c8f86f12c12199bfd9a7f14333550"
             },
             "require": {
-                "php": ">=5.3.9",
-                "symfony/dom-crawler": "~2.1|~3.0.0"
+                "php": ">=5.5.9",
+                "symfony/dom-crawler": "~2.8|~3.0"
             },
             "require-dev": {
-                "symfony/css-selector": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/process": "~2.3.34|~2.7,>=2.7.6|~3.0.0"
+                "symfony/css-selector": "~2.8|~3.0",
+                "symfony/process": "~2.8|~3.0"
             },
             "suggest": {
                 "symfony/process": ""
@@ -1999,7 +1947,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -2026,40 +1974,43 @@
             ],
             "description": "Symfony BrowserKit Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-06 10:55:00"
+            "time": "2016-09-06 11:07:23"
         },
         {
             "name": "symfony/console",
-            "version": "2.8.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "3d3e4fa5f0614c8e45220e5de80332322e33bd90"
+                "reference": "c1ca699a28543ccd880713a412daa3d11b257e65"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-console-3d3e4fa5f0614c8e45220e5de80332322e33bd90-zip-f90d67.tar",
-                "reference": "3d3e4fa5f0614c8e45220e5de80332322e33bd90",
-                "shasum": "a74d79aeca6fd316abacd54ed26255af2d843bdf"
+                "url": "http://packagist.b2pweb.com/dist/symfony-console-c1ca699a28543ccd880713a412daa3d11b257e65-zip-31b703.tar",
+                "reference": "c1ca699a28543ccd880713a412daa3d11b257e65",
+                "shasum": "157d321b3b637331436f0f5e25689fa30a07009a"
             },
             "require": {
-                "php": ">=5.3.9",
+                "php": ">=5.5.9",
+                "symfony/debug": "~2.8|~3.0",
                 "symfony/polyfill-mbstring": "~1.0"
             },
             "require-dev": {
                 "psr/log": "~1.0",
-                "symfony/event-dispatcher": "~2.1|~3.0.0",
-                "symfony/process": "~2.1|~3.0.0"
+                "symfony/event-dispatcher": "~2.8|~3.0",
+                "symfony/filesystem": "~2.8|~3.0",
+                "symfony/process": "~2.8|~3.0"
             },
             "suggest": {
                 "psr/log": "For using the console logger",
                 "symfony/event-dispatcher": "",
+                "symfony/filesystem": "",
                 "symfony/process": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -2086,29 +2037,29 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-06 10:55:00"
+            "time": "2016-09-14 22:49:28"
         },
         {
             "name": "symfony/css-selector",
-            "version": "2.8.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "71c8c3a04c126300c37089b1baa7c6322dfb845f"
+                "reference": "3912a05e7ae31afb78101f9de1be6b143c064fac"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-css-selector-71c8c3a04c126300c37089b1baa7c6322dfb845f-zip-9ac85b.tar",
-                "reference": "71c8c3a04c126300c37089b1baa7c6322dfb845f",
-                "shasum": "7ba9cf68d2c5848484087215233beaf244dea2d5"
+                "url": "http://packagist.b2pweb.com/dist/symfony-css-selector-3912a05e7ae31afb78101f9de1be6b143c064fac-zip-e0d8eb.tar",
+                "reference": "3912a05e7ae31afb78101f9de1be6b143c064fac",
+                "shasum": "42bb00ac5affee32e4b1baa364632273caa72586"
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.5.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -2139,28 +2090,28 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-06 10:55:00"
+            "time": "2016-09-06 11:07:23"
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "2.8.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "aac03b7ea2a7adff10a3599d614e79e6101230ab"
+                "reference": "241ffb09788b99db0e6b74740ae394850bc456f2"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-dom-crawler-aac03b7ea2a7adff10a3599d614e79e6101230ab-zip-2349a0.tar",
-                "reference": "aac03b7ea2a7adff10a3599d614e79e6101230ab",
-                "shasum": "fb5aa430e68722db44144ad9ecd6bff26e72b950"
+                "url": "http://packagist.b2pweb.com/dist/symfony-dom-crawler-241ffb09788b99db0e6b74740ae394850bc456f2-zip-76e6fb.tar",
+                "reference": "241ffb09788b99db0e6b74740ae394850bc456f2",
+                "shasum": "99b76b040c25d45f89476330a89cbf5870252196"
             },
             "require": {
-                "php": ">=5.3.9",
+                "php": ">=5.5.9",
                 "symfony/polyfill-mbstring": "~1.0"
             },
             "require-dev": {
-                "symfony/css-selector": "~2.8|~3.0.0"
+                "symfony/css-selector": "~2.8|~3.0"
             },
             "suggest": {
                 "symfony/css-selector": ""
@@ -2168,7 +2119,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -2195,45 +2146,34 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-30 07:20:35"
+            "time": "2016-08-31 11:20:00"
         },
         {
-            "name": "symfony/event-dispatcher",
-            "version": "2.8.x-dev",
+            "name": "symfony/filesystem",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "889983a79a043dfda68f38c38b6dba092dd49cd8"
+                "url": "https://github.com/symfony/filesystem.git",
+                "reference": "b3251ed8c44eff89b9ca6aa2d89f9f9b4565e056"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-event-dispatcher-889983a79a043dfda68f38c38b6dba092dd49cd8-zip-4ae94a.tar",
-                "reference": "889983a79a043dfda68f38c38b6dba092dd49cd8",
-                "shasum": "2d5a4a47c72e5455a3c9b9f28030e0d4a625c006"
+                "url": "http://packagist.b2pweb.com/dist/symfony-filesystem-b3251ed8c44eff89b9ca6aa2d89f9f9b4565e056-zip-c70dd7.tar",
+                "reference": "b3251ed8c44eff89b9ca6aa2d89f9f9b4565e056",
+                "shasum": "4a77bf4b3b1a8fd78f46867d3a77893fe6437f6f"
             },
             "require": {
-                "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "psr/log": "~1.0",
-                "symfony/config": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/dependency-injection": "~2.6|~3.0.0",
-                "symfony/expression-language": "~2.6|~3.0.0",
-                "symfony/stopwatch": "~2.3|~3.0.0"
-            },
-            "suggest": {
-                "symfony/dependency-injection": "",
-                "symfony/http-kernel": ""
+                "php": ">=5.5.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Symfony\\Component\\EventDispatcher\\": ""
+                    "Symfony\\Component\\Filesystem\\": ""
                 },
                 "exclude-from-classmap": [
                     "/Tests/"
@@ -2253,50 +2193,105 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony EventDispatcher Component",
+            "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-28 16:56:28"
+            "time": "2016-09-14 22:49:28"
         },
         {
-            "name": "symfony/http-kernel",
+            "name": "symfony/http-foundation",
             "version": "2.8.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "f2f184f2f8f6fa5f4e5c8ae947eec36491f174c1"
+                "url": "https://github.com/symfony/http-foundation.git",
+                "reference": "1d4ab8de2215e44e57fddc1e6b5d122546769e7d"
             },
             "dist": {
                 "type": "tar",
-                "url": "http://packagist.b2pweb.com/dist/symfony-http-kernel-f2f184f2f8f6fa5f4e5c8ae947eec36491f174c1-zip-54f3c1.tar",
-                "reference": "f2f184f2f8f6fa5f4e5c8ae947eec36491f174c1",
-                "shasum": "1df1bdc9e2990d58494c6194bdd40b58c3f0a631"
+                "url": "http://packagist.b2pweb.com/dist/symfony-http-foundation-1d4ab8de2215e44e57fddc1e6b5d122546769e7d-zip-823a3a.tar",
+                "reference": "1d4ab8de2215e44e57fddc1e6b5d122546769e7d",
+                "shasum": "9b647299f15130c0b14e484b9b4da5367ef37fd4"
             },
             "require": {
                 "php": ">=5.3.9",
-                "psr/log": "~1.0",
-                "symfony/debug": "~2.6,>=2.6.2",
-                "symfony/event-dispatcher": "~2.6,>=2.6.7|~3.0.0",
-                "symfony/http-foundation": "~2.7.15|~2.8.8|~3.0.8"
-            },
-            "conflict": {
-                "symfony/config": "<2.7"
+                "symfony/polyfill-mbstring": "~1.1",
+                "symfony/polyfill-php54": "~1.0",
+                "symfony/polyfill-php55": "~1.0"
             },
             "require-dev": {
-                "symfony/browser-kit": "~2.3|~3.0.0",
-                "symfony/class-loader": "~2.1|~3.0.0",
-                "symfony/config": "~2.8",
-                "symfony/console": "~2.3|~3.0.0",
-                "symfony/css-selector": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/dependency-injection": "~2.8|~3.0.0",
-                "symfony/dom-crawler": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/expression-language": "~2.4|~3.0.0",
-                "symfony/finder": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/process": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/routing": "~2.8|~3.0.0",
-                "symfony/stopwatch": "~2.3|~3.0.0",
-                "symfony/templating": "~2.2|~3.0.0",
-                "symfony/translation": "~2.0,>=2.0.5|~3.0.0",
-                "symfony/var-dumper": "~2.6|~3.0.0"
+                "symfony/expression-language": "~2.4|~3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\HttpFoundation\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony HttpFoundation Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-09-06 10:55:00"
+        },
+        {
+            "name": "symfony/http-kernel",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-kernel.git",
+                "reference": "d9374de5a5e0abb084000e0d138920e378bba40b"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/symfony-http-kernel-d9374de5a5e0abb084000e0d138920e378bba40b-zip-0dbbfe.tar",
+                "reference": "d9374de5a5e0abb084000e0d138920e378bba40b",
+                "shasum": "db92b0fb1482b53cf9cce107a4806da41732672b"
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "psr/log": "~1.0",
+                "symfony/debug": "~2.8|~3.0",
+                "symfony/event-dispatcher": "~2.8|~3.0",
+                "symfony/http-foundation": "~2.8.8|~3.0.8|~3.1.2|~3.2"
+            },
+            "conflict": {
+                "symfony/config": "<2.8"
+            },
+            "require-dev": {
+                "symfony/browser-kit": "~2.8|~3.0",
+                "symfony/class-loader": "~2.8|~3.0",
+                "symfony/config": "~2.8|~3.0",
+                "symfony/console": "~2.8|~3.0",
+                "symfony/css-selector": "~2.8|~3.0",
+                "symfony/dependency-injection": "~2.8|~3.0",
+                "symfony/dom-crawler": "~2.8|~3.0",
+                "symfony/expression-language": "~2.8|~3.0",
+                "symfony/finder": "~2.8|~3.0",
+                "symfony/process": "~2.8|~3.0",
+                "symfony/routing": "~2.8|~3.0",
+                "symfony/stopwatch": "~2.8|~3.0",
+                "symfony/templating": "~2.8|~3.0",
+                "symfony/translation": "~2.8|~3.0",
+                "symfony/var-dumper": "~3.2"
             },
             "suggest": {
                 "symfony/browser-kit": "",
@@ -2310,7 +2305,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -2337,12 +2332,293 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-07 02:58:32"
+            "time": "2016-09-14 22:49:28"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "53ad9faffe141fbe8f98cd6a7fd9a5e84513f56c"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/symfony-polyfill-mbstring-53ad9faffe141fbe8f98cd6a7fd9a5e84513f56c-zip-56a1bb.tar",
+                "reference": "53ad9faffe141fbe8f98cd6a7fd9a5e84513f56c",
+                "shasum": "67bc27c99d217044fa7398fc185f18ee2b2a05b5"
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2016-08-30 17:06:17"
+        },
+        {
+            "name": "symfony/polyfill-php54",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php54.git",
+                "reference": "34d761992f6f2cc6092cc0e5e93f38b53ba5e4f1"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/symfony-polyfill-php54-34d761992f6f2cc6092cc0e5e93f38b53ba5e4f1-zip-329959.tar",
+                "reference": "34d761992f6f2cc6092cc0e5e93f38b53ba5e4f1",
+                "shasum": "3c5f3c705139e2b0ce056c08c3d10e71b76e6550"
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php54\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 5.4+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2016-05-18 14:26:46"
+        },
+        {
+            "name": "symfony/polyfill-php55",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php55.git",
+                "reference": "bf2ff9ad6be1a4772cb873e4eea94d70daa95c6d"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/symfony-polyfill-php55-bf2ff9ad6be1a4772cb873e4eea94d70daa95c6d-zip-59971c.tar",
+                "reference": "bf2ff9ad6be1a4772cb873e4eea94d70daa95c6d",
+                "shasum": "16c77c9fd70bd8aeeef7af153d29f952c759e770"
+            },
+            "require": {
+                "ircmaxell/password-compat": "~1.0",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php55\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 5.5+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2016-05-18 14:26:46"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "aa8be2235b5dd4e472424552390609f61996f5ab"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/symfony-yaml-aa8be2235b5dd4e472424552390609f61996f5ab-zip-816ea3.tar",
+                "reference": "aa8be2235b5dd4e472424552390609f61996f5ab",
+                "shasum": "8662fd5507bf304f81f1f5f58d7cc22a83104e5d"
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "symfony/console": "~2.8|~3.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Yaml Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-09-02 02:14:06"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozart/assert.git",
+                "reference": "8444f2ac9f86342665cdae47b6d3ea6e07794456"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://packagist.b2pweb.com/dist/webmozart-assert-8444f2ac9f86342665cdae47b6d3ea6e07794456-zip-b2117c.tar",
+                "reference": "8444f2ac9f86342665cdae47b6d3ea6e07794456",
+                "shasum": "9fd91589dc63f0fc98d90940bf0fae4b8e736a6b"
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.6",
+                "sebastian/version": "^1.0.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "time": "2016-08-18 09:30:53"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "b2p/kangaroo": 20,
+        "b2p/parroauth2-server": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -2,64 +2,89 @@
 
 namespace Parroauth2\Client;
 
-use Parroauth2\Client\Adapter\AdapterInterface;
 use Parroauth2\Client\Exception\ConnectionException;
 use Parroauth2\Client\Storage\StorageInterface;
+use Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface;
+use Parroauth2\Client\Strategy\Introspection\IntrospectionStrategyInterface;
 
 /**
  * Class Client
  *
  * @package Parroauth2\Client
  */
-class Client
+class Client implements AuthorizationClientInterface, IntrospectionClientInterface
 {
-    /**
-     * @var AdapterInterface
-     */
-    protected $adapter;
-
     /**
      * @var StorageInterface
      */
     protected $storage;
 
     /**
+     * @var AuthorizationStrategyInterface
+     */
+    protected $authorizationStrategy;
+
+    /**
+     * @var IntrospectionStrategyInterface
+     */
+    protected $introspectionStrategy;
+
+    /**
      * Client constructor.
      *
-     * @param AdapterInterface $adapter
      * @param StorageInterface $storage
      */
-    public function __construct(AdapterInterface $adapter, StorageInterface $storage)
+    public function __construct(StorageInterface $storage)
     {
-        $this->adapter = $adapter;
         $this->storage = $storage;
     }
 
     /**
-     * @return string
+     * @param AuthorizationStrategyInterface $authorizationStrategy
+     * 
+     * @return $this
      */
-    public function getAccessToken()
+    public function setAuthorizationStrategy(AuthorizationStrategyInterface $authorizationStrategy)
     {
-        if ($this->storage->exists()) {
-            if ($this->storage->retrieve()->isExpired()) {
-                $this->refresh();
-            }
-
-            return $this->storage->retrieve()->getAccess();
-        }
-
-        return '';
+        $this->authorizationStrategy = $authorizationStrategy;
+        
+        return $this;
     }
 
     /**
-     * @param string $username
-     * @param string $password
+     * @return AuthorizationStrategyInterface
+     */
+    public function getAuthorizationStrategy()
+    {
+        return $this->authorizationStrategy;
+    }
+
+    /**
+     * @param IntrospectionStrategyInterface $introspectionStrategy
      *
      * @return $this
      */
-    public function login($username, $password)
+    public function setIntrospectionStrategy(IntrospectionStrategyInterface $introspectionStrategy)
     {
-        $grant = $this->adapter->token($username, $password);
+        $this->introspectionStrategy = $introspectionStrategy;
+
+        return $this;
+    }
+
+    /**
+     * @return IntrospectionStrategyInterface
+     */
+    public function getIntrospectionStrategy()
+    {
+        return $this->introspectionStrategy;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function login($login, $password)
+    {
+        $grant = $this->authorizationStrategy()->token($login, $password);
 
         $this->storage->store($grant);
 
@@ -67,18 +92,16 @@ class Client
     }
 
     /**
-     * @return $this
-     *
-     * @throws ConnectionException
+     * {@inheritdoc}
      */
     public function refresh()
     {
         if (!$this->storage->exists()) {
-            throw new ConnectionException('Not connected to service');
+            throw new ConnectionException('Client is not connected');
         }
 
         try {
-            $grant = $this->adapter->refresh($this->storage->retrieve());
+            $grant = $this->authorizationStrategy()->refresh($this->storage->retrieve());
             $this->storage->store($grant);
 
         } catch (ConnectionException $exception) {
@@ -89,35 +112,23 @@ class Client
     }
 
     /**
-     * @return array
-     *
-     * @throws ConnectionException
-     */
-    public function userinfo()
-    {
-        if (!$this->storage->exists()) {
-            throw new ConnectionException('Not connected to service');
-        }
-
-        return $this->adapter->userinfo($this->storage->retrieve());
-    }
-
-    /**
-     * @return array
+     * {@inheritdoc}
      *
      * @throws ConnectionException
      */
     public function introspect()
     {
-        if (!$this->storage->exists()) {
-            throw new ConnectionException('Not connected to service');
+        $grant = $this->getGrant();
+
+        if (!$grant) {
+            throw new ConnectionException('Client is not connected');
         }
 
-        return $this->adapter->introspect($this->storage->retrieve());
+        return $this->introspectionStrategy()->introspect($grant);
     }
 
     /**
-     * @return $this
+     * @return {@inheritdoc}
      */
     public function logout()
     {
@@ -125,10 +136,54 @@ class Client
             return $this;
         }
 
-        $this->adapter->revoke($this->storage->retrieve());
+        $this->authorizationStrategy()->revoke($this->storage->retrieve());
 
         $this->storage->clear();
 
         return $this;
+    }
+
+    /**
+     * @return Grant
+     */
+    public function getGrant()
+    {
+        if ($this->storage->exists()) {
+            if ($this->storage->retrieve()->isExpired()) {
+                $this->refresh();
+            }
+
+            return $this->storage->retrieve();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return AuthorizationStrategyInterface
+     *
+     * @throws \Exception
+     */
+    protected function authorizationStrategy()
+    {
+        if (!$this->authorizationStrategy) {
+            throw new \Exception('Error!');
+        }
+
+        return $this->authorizationStrategy;
+    }
+
+    /**
+     * @return IntrospectionStrategyInterface
+     *
+     * @throws \Exception
+     */
+    protected function introspectionStrategy()
+    {
+        if (!$this->introspectionStrategy) {
+            throw new \Exception('Error!');
+        }
+
+        return $this->introspectionStrategy;
     }
 }

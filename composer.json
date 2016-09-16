@@ -17,12 +17,14 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Kangaroo\\Tests\\": "tests/"
+            "Parroauth2\\Client\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "b2p/kangaroo": "dev-master",
+        "lcobucci/jwt": "^3.2"
     },
     "extra": {
         "branch-alias": {
@@ -30,13 +32,11 @@
         }
     },
     "suggest": {
-        "b2p/bdf-session": "Allows the use of the Bdf session storage",
-        "b2p/kangaroo": "Allows the use of the Kangaroo adapter"
+        "b2p/bdf-session": "Allows the use of the Bdf session storage"
     },
 
     "require-dev": {
         "b2p/bdf-phpunit": "~1.0",
-        "b2p/bdf-session": "~1.0",
-        "b2p/kangaroo": "dev-master"
+        "b2p/bdf-session": "~1.0"
     }
 }

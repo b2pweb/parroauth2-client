@@ -17,7 +17,7 @@ class MemoryStorage implements StorageInterface
     protected $grant;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function exists()
     {
@@ -25,7 +25,7 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function retrieve()
     {
@@ -37,7 +37,7 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function store($grant)
     {
@@ -45,7 +45,7 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {
