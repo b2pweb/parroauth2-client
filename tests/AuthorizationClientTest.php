@@ -4,20 +4,21 @@ namespace Parroauth2\Client\Tests;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
-use Parroauth2\Client\Client;
+use Parroauth2\Client\AuthorizationClient;
 use Parroauth2\Client\Grant;
 use Parroauth2\Client\Storage\MemoryStorage;
+use Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface;
 
 /**
- * Class ClientTest
+ * Class AuthorizationClientTest
  * 
  * @package Parroauth2\Client
  *
  * @group Parroauth2
  * @group Parroauth2/Client
- * @group Parroauth2/Client/Client
+ * @group Parroauth2/Client/AuthorizationClient
  */
-class ClientTest extends TestCase
+class AuthorizationClientTest extends TestCase
 {
     /**
      * @var MemoryStorage
@@ -25,9 +26,14 @@ class ClientTest extends TestCase
     protected $storage;
 
     /**
-     * @var Client
+     * @var AuthorizationClient
      */
     protected $client;
+
+    /**
+     * @var AuthorizationStrategyInterface
+     */
+    protected $strategy;
 
     /**
      * 
@@ -36,7 +42,10 @@ class ClientTest extends TestCase
     {
         $this->storage = new MemoryStorage();
 
-        $this->client = new Client(
+        $this->strategy = $this->getMock('Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface', ['token', 'refresh', 'revoke']);
+
+        $this->client = new AuthorizationClient(
+            $this->strategy,
             $this->storage
         );
     }
@@ -70,14 +79,12 @@ class ClientTest extends TestCase
         $grant = new Grant('access_token', new DateTime('tomorrow'), 'updated_refresh_token', 'Bearer');
 
         $this->storage->store($outdatedGrant);
-        $strategy = $this->getMock('Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface', ['token', 'refresh', 'revoke']);
-        $strategy
+        $this->strategy
             ->expects($this->once())
             ->method('refresh')
             ->with($outdatedGrant)
             ->will($this->returnValue($grant))
         ;
-        $this->client->setAuthorizationStrategy($strategy);
 
         $this->assertSame($grant, $this->client->getGrant());
     }
@@ -89,14 +96,12 @@ class ClientTest extends TestCase
     {
         $expectedGrant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token', 'Bearer');
 
-        $strategy = $this->getMock('Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface', ['token', 'refresh', 'revoke']);
-        $strategy
+        $this->strategy
             ->expects($this->once())
             ->method('token')
             ->with('invalid', 'credentials')
             ->will($this->returnValue($expectedGrant))
         ;
-        $this->client->setAuthorizationStrategy($strategy);
 
         $this->client->login('invalid', 'credentials');
 
@@ -122,52 +127,15 @@ class ClientTest extends TestCase
         $grant = new Grant('access_token', new DateTime('tomorrow'), 'updated_refresh_token', 'Bearer');
 
         $this->storage->store($outdatedGrant);
-        $strategy = $this->getMock('Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface', ['token', 'refresh', 'revoke']);
-        $strategy
+        $this->strategy
             ->expects($this->once())
             ->method('refresh')
             ->will($this->returnValue($grant))
         ;
-        $this->client->setAuthorizationStrategy($strategy);
 
         $this->client->refresh();
 
         $this->assertSame($grant, $this->storage->retrieve());
-    }
-
-    /**
-     *
-     */
-    public function test_introspect_throws_connection_exception_if_no_token_is_set()
-    {
-        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Client is not connected');
-
-        $this->client->introspect();
-    }
-
-    /**
-     *
-     */
-    public function test_introspect_returns_the_token_data()
-    {
-        $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token', 'Bearer');
-        $expectedIntrospection = [
-            'id'   => 123,
-            'name' => 'Phpunit Instance',
-            'role' => 'tester',
-        ];
-
-        $this->storage->store($grant);
-        $strategy = $this->getMock('Parroauth2\Client\Strategy\Introspection\IntrospectionStrategyInterface', ['introspect']);
-        $strategy
-            ->expects($this->once())
-            ->method('introspect')
-            ->with($grant)
-            ->will($this->returnValue($expectedIntrospection))
-        ;
-        $this->client->setIntrospectionStrategy($strategy);
-
-        $this->assertEquals($expectedIntrospection, $this->client->introspect());
     }
 
     /**
@@ -178,13 +146,11 @@ class ClientTest extends TestCase
         $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token', 'Bearer');
 
         $this->storage->store($grant);
-        $strategy = $this->getMock('Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface', ['token', 'refresh', 'revoke']);
-        $strategy
+        $this->strategy
             ->expects($this->once())
             ->method('revoke')
             ->with($grant)
         ;
-        $this->client->setAuthorizationStrategy($strategy);
 
         $this->client->logout();
 
