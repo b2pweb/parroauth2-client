@@ -1,6 +1,6 @@
 <?php
 
-namespace Parroauth2\Client\Decoder;
+namespace Parroauth2\Client\Unserializer;
 
 use Exception;
 use Lcobucci\JWT\Parser;
@@ -9,11 +9,11 @@ use Lcobucci\JWT\Token;
 use Parroauth2\Client\Exception\ParsingException;
 
 /**
- * Class JwtDecoder
+ * Class JwtUnserializer
  * 
  * @package Parroauth2\Client\Parser
  */
-class JwtDecoder implements DecoderInterface
+class JwtUnserializer implements UnserializerInterface
 {
     /**
      * @var Parser
@@ -26,7 +26,7 @@ class JwtDecoder implements DecoderInterface
     protected $publicKey;
 
     /**
-     * JwtDecoder constructor.
+     * JwtUnserializer constructor.
      *
      * @param Parser $parser
      * @param string $publicKey
@@ -40,13 +40,13 @@ class JwtDecoder implements DecoderInterface
     /**
      * {@inheritdoc}
      */
-    public function decode($token)
+    public function unserialize($token)
     {
         try {
             $token = $this->parser->parse($token);
 
         } catch (Exception $e) {
-            throw new ParsingException('Unable to decode token', 0, $e);
+            throw new ParsingException('Unable to unserialize token', 0, $e);
         }
 
         $this->verify($token);

@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Strategy\Introspection;
 
-use Parroauth2\Client\Decoder\DecoderInterface;
+use Parroauth2\Client\Unserializer\UnserializerInterface;
 use Parroauth2\Client\Exception\ParsingException;
 use Parroauth2\Client\Introspection;
 
@@ -14,16 +14,16 @@ use Parroauth2\Client\Introspection;
 class SelfIntrospectionStrategy implements IntrospectionStrategyInterface
 {
     /**
-     * @var DecoderInterface
+     * @var UnserializerInterface
      */
     protected $decoder;
 
     /**
      * SelfIntrospectionStrategy constructor.
      *
-     * @param DecoderInterface $decoder
+     * @param UnserializerInterface $decoder
      */
-    public function __construct(DecoderInterface $decoder)
+    public function __construct(UnserializerInterface $decoder)
     {
         $this->decoder = $decoder;
     }
@@ -36,7 +36,7 @@ class SelfIntrospectionStrategy implements IntrospectionStrategyInterface
         $introspection = new Introspection();
 
         try {
-            $data = $this->decoder->decode($token);
+            $data = $this->decoder->unserialize($token);
             
             if ($data['exp']) {
                 $introspection->setActive(0 > (time() - $data['exp']));

@@ -3,12 +3,10 @@
 namespace Parroauth2\Client\Tests\Strategy\Introspection;
 
 use Bdf\PHPUnit\TestCase;
-use DateTime;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Parroauth2\Client\Grant;
-use Parroauth2\Client\Decoder\JwtDecoder;
+use Parroauth2\Client\Unserializer\JwtUnserializer;
 use Parroauth2\Client\Introspection;
 use Parroauth2\Client\Strategy\Introspection\SelfIntrospectionStrategy;
 
@@ -48,7 +46,7 @@ class SelfIntrospectionStrategyTest extends TestCase
         $this->privateKey = file_get_contents(__DIR__ . '/../../oauth-private.key');
         $this->publicKey = file_get_contents(__DIR__ . '/../../oauth-public.key');
 
-        $parser = new JwtDecoder(new Parser(), $this->publicKey);
+        $parser = new JwtUnserializer(new Parser(), $this->publicKey);
 
         $this->strategy = new SelfIntrospectionStrategy($parser);
     }
