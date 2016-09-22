@@ -2,6 +2,8 @@
 
 namespace Parroauth2\Client\Strategy\Authorization;
 
+use DateTime;
+use Kangaroo\Response;
 use Parroauth2\Client\Exception\ConnectionException;
 use Parroauth2\Client\Exception\InternalErrorException;
 use Parroauth2\Client\Grant;
@@ -46,24 +48,20 @@ class RemoteAuthorizationStrategy extends AbstractRemoteStrategy implements Auth
     }
 
     /**
-     * @param Grant|string $grant
+     * @param string $token
      *
      * @return Grant
      *
      * @throws ConnectionException
      * @throws InternalErrorException
      */
-    public function refresh($grant)
+    public function refresh($token)
     {
-        if ($grant instanceof Grant) {
-            $grant = $grant->getRefresh();
-        }
-
         $response = $this->client->api($this->config['path'])->post('token', [
             'grant_type'    => 'refresh_token',
             'client_id'     => $this->config['clientId'],
             'client_secret' => $this->config['clientSecret'],
-            'refresh_token' => $grant,
+            'refresh_token' => $token,
         ]);
 
         if ($response->isError()) {
@@ -79,22 +77,18 @@ class RemoteAuthorizationStrategy extends AbstractRemoteStrategy implements Auth
     }
 
     /**
-     * @param Grant|string $grant
+     * @param string $token
      *
      * @return $this
      *
      * @throws InternalErrorException
      */
-    public function revoke($grant)
+    public function revoke($token)
     {
-        if ($grant instanceof Grant) {
-            $grant = $grant->getAccess();
-        }
-
         $response = $this->client->api($this->config['path'])->post('revoke', [
             'client_id'     => $this->config['clientId'],
             'client_secret' => $this->config['clientSecret'],
-            'token'         => $grant,
+            'token'         => $token,
         ]);
 
         if ($response->isError()) {
@@ -103,5 +97,26 @@ class RemoteAuthorizationStrategy extends AbstractRemoteStrategy implements Auth
         }
 
         return $this;
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return Grant
+     */
+    protected function createGrant(Response $response)
+    {
+        if ($response->isError()) {
+            return null;
+        }
+
+        $body = $response->getBody();
+
+        return new Grant(
+            $body->access_token,
+            (new DateTime())->setTimestamp(time() + (int)($body->expires_in * 0.9)),
+            $body->refresh_token,
+            $body->token_type
+        );
     }
 }

@@ -31,12 +31,8 @@
             "dev-dev": "1.2.x-dev"
         }
     },
-    "suggest": {
-        "b2p/bdf-session": "Allows the use of the Bdf session storage"
-    },
 
     "require-dev": {
-        "b2p/bdf-phpunit": "~1.0",
-        "b2p/bdf-session": "~1.0"
+        "b2p/bdf-phpunit": "~1.0"
     }
 }

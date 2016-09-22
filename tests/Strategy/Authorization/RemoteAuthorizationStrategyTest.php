@@ -153,7 +153,7 @@ class RemoteAuthorizationStrategyTest extends TestCase
                 ])
         );
 
-        $token = $this->strategy->refresh(new Grant('access_token', new DateTime(), 'refresh_token', 'Bearer'));
+        $token = $this->strategy->refresh('refresh_token');
 
         $this->assertEquals($expectedGrant->getAccess(), $token->getAccess(), 'Error on access token');
         $this->assertEquals($expectedGrant->getValidityEndpoint(), $token->getValidityEndpoint(), 'Error on token validity endpoint', 1);

@@ -28,18 +28,16 @@ class IntrospectionClient
     }
 
     /**
-     * @param Grant|string $grant
+     * @param Grant|string $token
      *
      * @return Introspection
      *
      * @throws InternalErrorException
      */
-    public function introspect($grant)
+    public function introspect($token)
     {
-        if ($grant instanceof Grant) {
-            $token = $grant->getAccess();
-        } else {
-            $token = $grant;
+        if ($token instanceof Grant) {
+            $token = $token->getAccess();
         }
 
         if (!$token) {

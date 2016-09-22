@@ -103,6 +103,14 @@ class Grant
     }
 
     /**
+     * @return $this
+     */
+    public function expire()
+    {
+        return $this->validityEndpoint = time();
+    }
+
+    /**
      * @param string $type
      */
     public function setType($type)

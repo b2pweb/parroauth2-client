@@ -3,6 +3,7 @@
 namespace Parroauth2\Client;
 
 use Parroauth2\Client\Exception\ConnectionException;
+use Parroauth2\Client\Exception\InternalErrorException;
 use Parroauth2\Client\Storage\StorageInterface;
 use Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface;
 
@@ -19,88 +20,60 @@ class AuthorizationClient
     protected $authorizationStrategy;
 
     /**
-     * @var StorageInterface
-     */
-    protected $storage;
-
-    /**
      * AuthorizationClient constructor.
      * 
      * @param AuthorizationStrategyInterface $authorizationStrategy
-     * @param StorageInterface $storage
      */
-    public function __construct(AuthorizationStrategyInterface $authorizationStrategy, StorageInterface $storage)
+    public function __construct(AuthorizationStrategyInterface $authorizationStrategy)
     {
         $this->authorizationStrategy = $authorizationStrategy;
-        $this->storage = $storage;
     }
 
     /**
-     * @param $login
-     * @param $password
+     * @param string $login
+     * @param string $password
      *
      * @return $this
      */
     public function login($login, $password)
     {
-        $grant = $this->authorizationStrategy->token($login, $password);
-
-        $this->storage->store($grant);
-
-        return $this;
+        return $this->authorizationStrategy->token($login, $password);
     }
 
     /**
+     * @param Grant|string $token
+     * 
      * @return $this
      * 
+     * @throws InternalErrorException
      * @throws ConnectionException
      */
-    public function refresh()
+    public function refresh($token)
     {
-        if (!$this->storage->exists()) {
-            throw new ConnectionException('Client is not connected');
+        if ($token instanceof Grant) {
+            $token = $token->getRefresh();
         }
 
-        try {
-            $grant = $this->authorizationStrategy->refresh($this->storage->retrieve());
-            $this->storage->store($grant);
-
-        } catch (ConnectionException $exception) {
-            $this->storage->clear();
+        if (!$token) {
+            throw new InternalErrorException('Unable to refresh empty token', 500);
         }
 
-        return $this;
+        return $this->authorizationStrategy->refresh($token);
     }
 
     /**
-     * @return $this
+     * @param Grant|string $token
      */
-    public function logout()
+    public function logout($token)
     {
-        if (!$this->storage->exists()) {
-            return $this;
+        if ($token instanceof Grant) {
+            $token = $token->getAccess();
         }
 
-        $this->authorizationStrategy->revoke($this->storage->retrieve());
-
-        $this->storage->clear();
-
-        return $this;
-    }
-
-    /**
-     * @return Grant
-     */
-    public function getGrant()
-    {
-        if ($this->storage->exists()) {
-            if ($this->storage->retrieve()->isExpired()) {
-                $this->refresh();
-            }
-
-            return $this->storage->retrieve();
+        if (!$token) {
+            return;
         }
 
-        return null;
+        $this->authorizationStrategy->revoke($token);
     }
 }

@@ -20,16 +20,16 @@ interface AuthorizationStrategyInterface
     public function token($login, $password);
 
     /**
-     * @param Grant|string $grant
+     * @param string $token
      *
      * @return Grant
      */
-    public function refresh($grant);
+    public function refresh($token);
 
     /**
-     * @param Grant|string $grant
+     * @param string $token
      *
      * @return $this
      */
-    public function revoke($grant);
+    public function revoke($token);
 }

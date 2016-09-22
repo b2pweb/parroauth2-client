@@ -2,11 +2,9 @@
 
 namespace Parroauth2\Client\Strategy;
 
-use DateTime;
 use Kangaroo\Client;
 use Kangaroo\Response;
 use Parroauth2\Client\Exception\InternalErrorException;
-use Parroauth2\Client\Grant;
 
 /**
  * Class AbstractRemoteStrategy
@@ -42,27 +40,6 @@ abstract class AbstractRemoteStrategy
                 'clientSecret' => '',
             ],
             $config
-        );
-    }
-
-    /**
-     * @param Response $response
-     *
-     * @return Grant
-     */
-    protected function createGrant(Response $response)
-    {
-        if ($response->isError()) {
-            return null;
-        }
-
-        $body = $response->getBody();
-
-        return new Grant(
-            $body->access_token,
-            (new DateTime())->setTimestamp(time() + (int)($body->expires_in * 0.9)),
-            $body->refresh_token,
-            $body->token_type
         );
     }
 
