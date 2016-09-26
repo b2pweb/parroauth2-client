@@ -28,8 +28,11 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-dev": "1.2.x-dev"
+            "dev-master": "1.0-dev"
         }
+    },
+    "suggest": {
+        "b2p/parroauth2-server": "dev-master"
     },
 
     "require-dev": {
