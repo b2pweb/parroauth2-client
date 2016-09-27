@@ -4,7 +4,6 @@ namespace Parroauth2\Client;
 
 use Parroauth2\Client\Exception\ConnectionException;
 use Parroauth2\Client\Exception\InternalErrorException;
-use Parroauth2\Client\Storage\StorageInterface;
 use Parroauth2\Client\Strategy\Authorization\AuthorizationStrategyInterface;
 
 /**
