@@ -82,12 +82,8 @@ class RemoteIntrospectionStrategyTest extends TestCase
                 ])
         );
 
-        $introspection = (new Introspection())
-            ->setActive(true)
-            ->setScopes($scopes)
-            ->setMetadata($metadata)
-        ;
+        $introspection = new Introspection(true, $scopes, $metadata);
 
-        $this->assertEquals($introspection, $this->strategy->introspect('access_token'));
+        $this->assertEquals($introspection, $this->strategy->introspect('access_token', 'token_type'));
     }
 }

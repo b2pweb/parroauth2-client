@@ -36,6 +36,7 @@ class Grant
      *
      * @param string $access
      * @param DateTime $validityEndpoint
+     * @param string $refresh
      * @param string $type
      */
     public function __construct($access, $validityEndpoint, $refresh, $type)

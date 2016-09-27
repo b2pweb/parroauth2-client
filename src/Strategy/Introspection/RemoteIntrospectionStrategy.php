@@ -18,13 +18,15 @@ class RemoteIntrospectionStrategy extends AbstractRemoteStrategy implements Intr
      *
      * @throws InternalErrorException
      */
-    public function introspect($token)
+    public function introspect($token, $type = '')
     {
+        $data = $type ? ['token_type_hint' => $type] : [];
+
         $response = $this->client->api($this->config['path'])->post('introspect', [
             'client_id'     => $this->config['clientId'],
             'client_secret' => $this->config['clientSecret'],
             'token'         => $token,
-        ]);
+        ] + $data);
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc7662#section-2.3
@@ -33,8 +35,7 @@ class RemoteIntrospectionStrategy extends AbstractRemoteStrategy implements Intr
 
         $body = $response->getBody();
 
-        $introspection = new Introspection();
-        $introspection->setActive($body->active);
+        $introspection = new Introspection($body->active);
 
         if (isset($body->scope)) {
             $introspection->setScopes(explode(' ', $body->scope));

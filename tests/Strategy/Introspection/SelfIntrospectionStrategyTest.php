@@ -70,11 +70,7 @@ class SelfIntrospectionStrategyTest extends TestCase
             ->__toString()
         ;
 
-        $introspection = (new Introspection())
-            ->setActive(true)
-            ->setScopes($scopes)
-            ->setMetadata($metadata)
-        ;
+        $introspection = new Introspection(true, $scopes, $metadata);
 
         $this->assertEquals(
             $introspection,

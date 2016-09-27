@@ -31,17 +31,15 @@ class SelfIntrospectionStrategy implements IntrospectionStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function introspect($token)
+    public function introspect($token, $type = '')
     {
-        $introspection = new Introspection();
+        $introspection = new Introspection(true);
 
         try {
             $data = $this->decoder->unserialize($token);
             
             if ($data['exp']) {
                 $introspection->setActive(0 > (time() - $data['exp']));
-            } else {
-                $introspection->setActive(true);
             }
 
             if (isset($data['scope'])) {

@@ -25,6 +25,20 @@ class Introspection
     protected $metadata;
 
     /**
+     * Introspection constructor.
+     *
+     * @param bool $active
+     * @param array $scopes
+     * @param null $metadata
+     */
+    public function __construct($active, $scopes = [], $metadata = null)
+    {
+        $this->active = $active;
+        $this->scopes = $scopes;
+        $this->metadata = $metadata;
+    }
+
+    /**
      * @return boolean
      */
     public function isActive()

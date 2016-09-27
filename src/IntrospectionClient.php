@@ -29,21 +29,23 @@ class IntrospectionClient
 
     /**
      * @param Grant|string $token
+     * @param string $type
      *
      * @return Introspection
      *
      * @throws InternalErrorException
      */
-    public function introspect($token)
+    public function introspect($token, $type = '')
     {
         if ($token instanceof Grant) {
             $token = $token->getAccess();
+            $type = 'access_token';
         }
 
         if (!$token) {
             throw new InternalErrorException('Unable to introspect empty token', 500);
         }
 
-        return $this->introspectionStrategy->introspect($token);
+        return $this->introspectionStrategy->introspect($token, $type);
     }
 }

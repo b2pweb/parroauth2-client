@@ -13,8 +13,9 @@ interface IntrospectionStrategyInterface
 {
     /**
      * @param string $token
+     * @param string $type
      *
      * @return Introspection
      */
-    public function introspect($token);
+    public function introspect($token, $type = '');
 }

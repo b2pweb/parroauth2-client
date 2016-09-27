@@ -53,18 +53,37 @@ class IntrospectionClientTest extends TestCase
     /**
      *
      */
-    public function test_introspect_returns_the_token_introspection()
+    public function test_introspect_of_given_grant_returns_the_token_introspection()
     {
         $grant = new Grant('access_token', new DateTime('tomorrow'), 'refresh_token', 'Bearer');
-        $introspection = new Introspection();
+        $introspection = new Introspection(true);
 
         $this->strategy
             ->expects($this->once())
             ->method('introspect')
-            ->with($grant->getAccess())
+            ->with($grant->getAccess(), 'access_token')
             ->will($this->returnValue($introspection))
         ;
 
-        $this->assertSame($introspection, $this->client->introspect($grant));
+        $this->assertSame($introspection, $this->client->introspect($grant, 'token_type'));
+    }
+
+    /**
+     *
+     */
+    public function test_introspect_of_given_token_and_type_returns_the_token_introspection()
+    {
+        $token = 'access_token';
+        $type = 'token_type';
+        $introspection = new Introspection(true);
+
+        $this->strategy
+            ->expects($this->once())
+            ->method('introspect')
+            ->with($token, $type)
+            ->will($this->returnValue($introspection))
+        ;
+
+        $this->assertSame($introspection, $this->client->introspect($token, $type));
     }
 }
