@@ -14,28 +14,28 @@ use Kangaroo\Response;
 class TestableHttpClientAdapter implements ClientAdapterInterface
 {
     /**
-     * @var Response
+     * @var callable|Response
      */
     protected $response;
-
-    /**
-     * TestableHttpClientAdapter constructor.
-     */
-    public function __construct()
-    {
-        $this->response = (new Response())->setStatusCode(200);
-    }
 
     /**
      * {@inheritdoc}
      */
     public function send(Request $request)
     {
-        return $this->response;
+        if (is_callable($this->response)) {
+            return call_user_func($this->response, $request);
+        }
+
+        if ($this->response) {
+            return $this->response;
+        }
+
+        return (new Response())->setStatusCode(200);
     }
 
     /**
-     * @param Response $response
+     * @param callable|Response $response
      */
     public function setResponse($response)
     {

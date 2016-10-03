@@ -52,10 +52,18 @@ class JwtUnserializer implements UnserializerInterface
         $this->verify($token);
 
         return [
-            'active'   => $token->getClaim('active', false),
-            'scope'    => $token->getClaim('scope', ''),
-            'metadata' => $token->getClaim('metadata', []),
-            'exp'      => $token->getClaim('exp', 0),
+            'scope'      => $token->getClaim('scope', ''),
+            'client_id'  => $token->getClaim('aud', ''),
+            'username'   => $token->getClaim('username', ''),
+            'token_type' => $token->getClaim('token_type', ''),
+            'exp'        => $token->getClaim('exp'),
+            'iat'        => $token->getClaim('iat'),
+            'nbf'        => $token->getClaim('nbf'),
+            'sub'        => $token->getClaim('sub', ''),
+            'aud'        => $token->getClaim('aud', ''),
+            'iss'        => $token->getClaim('iss', ''),
+            'jti'        => $token->getClaim('jti', ''),
+            'metadata'   => $token->getClaim('metadata', []),
         ];
     }
 

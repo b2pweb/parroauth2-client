@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Tests\Unserializer;
 
 use Bdf\PHPUnit\TestCase;
+use DateTime;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -45,36 +46,6 @@ class JwtUnserializerTest extends TestCase
 
         $this->unserializer = new JwtUnserializer(new Parser(), $this->publicKey);
     }
-    
-    /**
-     * 
-     */
-    public function test_decode()
-    {
-        $scope = 'scope1 scope2';
-        $metadata = [
-            'id' => 123,
-            'name' => 'Phpunit',
-        ];
-
-        $token = (new Builder())
-            ->set('scope', $scope)
-            ->set('metadata', $metadata)
-            ->sign(new Sha256(), $this->privateKey)
-            ->getToken()
-            ->__toString()
-        ;
-
-        $this->assertEquals(
-            [
-                'active'   => false,
-                'scope'    => $scope,
-                'metadata' => (object)$metadata,
-                'exp'      => 0,
-            ],
-            $this->unserializer->unserialize($token)
-        );
-    }
 
     /**
      *
@@ -103,5 +74,48 @@ class JwtUnserializerTest extends TestCase
             new Parser(),
             file_get_contents(__DIR__ . '/../oauth-public-wrong.key')
         ))->unserialize($token);
+    }
+
+    /**
+     *
+     */
+    public function test_decode()
+    {
+        $expected = [
+            'scope'      => 'scope',
+            'client_id'  => 'audience',
+            'username'   => 'username',
+            'token_type' => 'bearer',
+            'exp'        => (new DateTime('tomorrow'))->getTimestamp(),
+            'iat'        => (new DateTime('yesterday'))->getTimestamp(),
+            'nbf'        => (new DateTime('yesterday'))->getTimestamp(),
+            'sub'        => 'subject',
+            'aud'        => 'audience',
+            'iss'        => 'issuer',
+            'jti'        => 'token_id',
+            'metadata'   => (object)['userId' => 'id'],
+        ];
+
+        $token = (new Builder())
+            ->setExpiration($expected['exp'])
+            ->setIssuedAt($expected['iat'])
+            ->setNotBefore($expected['nbf'])
+            ->setSubject($expected['sub'])
+            ->setAudience($expected['aud'])
+            ->setIssuer($expected['iss'])
+            ->setId($expected['jti'], true)
+
+            ->set('scope', $expected['scope'])
+            ->set('client_id', $expected['client_id'])
+            ->set('username', $expected['username'])
+            ->set('token_type', $expected['token_type'])
+            ->set('metadata', $expected['metadata'])
+
+            ->sign(new Sha256(), $this->privateKey)
+            ->getToken()
+            ->__toString()
+        ;
+
+        $this->assertEquals($expected, $this->unserializer->unserialize($token));
     }
 }
