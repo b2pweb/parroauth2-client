@@ -4,10 +4,15 @@ namespace Parroauth2\Client\Adapters;
 
 use Kangaroo\ApiScope;
 use Kangaroo\Response as KangarooResponse;
-use Parroauth2\Client\Response;
-use Parroauth2\Client\Exception\ConnectionException;
-use Parroauth2\Client\Exception\InternalErrorException;
+use Parroauth2\Client\Exception\InvalidClientException;
+use Parroauth2\Client\Exception\InvalidGrantException;
+use Parroauth2\Client\Exception\InvalidRequestException;
+use Parroauth2\Client\Exception\InvalidScopeException;
+use Parroauth2\Client\Exception\Parroauth2Exception;
+use Parroauth2\Client\Exception\UnauthorizedClientException;
+use Parroauth2\Client\Exception\UnsupportedGrantTypeException;
 use Parroauth2\Client\Request;
+use Parroauth2\Client\Response;
 
 /**
  * Class KangarooAdapter
@@ -34,7 +39,7 @@ class KangarooAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InternalErrorException
+     * @throws Parroauth2Exception
      */
     public function token(Request $request)
     {
@@ -49,10 +54,6 @@ class KangarooAdapter implements AdapterInterface
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc6749#section-5.2
-            if ($response->getStatusCode() == 400 && $response->getBody()->error == 'invalid_grant') {
-                throw new ConnectionException('Invalid credentials');
-            }
-
             throw $this->internalError($response);
         }
         
@@ -62,7 +63,7 @@ class KangarooAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InternalErrorException
+     * @throws Parroauth2Exception
      */
     public function introspect(Request $request)
     {
@@ -86,7 +87,7 @@ class KangarooAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InternalErrorException
+     * @throws Parroauth2Exception
      */
     public function revoke(Request $request)
     {
@@ -110,35 +111,43 @@ class KangarooAdapter implements AdapterInterface
     /**
      * @param KangarooResponse $response
      *
-     * @return InternalErrorException
+     * @return Parroauth2Exception
      */
     protected function internalError(KangarooResponse $response)
     {
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-        ];
-
         if ($body = $response->getBody()) {
             if (is_object($body)) {
                 if (is_object($body->error)) {
-                    $messageData[] = 'Error: ' . print_r($body->error, true);
+                    return new Parroauth2Exception('An error has occurred:' . PHP_EOL . print_r($body->error), 400);
                 } else {
-                    $messageData[] = 'Error: ' . $body->error;
+                    switch ($body->error) {
+                        case 'invalid_request':
+                            return new InvalidRequestException(isset($body->error_description) ? $body->error_description : 'Invalid request', $response->getStatusCode());
 
-                    if (isset($body->error_description)) {
-                        $messageData[] = 'Error description: ' . $body->error_description;
-                    }
+                        case 'invalid_client':
+                            return new InvalidClientException(isset($body->error_description) ? $body->error_description : 'Invalid client', $response->getStatusCode());
 
-                    if (isset($body->error_uri)) {
-                        $messageData[] = 'Error URI: ' . $body->error_uri;
+                        case 'invalid_grant':
+                            return new InvalidGrantException(isset($body->error_description) ? $body->error_description : 'Invalid grant', $response->getStatusCode());
+
+                        case 'unauthorized_client':
+                            return new UnauthorizedClientException(isset($body->error_description) ? $body->error_description : 'Unauthorized client', $response->getStatusCode());
+
+                        case 'unsupported_grant_type':
+                            return new UnsupportedGrantTypeException(isset($body->error_description) ? $body->error_description : 'Unsupported grant type', $response->getStatusCode());
+
+                        case 'invalid_scope':
+                            return new InvalidScopeException(isset($body->error_description) ? $body->error_description : 'Invalid scope', $response->getStatusCode());
+
+                        default:
+                            return new Parroauth2Exception(isset($body->error_description) ? $body->error_description : 'An error has occurred', 400);
                     }
                 }
             } else {
-                $messageData[] = 'Error: ' . $body;
+                return new Parroauth2Exception($body->error, 400);
             }
         }
 
-        return new InternalErrorException(implode(PHP_EOL, $messageData), 500);
+        return new Parroauth2Exception('An error has occurred', 400);
     }
 }

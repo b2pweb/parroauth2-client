@@ -3,7 +3,6 @@
 namespace Parroauth2\Client\Tests;
 
 use Bdf\PHPUnit\TestCase;
-use DateTime;
 use Kangaroo\Client as KangarooClient;
 use Kangaroo\Response as KangarooResponse;
 use Parroauth2\Client\Adapters\AdapterInterface;

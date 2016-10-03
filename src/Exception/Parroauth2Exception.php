@@ -5,11 +5,10 @@ namespace Parroauth2\Client\Exception;
 use Exception;
 
 /**
- * Class InternalErrorException
+ * Class Parroauth2Exception
  *
  * @package Parroauth2\Client\Exception
  */
-class InternalErrorException extends Exception
+class Parroauth2Exception extends Exception
 {
-    
 }

@@ -2,7 +2,6 @@
 
 namespace Parroauth2\Client;
 
-use DateTime;
 use Parroauth2\Client\Adapters\AdapterInterface;
 use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
 use Parroauth2\Client\GrantTypes\GrantTypeInterface;

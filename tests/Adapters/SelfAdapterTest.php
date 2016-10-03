@@ -56,7 +56,7 @@ class SelfAdapterTest extends TestCase
      */
     public function test_token_is_not_available()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException', 'Access granting is not available');
+        $this->setExpectedException('Parroauth2\Client\Exception\InvalidRequestException', 'Access granting is not available');
 
         $this->adapter->token(new Request());
     }
@@ -66,7 +66,7 @@ class SelfAdapterTest extends TestCase
      */
     public function test_revoke_is_not_available()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException', 'Access revoking is not available');
+        $this->setExpectedException('Parroauth2\Client\Exception\InvalidRequestException', 'Access revoking is not available');
 
         $this->adapter->revoke(new Request());
     }

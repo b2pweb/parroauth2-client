@@ -2,11 +2,11 @@
 
 namespace Parroauth2\Client\Adapters;
 
-use Parroauth2\Client\Exception\InternalErrorException;
 use Parroauth2\Client\Exception\ParsingException;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 use Parroauth2\Client\Unserializer\UnserializerInterface;
+use Parroauth2\Client\Exception\InvalidRequestException;
 
 /**
  * Class SelfAdapter
@@ -33,11 +33,11 @@ class SelfAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InternalErrorException
+     * @throws InvalidRequestException
      */
     public function token(Request $request)
     {
-        throw new InternalErrorException('Access granting is not available');
+        throw new InvalidRequestException('Access granting is not available');
     }
 
     /**
@@ -46,7 +46,7 @@ class SelfAdapter implements AdapterInterface
     public function introspect(Request $request)
     {
         if ($request->getParameter('token_type_hint') == 'refresh_token') {
-            throw new InternalErrorException('Refresh token introspect is not available. You can only introspect access tokens');
+            throw new InvalidRequestException('Refresh token introspect is not available. You can only introspect access tokens', 400);
         }
 
         try {
@@ -77,10 +77,10 @@ class SelfAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InternalErrorException
+     * @throws InvalidRequestException
      */
     public function revoke(Request $request)
     {
-        throw new InternalErrorException('Access revoking is not available');
+        throw new InvalidRequestException('Access revoking is not available');
     }
 }

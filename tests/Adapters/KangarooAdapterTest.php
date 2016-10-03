@@ -9,11 +9,9 @@ use Kangaroo\Request as KangarooRequest;
 use Kangaroo\Response as KangarooResponse;
 use Parroauth2\Client\Adapters\KangarooAdapter;
 use Parroauth2\Client\ClientCredentials;
-use Parroauth2\Client\Exception\InternalErrorException;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
-use ReflectionClass;
 
 /**
  * Class KangarooAdapterTest
@@ -53,27 +51,33 @@ class KangarooAdapterTest extends TestCase
     /**
      *
      */
-    public function test_token_throws_connection_exception_if_grant_type_is_invalid()
+    public function exceptionProvider()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\ConnectionException', 'Invalid credentials');
+        return [
+            [(object)['error' => 'invalid_request', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidRequestException'],
+            [(object)['error' => 'invalid_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidClientException'],
+            [(object)['error' => 'invalid_grant', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidGrantException'],
+            [(object)['error' => 'unauthorized_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnauthorizedClientException'],
+            [(object)['error' => 'unsupported_grant_type', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnsupportedGrantTypeException'],
+            [(object)['error' => 'invalid_scope', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidScopeException'],
+        ];
+    }
+
+    /**
+     * @dataProvider exceptionProvider
+     *
+     * @param object $error
+     * @param string $exceptionClass
+     */
+    public function test_token_throws_exception_if_so($error, $exceptionClass)
+    {
+        $this->setExpectedException($exceptionClass, $error->error_description);
 
         $this->http->setResponse(
             (new KangarooResponse())
                 ->setStatusCode(400)
-                ->setBody((object)['error' => 'invalid_grant'])
+                ->setBody($error)
         );
-
-        $this->adapter->token(new Request());
-    }
-
-    /**
-     *
-     */
-    public function test_token_throws_internal_exception_if_an_error_occurs()
-    {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
-
-        $this->http->setResponse((new KangarooResponse())->setStatusCode(401));
 
         $this->adapter->token(new Request());
     }
@@ -132,13 +136,20 @@ class KangarooAdapterTest extends TestCase
     }
 
     /**
+     * @dataProvider exceptionProvider
      *
+     * @param object $error
+     * @param string $exceptionClass
      */
-    public function test_introspect_throws_internal_exception_if_an_error_occurs()
+    public function test_introspect_throws_exception_if_so($error, $exceptionClass)
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
+        $this->setExpectedException($exceptionClass, $error->error_description);
 
-        $this->http->setResponse((new KangarooResponse())->setStatusCode(401));
+        $this->http->setResponse(
+            (new KangarooResponse())
+                ->setStatusCode(400)
+                ->setBody($error)
+        );
 
         $this->adapter->introspect(new Request());
     }
@@ -192,13 +203,20 @@ class KangarooAdapterTest extends TestCase
     }
 
     /**
+     * @dataProvider exceptionProvider
      *
+     * @param object $error
+     * @param string $exceptionClass
      */
-    public function test_revoke_throws_internal_exception_if_an_error_occurs()
+    public function test_revoke_throws_exception_if_so($error, $exceptionClass)
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\InternalErrorException');
+        $this->setExpectedException($exceptionClass, $error->error_description);
 
-        $this->http->setResponse((new KangarooResponse())->setStatusCode(401));
+        $this->http->setResponse(
+            (new KangarooResponse())
+                ->setStatusCode(400)
+                ->setBody($error)
+        );
 
         $this->adapter->revoke(new Request());
     }
@@ -240,86 +258,5 @@ class KangarooAdapterTest extends TestCase
         if (!$asserted) {
             $this->fail('Http adapter send method seems not to be called');
         }
-    }
-
-    /**
-     *
-     */
-    public function test_internalError_generates_exception_from_valid_minimal_rfc_error()
-    {
-        $response = (new KangarooResponse())
-            ->setStatusCode(400)
-            ->setBody((object)['error' => 'invalid_request'])
-        ;
-
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-            'Error: ' . $response->getBody()->error,
-        ];
-
-        $expectedException = new InternalErrorException(implode(PHP_EOL, $messageData), 500);
-
-        $class = new ReflectionClass('Parroauth2\Client\Adapters\KangarooAdapter');
-        $method = $class->getMethod('internalError');
-        $method->setAccessible(true);
-
-        $this->assertEquals($expectedException, $method->invokeArgs($this->adapter, [$response]));
-    }
-
-    /**
-     *
-     */
-    public function test_internalError_generates_exception_from_valid_rfc_error()
-    {
-        $response = (new KangarooResponse())
-            ->setStatusCode(400)
-            ->setBody((object)[
-                'error' => 'invalid_request',
-                'error_description' => 'Unable to find token or client not authenticated.',
-                'error_uri' => 'http://localhost/error',
-            ])
-        ;
-
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-            'Error: ' . $response->getBody()->error,
-            'Error description: ' . $response->getBody()->error_description,
-            'Error URI: ' . $response->getBody()->error_uri,
-        ];
-
-        $expectedException = new InternalErrorException(implode(PHP_EOL, $messageData), 500);
-
-        $class = new ReflectionClass('Parroauth2\Client\Adapters\KangarooAdapter');
-        $method = $class->getMethod('internalError');
-        $method->setAccessible(true);
-
-        $this->assertEquals($expectedException, $method->invokeArgs($this->adapter, [$response]));
-    }
-
-    /**
-     *
-     */
-    public function test_internalError_generates_exception_from_body_as_string()
-    {
-        $response = (new KangarooResponse())
-            ->setStatusCode(404)
-            ->setBody('Page not found')
-        ;
-
-        $messageData = [
-            'Configuration error',
-            'Status code: ' . $response->getStatusCode(),
-            'Error: ' . $response->getBody(),
-        ];
-
-        $expectedException = new InternalErrorException(implode(PHP_EOL, $messageData), 500);
-
-        $class = new ReflectionClass('Parroauth2\Client\Adapters\KangarooAdapter');
-        $method = $class->getMethod('internalError');
-        $method->setAccessible(true);
-
-        $this->assertEquals($expectedException, $method->invokeArgs($this->adapter, [$response]));
     }
 }
