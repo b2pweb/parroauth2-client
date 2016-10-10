@@ -64,6 +64,16 @@ class SelfAdapterTest extends TestCase
     /**
      *
      */
+    public function test_authorize_is_not_available()
+    {
+        $this->setExpectedException('Parroauth2\Client\Exception\InvalidRequestException', 'Authorize procedure is not available');
+
+        $this->adapter->authorize(new Request());
+    }
+
+    /**
+     *
+     */
     public function test_revoke_is_not_available()
     {
         $this->setExpectedException('Parroauth2\Client\Exception\InvalidRequestException', 'Access revoking is not available');

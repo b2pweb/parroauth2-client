@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client;
 
+use InvalidArgumentException;
 use Parroauth2\Client\Adapters\AdapterInterface;
 use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
 use Parroauth2\Client\GrantTypes\GrantTypeInterface;
@@ -30,6 +31,8 @@ class Client
      *
      * @param AdapterInterface $adapter
      * @param ClientCredentials $credentials
+     *
+     * @todo Manage credentials like acquaint grant type (if possible, due to 'prepare' method param)
      */
     public function __construct(AdapterInterface $adapter, ClientCredentials $credentials = null)
     {
@@ -71,7 +74,7 @@ class Client
      * 
      * @return Authorization
      */
-    public function authorize($code, $redirectUri = '', $clientId = '')
+    public function tokenFromAuthorizationCode($code, $redirectUri, $clientId)
     {
         return $this->token(new AuthorizationGrantType($code, $redirectUri, $clientId));
     }
@@ -96,6 +99,43 @@ class Client
             $response->getBodyItem('refresh_token'),
             explode(' ', $response->getBodyItem('scope', ''))
         );
+    }
+
+    /**
+     * @param string $redirectUri
+     * @param string $scope
+     * @param string $state
+     * @param string $clientId
+     * @param callable $onSuccess
+     */
+    public function authorize($redirectUri, $scope = '', $state = '', $clientId = '', callable $onSuccess = null)
+    {
+        $request = (new Request())
+            ->setParameters([
+                'response_type' => 'code',
+                'redirect_uri' => $redirectUri,
+            ])
+        ;
+
+        if ($scope) {
+            $request->setParameter('scope', $scope);
+        }
+
+        if ($state) {
+            $request->setParameter('state', $state);
+        }
+
+        if (!$clientId && $this->credentials) {
+            $clientId = $this->credentials->getId();
+        }
+
+        if (!$clientId) {
+            throw new InvalidArgumentException('Client id is required');
+        }
+
+        $request->setParameter('client_id', $clientId);
+
+        $this->adapter->authorize($request, $onSuccess);
     }
 
     /**

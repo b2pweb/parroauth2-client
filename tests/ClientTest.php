@@ -64,7 +64,7 @@ class ClientTest extends TestCase
             ->expects($this->once())
             ->method('token')
             ->with(new PasswordGrantType($username, $password, $expectedAuthorization->getScopes()))
-            ->will($this->returnValue($expectedAuthorization))
+            ->willReturn($expectedAuthorization)
         ;
 
         $this->assertSame($expectedAuthorization, $client->login($username, $password, $expectedAuthorization->getScopes()));
@@ -83,7 +83,7 @@ class ClientTest extends TestCase
             ->expects($this->once())
             ->method('token')
             ->with(new RefreshGrantType($token, $expectedAuthorization->getScopes()))
-            ->will($this->returnValue($expectedAuthorization))
+            ->willReturn($expectedAuthorization)
         ;
 
         $this->assertSame($expectedAuthorization, $client->refresh($token, $expectedAuthorization->getScopes()));
@@ -92,28 +92,28 @@ class ClientTest extends TestCase
     /**
      *
      */
-    public function test_unit_authorize_calls_token()
+    public function test_unit_tokenFromAuthorizationCode_calls_token()
     {
-        $expectedAuthorization = new Authorization('access_token', 'Bearer');
+        $expectedAuthorization = new Authorization('access_token', 'Bearer', 0, 'refresh_token', ['scope']);
         $code = 'code';
-        $redirectUri = 'http://localhost';
-        $clientId = 'some_id';
+        $redirectUri = 'https://my-app/home';
+        $clientId = 'clientId';
 
         $client = $this->getMock('Parroauth2\Client\Client', ['token'], [$this->adapter]);
         $client
             ->expects($this->once())
             ->method('token')
             ->with(new AuthorizationGrantType($code, $redirectUri, $clientId))
-            ->will($this->returnValue($expectedAuthorization))
+            ->willReturn($expectedAuthorization)
         ;
 
-        $this->assertSame($expectedAuthorization, $client->authorize($code, $redirectUri, $clientId));
+        $this->assertSame($expectedAuthorization, $client->tokenFromAuthorizationCode($code, $redirectUri, $clientId));
     }
 
     /**
      *
      */
-    public function test_token_provides_token_from_password_grant_type()
+    public function test_token_provides_authorization_from_password_grant_type()
     {
         $expectedAuthorization = new Authorization('access_token', 'Bearer', 3600, 'refresh_token', ['scope']);
         $username = 'username';
@@ -133,7 +133,7 @@ class ClientTest extends TestCase
     /**
      *
      */
-    public function test_token_provides_token_from_refresh_grant_type()
+    public function test_token_provides_authorization_from_refresh_grant_type()
     {
         $expectedAuthorization = new Authorization('access_token', 'Bearer', 3600, 'refresh_token', ['scope']);
         $token = 'token';
@@ -152,7 +152,28 @@ class ClientTest extends TestCase
     /**
      *
      */
-    public function test_authorize_provides_token()
+    public function test_token_provides_authorization_from_authorization_grant_type()
+    {
+        $expectedAuthorization = new Authorization('access_token', 'Bearer', 3600, 'refresh_token', ['scope']);
+        $code = 'code';
+        $redirectUri = 'https://my-app/home';
+        $clientId = 'clientId';
+
+        $this->http->setResponse(new KangarooResponse((object)[
+            'access_token'  => $expectedAuthorization->getAccess(),
+            'token_type'    => $expectedAuthorization->getType(),
+            'expires_in'    => $expectedAuthorization->getLifetime(),
+            'refresh_token' => $expectedAuthorization->getRefresh(),
+            'scope'         => implode(' ', $expectedAuthorization->getScopes()),
+        ]));
+
+        $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationGrantType($code, $redirectUri, $clientId)));
+    }
+
+    /**
+     *
+     */
+    public function test_authorize_provides_authorization()
     {
         $expectedAuthorization = new Authorization('access_token', 'Bearer', 3600, 'refresh_token', ['scope']);
         $code = 'code';
@@ -198,7 +219,7 @@ class ClientTest extends TestCase
         $token = 'token';
         $hint = 'access_token';
 
-        $this->adapter = $this->getMock('Parroauth2\Client\Adapters\AdapterInterface', ['token', 'introspect', 'revoke']);
+        $this->adapter = $this->getMock('Parroauth2\Client\Adapters\AdapterInterface', ['token', 'authorize', 'introspect', 'revoke']);
         $this->adapter
             ->expects($this->once())
             ->method('revoke')

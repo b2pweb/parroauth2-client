@@ -21,6 +21,14 @@ interface AdapterInterface
 
     /**
      * @param Request $request
+     * @param callable $onSuccess
+     *
+     * @return Response
+     */
+    public function authorize(Request $request, callable $onSuccess = null);
+
+    /**
+     * @param Request $request
      *
      * @return Response
      */

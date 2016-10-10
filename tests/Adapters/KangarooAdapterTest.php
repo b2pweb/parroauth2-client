@@ -49,21 +49,6 @@ class KangarooAdapterTest extends TestCase
     }
 
     /**
-     *
-     */
-    public function exceptionProvider()
-    {
-        return [
-            [(object)['error' => 'invalid_request', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidRequestException'],
-            [(object)['error' => 'invalid_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidClientException'],
-            [(object)['error' => 'invalid_grant', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidGrantException'],
-            [(object)['error' => 'unauthorized_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnauthorizedClientException'],
-            [(object)['error' => 'unsupported_grant_type', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnsupportedGrantTypeException'],
-            [(object)['error' => 'invalid_scope', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidScopeException'],
-        ];
-    }
-
-    /**
      * @dataProvider exceptionProvider
      *
      * @param object $error
@@ -80,6 +65,25 @@ class KangarooAdapterTest extends TestCase
         );
 
         $this->adapter->token(new Request());
+    }
+
+    /**
+     *
+     */
+    public function exceptionProvider()
+    {
+        return [
+            [(object)['error' => 'access_denied', 'error_description' => 'Access denied'], 'Parroauth2\Client\Exception\AccessDeniedException'],
+            [(object)['error' => 'invalid_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidClientException'],
+            [(object)['error' => 'invalid_grant', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidGrantException'],
+            [(object)['error' => 'invalid_request', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidRequestException'],
+            [(object)['error' => 'invalid_scope', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidScopeException'],
+            [(object)['error' => 'server_error', 'error_description' => 'Server error'], 'Parroauth2\Client\Exception\ServerErrorException'],
+            [(object)['error' => 'temporarily_unavailable', 'error_description' => 'Temporarily unavailable'], 'Parroauth2\Client\Exception\TemporarilyUnavailableException'],
+            [(object)['error' => 'unauthorized_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnauthorizedClientException'],
+            [(object)['error' => 'unsupported_grant_type', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnsupportedGrantTypeException'],
+            [(object)['error' => 'unsupported_response_type', 'error_description' => 'Unsupported response type'], 'Parroauth2\Client\Exception\UnsupportedResponseTypeException'],
+        ];
     }
 
     /**
@@ -133,6 +137,34 @@ class KangarooAdapterTest extends TestCase
 
         $this->assertEquals($request->getCredentials()->getId(), $responseData['client_id']);
         $this->assertEquals($request->getCredentials()->getSecret(), $responseData['client_secret']);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function test_authorize_redirects()
+    {
+        $request = new Request(['some' => 'parameter']);
+
+        $this->adapter->authorize($request);
+
+        $this->fail('Adapter should have exited the script');
+    }
+
+    /**
+     *
+     */
+    public function test_authorize_redirects_runs_user_callback()
+    {
+        $request = new Request(['some' => 'parameter']);
+
+        $data = [];
+
+        $this->adapter->authorize($request, function($location) use (&$data) {
+            $data['location'] = $location;
+        });
+
+        $this->assertEquals('http://localhost/oauth2/authorize?some=parameter', $data['location']);
     }
 
     /**

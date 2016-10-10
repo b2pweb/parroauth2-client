@@ -42,6 +42,16 @@ class SelfAdapter implements AdapterInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws InvalidRequestException
+     */
+    public function authorize(Request $request, callable $onSuccess = null)
+    {
+        throw new InvalidRequestException('Authorize procedure is not available');
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function introspect(Request $request)
     {

@@ -33,7 +33,7 @@ class AuthorizationGrantType implements GrantTypeInterface
      * @param string $redirectUri
      * @param string $clientId
      */
-    public function __construct($code, $redirectUri = '', $clientId = '')
+    public function __construct($code, $redirectUri, $clientId)
     {
         $this->code = $code;
         $this->redirectUri = $redirectUri;
