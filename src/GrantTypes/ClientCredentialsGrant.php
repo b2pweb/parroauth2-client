@@ -6,8 +6,6 @@ use Parroauth2\Client\Request;
 
 /**
  * Class ClientCredentialsGrant
- * 
- * @package Parroauth2\Client\GrantTypes
  */
 class ClientCredentialsGrant implements GrantTypeInterface
 {

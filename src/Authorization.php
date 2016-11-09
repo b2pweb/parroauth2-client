@@ -4,8 +4,6 @@ namespace Parroauth2\Client;
 
 /**
  * Class Authorization
- *
- * @package Parroauth2\Client
  */
 class Authorization
 {

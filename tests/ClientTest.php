@@ -15,6 +15,7 @@ use Parroauth2\Client\GrantTypes\RefreshGrantType;
 use Parroauth2\Client\Introspection;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
+use PHPUnit_Framework_MockObject_MockBuilder;
 
 /**
  * Class ClientTest
@@ -59,7 +60,11 @@ class ClientTest extends TestCase
         $username = 'username';
         $password = 'password';
 
-        $client = $this->getMock('Parroauth2\Client\Client', ['token'], [$this->adapter]);
+        $client = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['token'])
+            ->getMock();
+        ;
         $client
             ->expects($this->once())
             ->method('token')
@@ -78,7 +83,11 @@ class ClientTest extends TestCase
         $expectedAuthorization = new Authorization('access_token', 'Bearer', 0, 'refresh_token', ['scope']);
         $token = 'token';
 
-        $client = $this->getMock('Parroauth2\Client\Client', ['token'], [$this->adapter]);
+        $client = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['token'])
+            ->getMock();
+        ;
         $client
             ->expects($this->once())
             ->method('token')
@@ -99,7 +108,11 @@ class ClientTest extends TestCase
         $redirectUri = 'https://my-app/home';
         $clientId = 'clientId';
 
-        $client = $this->getMock('Parroauth2\Client\Client', ['token'], [$this->adapter]);
+        $client = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['token'])
+            ->getMock();
+        ;
         $client
             ->expects($this->once())
             ->method('token')
@@ -219,7 +232,11 @@ class ClientTest extends TestCase
         $token = 'token';
         $hint = 'access_token';
 
-        $this->adapter = $this->getMock('Parroauth2\Client\Adapters\AdapterInterface', ['token', 'authorize', 'introspect', 'revoke']);
+        $this->adapter = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['token', 'authorize', 'introspect', 'revoke'])
+            ->getMock();
+        ;
         $this->adapter
             ->expects($this->once())
             ->method('revoke')

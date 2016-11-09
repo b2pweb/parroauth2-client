@@ -8,8 +8,6 @@ use Kangaroo\Response;
 
 /**
  * Class TestableHttpClientAdapter
- *
- * @package Parroauth2\Client\Tests\Stubs
  */
 class TestableHttpClientAdapter implements ClientAdapterInterface
 {

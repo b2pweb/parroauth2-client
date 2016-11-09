@@ -4,8 +4,6 @@ namespace Parroauth2\Client;
 
 /**
  * Class ClientCredentials
- *
- * @package Parroauth2\Client
  */
 class ClientCredentials
 {

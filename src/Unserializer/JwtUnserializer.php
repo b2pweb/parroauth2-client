@@ -10,8 +10,6 @@ use Parroauth2\Client\Exception\ParsingException;
 
 /**
  * Class JwtUnserializer
- * 
- * @package Parroauth2\Client\Parser
  */
 class JwtUnserializer implements UnserializerInterface
 {

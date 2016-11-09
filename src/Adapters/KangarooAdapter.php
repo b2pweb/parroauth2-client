@@ -20,8 +20,6 @@ use Parroauth2\Client\Response;
 
 /**
  * Class KangarooAdapter
- * 
- * @package Parroauth2\Client\Adapters
  */
 class KangarooAdapter implements AdapterInterface
 {
@@ -50,8 +48,8 @@ class KangarooAdapter implements AdapterInterface
         $headers = [];
 
         if ($request->getCredentials()) {
-            $headers['client_id'] = $request->getCredentials()->getId();
-            $headers['client_secret'] = $request->getCredentials()->getSecret();
+            $headers['PHP_AUTH_USER'] = $request->getCredentials()->getId();
+            $headers['PHP_AUTH_PW'] = $request->getCredentials()->getSecret();
         }
 
         $response = $this->api->post('token', $request->getParameters(), [], $headers);
@@ -94,8 +92,8 @@ class KangarooAdapter implements AdapterInterface
         $headers = [];
 
         if ($request->getCredentials()) {
-            $headers['client_id'] = $request->getCredentials()->getId();
-            $headers['client_secret'] = $request->getCredentials()->getSecret();
+            $headers['PHP_AUTH_USER'] = $request->getCredentials()->getId();
+            $headers['PHP_AUTH_PW'] = $request->getCredentials()->getSecret();
         }
 
         $response = $this->api->post('introspect', $request->getParameters(), [], $headers);
@@ -118,8 +116,8 @@ class KangarooAdapter implements AdapterInterface
         $headers = [];
 
         if ($request->getCredentials()) {
-            $headers['client_id'] = $request->getCredentials()->getId();
-            $headers['client_secret'] = $request->getCredentials()->getSecret();
+            $headers['PHP_AUTH_USER'] = $request->getCredentials()->getId();
+            $headers['PHP_AUTH_PW'] = $request->getCredentials()->getSecret();
         }
 
         $response = $this->api->post('revoke', $request->getParameters(), [], $headers);

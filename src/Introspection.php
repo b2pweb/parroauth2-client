@@ -4,8 +4,6 @@ namespace Parroauth2\Client;
 
 /**
  * Class Introspection
- *
- * @package Parroauth2\Client
  */
 class Introspection
 {
@@ -99,7 +97,7 @@ class Introspection
      *
      * @return $this
      */
-    public function setScopes($scopes)
+    public function setScopes(array $scopes)
     {
         $this->scopes = $scopes;
 
