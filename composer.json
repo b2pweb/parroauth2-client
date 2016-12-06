@@ -3,6 +3,9 @@
     "description": "B2P OAuth 2 client implementation",
     "type": "library",
     "license": "proprietary",
+    "config": {
+        "secure-http": false
+    },
     "repositories": [
         {
             "type": "composer",
@@ -22,7 +25,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.6",
-        "b2p/kangaroo": "dev-master"
+        "b2p/kangaroo": "~1.0"
     },
     "extra": {
         "branch-alias": {
@@ -30,7 +33,7 @@
         }
     },
     "require-dev": {
-        "b2p/bdf-phpunit": "~1.0",
+        "phpunit/phpunit": "@stable",
         "lcobucci/jwt": "^3.2"
     },
     "suggest": {
