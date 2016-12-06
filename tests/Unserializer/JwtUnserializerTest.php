@@ -7,12 +7,11 @@ use DateTime;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Parroauth2\Client\Exception\ParsingException;
 use Parroauth2\Client\Unserializer\JwtUnserializer;
 
 /**
  * Class JwtUnserializerTest
- *
- * @package Parroauth2\Client\Unserializer
  *
  * @group Parroauth2
  * @group Parroauth2/Client
@@ -41,8 +40,8 @@ class JwtUnserializerTest extends TestCase
      */
     public function setUp()
     {
-        $this->privateKey = file_get_contents(__DIR__ . '/../oauth-private.key');
-        $this->publicKey = file_get_contents(__DIR__ . '/../oauth-public.key');
+        $this->privateKey = 'file://' . __DIR__ . '/../oauth-private.key';
+        $this->publicKey = 'file://' . __DIR__ . '/../oauth-public.key';
 
         $this->unserializer = new JwtUnserializer(new Parser(), $this->publicKey);
     }
@@ -50,9 +49,21 @@ class JwtUnserializerTest extends TestCase
     /**
      *
      */
+    public function test_csrf()
+    {
+        $signer = new Sha256();
+        $token = base64_encode($signer->sign('http://localhost', $this->privateKey)->__toString());
+
+        $this->assertTrue($signer->verify(base64_decode($token), 'http://localhost', $this->publicKey));
+    }
+
+    /**
+     *
+     */
     public function test_decode_throws_parsing_exception_if_an_error_occurs()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\ParsingException', 'Unable to unserialize token');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Unable to unserialize token');
 
         $this->unserializer->unserialize('SomeWrongToken');
     }
@@ -62,7 +73,8 @@ class JwtUnserializerTest extends TestCase
      */
     public function test_decode_throws_parsing_exception_if_token__cannot_be_verified()
     {
-        $this->setExpectedException('Parroauth2\Client\Exception\ParsingException', 'Unable to verify token');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Unable to verify token');
 
         $token = (new Builder())
             ->sign(new Sha256(), $this->privateKey)
@@ -72,7 +84,7 @@ class JwtUnserializerTest extends TestCase
 
         (new JwtUnserializer(
             new Parser(),
-            file_get_contents(__DIR__ . '/../oauth-public-wrong.key')
+            'file://' . __DIR__ . '/../oauth-public-wrong.key'
         ))->unserialize($token);
     }
 

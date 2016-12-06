@@ -4,8 +4,6 @@ namespace Parroauth2\Client\Unserializer;
 
 /**
  * Interface UnserializerInterface
- *
- * @package Parroauth2\Client\Unserializer
  */
 interface UnserializerInterface
 {

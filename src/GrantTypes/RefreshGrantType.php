@@ -6,8 +6,6 @@ use Parroauth2\Client\Request;
 
 /**
  * Class RefreshGrantType
- * 
- * @package Parroauth2\Client\GrantTypes
  */
 class RefreshGrantType implements GrantTypeInterface
 {

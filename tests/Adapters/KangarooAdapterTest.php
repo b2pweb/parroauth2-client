@@ -9,6 +9,16 @@ use Kangaroo\Request as KangarooRequest;
 use Kangaroo\Response as KangarooResponse;
 use Parroauth2\Client\Adapters\KangarooAdapter;
 use Parroauth2\Client\ClientCredentials;
+use Parroauth2\Client\Exception\AccessDeniedException;
+use Parroauth2\Client\Exception\InvalidClientException;
+use Parroauth2\Client\Exception\InvalidGrantException;
+use Parroauth2\Client\Exception\InvalidRequestException;
+use Parroauth2\Client\Exception\InvalidScopeException;
+use Parroauth2\Client\Exception\ServerErrorException;
+use Parroauth2\Client\Exception\TemporarilyUnavailableException;
+use Parroauth2\Client\Exception\UnauthorizedClientException;
+use Parroauth2\Client\Exception\UnsupportedGrantTypeException;
+use Parroauth2\Client\Exception\UnsupportedResponseTypeException;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
@@ -56,7 +66,8 @@ class KangarooAdapterTest extends TestCase
      */
     public function test_token_throws_exception_if_so($error, $exceptionClass)
     {
-        $this->setExpectedException($exceptionClass, $error->error_description);
+        $this->expectException($exceptionClass);
+        $this->expectExceptionMessage($error->error_description);
 
         $this->http->setResponse(
             (new KangarooResponse())
@@ -73,16 +84,16 @@ class KangarooAdapterTest extends TestCase
     public function exceptionProvider()
     {
         return [
-            [(object)['error' => 'access_denied', 'error_description' => 'Access denied'], 'Parroauth2\Client\Exception\AccessDeniedException'],
-            [(object)['error' => 'invalid_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidClientException'],
-            [(object)['error' => 'invalid_grant', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidGrantException'],
-            [(object)['error' => 'invalid_request', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidRequestException'],
-            [(object)['error' => 'invalid_scope', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\InvalidScopeException'],
-            [(object)['error' => 'server_error', 'error_description' => 'Server error'], 'Parroauth2\Client\Exception\ServerErrorException'],
-            [(object)['error' => 'temporarily_unavailable', 'error_description' => 'Temporarily unavailable'], 'Parroauth2\Client\Exception\TemporarilyUnavailableException'],
-            [(object)['error' => 'unauthorized_client', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnauthorizedClientException'],
-            [(object)['error' => 'unsupported_grant_type', 'error_description' => 'Error description'], 'Parroauth2\Client\Exception\UnsupportedGrantTypeException'],
-            [(object)['error' => 'unsupported_response_type', 'error_description' => 'Unsupported response type'], 'Parroauth2\Client\Exception\UnsupportedResponseTypeException'],
+            [(object)['error' => 'access_denied',             'error_description' => 'Access denied'],             AccessDeniedException::class],
+            [(object)['error' => 'invalid_client',            'error_description' => 'Error description'],         InvalidClientException::class],
+            [(object)['error' => 'invalid_grant',             'error_description' => 'Error description'],         InvalidGrantException::class],
+            [(object)['error' => 'invalid_request',           'error_description' => 'Error description'],         InvalidRequestException::class],
+            [(object)['error' => 'invalid_scope',             'error_description' => 'Error description'],         InvalidScopeException::class],
+            [(object)['error' => 'server_error',              'error_description' => 'Server error'],              ServerErrorException::class],
+            [(object)['error' => 'temporarily_unavailable',   'error_description' => 'Temporarily unavailable'],   TemporarilyUnavailableException::class],
+            [(object)['error' => 'unauthorized_client',       'error_description' => 'Error description'],         UnauthorizedClientException::class],
+            [(object)['error' => 'unsupported_grant_type',    'error_description' => 'Error description'],         UnsupportedGrantTypeException::class],
+            [(object)['error' => 'unsupported_response_type', 'error_description' => 'Unsupported response type'], UnsupportedResponseTypeException::class],
         ];
     }
 
@@ -120,8 +131,8 @@ class KangarooAdapterTest extends TestCase
                     'path'          => $request->getPath(),
                     'postFields'    => $request->getPostFields(),
                     'queries'       => $request->getQueries(),
-                    'client_id'     => $request->getHeader('client_id'),
-                    'client_secret' => $request->getHeader('client_secret'),
+                    'client_id'     => $request->getHeader('PHP_AUTH_USER'),
+                    'client_secret' => $request->getHeader('PHP_AUTH_PW'),
                 ],
                 200
             );
@@ -175,7 +186,8 @@ class KangarooAdapterTest extends TestCase
      */
     public function test_introspect_throws_exception_if_so($error, $exceptionClass)
     {
-        $this->setExpectedException($exceptionClass, $error->error_description);
+        $this->expectException($exceptionClass);
+        $this->expectExceptionMessage($error->error_description);
 
         $this->http->setResponse(
             (new KangarooResponse())
@@ -215,8 +227,8 @@ class KangarooAdapterTest extends TestCase
                     'path'          => $request->getPath(),
                     'postFields'    => $request->getPostFields(),
                     'queries'       => $request->getQueries(),
-                    'client_id'     => $request->getHeader('client_id'),
-                    'client_secret' => $request->getHeader('client_secret'),
+                    'client_id'     => $request->getHeader('PHP_AUTH_USER'),
+                    'client_secret' => $request->getHeader('PHP_AUTH_PW'),
                 ],
                 200
             );
@@ -242,7 +254,8 @@ class KangarooAdapterTest extends TestCase
      */
     public function test_revoke_throws_exception_if_so($error, $exceptionClass)
     {
-        $this->setExpectedException($exceptionClass, $error->error_description);
+        $this->expectException($exceptionClass);
+        $this->expectExceptionMessage($error->error_description);
 
         $this->http->setResponse(
             (new KangarooResponse())
@@ -277,8 +290,8 @@ class KangarooAdapterTest extends TestCase
             $this->assertEquals([], $kangarooRequest->getQueries());
             $this->assertEquals($request->getParameters(), $kangarooRequest->getPostFields());
 
-            $this->assertEquals($request->getCredentials()->getId(), $kangarooRequest->getHeader('client_id'));
-            $this->assertEquals($request->getCredentials()->getSecret(), $kangarooRequest->getHeader('client_secret'));
+            $this->assertEquals($request->getCredentials()->getId(), $kangarooRequest->getHeader('PHP_AUTH_USER'));
+            $this->assertEquals($request->getCredentials()->getSecret(), $kangarooRequest->getHeader('PHP_AUTH_PW'));
 
             $asserted = true;
 

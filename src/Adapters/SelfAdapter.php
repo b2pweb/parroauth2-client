@@ -10,8 +10,6 @@ use Parroauth2\Client\Exception\InvalidRequestException;
 
 /**
  * Class SelfAdapter
- *
- * @package Parroauth2\Client\Adapters
  */
 class SelfAdapter implements AdapterInterface
 {

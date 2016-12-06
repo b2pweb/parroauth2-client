@@ -4,8 +4,6 @@ namespace Parroauth2\Client;
 
 /**
  * Class Request
- *
- * @package Parroauth2\Client
  */
 class Request
 {

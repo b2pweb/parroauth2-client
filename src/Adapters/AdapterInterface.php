@@ -7,8 +7,6 @@ use Parroauth2\Client\Response;
 
 /**
  * Interface AdapterInterface
- *
- * @package Parroauth2\Client\Adapters
  */
 interface AdapterInterface
 {

@@ -4,8 +4,6 @@ namespace Parroauth2\Client;
 
 /**
  * Class Response
- * 
- * @package Parroauth2\Client
  */
 class Response
 {

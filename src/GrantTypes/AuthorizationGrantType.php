@@ -6,8 +6,6 @@ use Parroauth2\Client\Request;
 
 /**
  * Class AuthorizationGrantType
- *
- * @package Parroauth2\Client\GrantTypes
  */
 class AuthorizationGrantType implements GrantTypeInterface
 {
@@ -27,17 +25,24 @@ class AuthorizationGrantType implements GrantTypeInterface
     protected $clientId;
 
     /**
+     * @var string[]
+     */
+    protected $scopes;
+
+    /**
      * AuthorizationGrantType constructor.
      *
      * @param string $code
      * @param string $redirectUri
      * @param string $clientId
+     * @param string[] $scopes
      */
-    public function __construct($code, $redirectUri, $clientId)
+    public function __construct($code, $redirectUri, $clientId, array $scopes = [])
     {
         $this->code = $code;
         $this->redirectUri = $redirectUri;
         $this->clientId = $clientId;
+        $this->scopes = $scopes;
     }
 
     /**
@@ -52,6 +57,8 @@ class AuthorizationGrantType implements GrantTypeInterface
 
     /**
      * @return array
+     *
+     * @todo We should not add client_id if Oauth client has credentials
      */
     protected function toArray()
     {
@@ -66,6 +73,10 @@ class AuthorizationGrantType implements GrantTypeInterface
 
         if ($this->clientId) {
             $data['client_id'] = $this->clientId;
+        }
+
+        if ($this->scopes) {
+            $data['scope'] = implode(' ', $this->scopes);
         }
 
         return $data;

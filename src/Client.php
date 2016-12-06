@@ -11,8 +11,6 @@ use Parroauth2\Client\GrantTypes\RefreshGrantType;
 
 /**
  * Class Client
- * 
- * @package Parroauth2\Client
  */
 class Client
 {
@@ -43,40 +41,41 @@ class Client
     /**
      * @param string $username
      * @param string $password
-     * @param string $scope
+     * @param string[] $scopes
      * 
      * @return Authorization
      */
-    public function login($username, $password, $scope = '')
+    public function login($username, $password, array $scopes = [])
     {
-        return $this->token(new PasswordGrantType($username, $password, $scope));
+        return $this->token(new PasswordGrantType($username, $password, $scopes));
     }
 
     /**
      * @param Authorization|string $token
-     * @param string $scope
-     * 
+     * @param string[] $scopes
+     *
      * @return Authorization
      */
-    public function refresh($token, $scope = '')
+    public function refresh($token, array $scopes = [])
     {
         if ($token instanceof Authorization) {
             $token = $token->getRefresh();
         }
 
-        return $this->token(new RefreshGrantType($token, $scope));
+        return $this->token(new RefreshGrantType($token, $scopes));
     }
 
     /**
      * @param string $code
      * @param string $redirectUri
      * @param string $clientId
-     * 
+     * @param string[] $scopes
+     *
      * @return Authorization
      */
-    public function tokenFromAuthorizationCode($code, $redirectUri, $clientId)
+    public function tokenFromAuthorizationCode($code, $redirectUri, $clientId, array $scopes = [])
     {
-        return $this->token(new AuthorizationGrantType($code, $redirectUri, $clientId));
+        return $this->token(new AuthorizationGrantType($code, $redirectUri, $clientId, $scopes));
     }
 
     /**
@@ -103,12 +102,12 @@ class Client
 
     /**
      * @param string $redirectUri
-     * @param string $scope
+     * @param string[] $scopes
      * @param string $state
      * @param string $clientId
      * @param callable $onSuccess
      */
-    public function authorize($redirectUri, $scope = '', $state = '', $clientId = '', callable $onSuccess = null)
+    public function authorize($redirectUri, array $scopes = [], $state = '', $clientId = '', callable $onSuccess = null)
     {
         $request = (new Request())
             ->setParameters([
@@ -117,8 +116,8 @@ class Client
             ])
         ;
 
-        if ($scope) {
-            $request->setParameter('scope', $scope);
+        if ($scopes) {
+            $request->setParameter('scope', implode(' ', $scopes));
         }
 
         if ($state) {
