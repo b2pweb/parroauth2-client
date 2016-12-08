@@ -5,7 +5,7 @@ namespace Parroauth2\Client\GrantTypes;
 use Parroauth2\Client\Request;
 
 /**
- * Class PasswordGrantType
+ * PasswordGrantType
  */
 class PasswordGrantType implements GrantTypeInterface
 {
@@ -43,7 +43,7 @@ class PasswordGrantType implements GrantTypeInterface
      */
     public function acquaint(Request $request)
     {
-        $request->addParameters($this->toArray());
+        $request->addAttributes($this->toArray());
 
         return $this;
     }

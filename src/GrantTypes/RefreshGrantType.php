@@ -5,7 +5,7 @@ namespace Parroauth2\Client\GrantTypes;
 use Parroauth2\Client\Request;
 
 /**
- * Class RefreshGrantType
+ * RefreshGrantType
  */
 class RefreshGrantType implements GrantTypeInterface
 {
@@ -36,7 +36,7 @@ class RefreshGrantType implements GrantTypeInterface
      */
     public function acquaint(Request $request)
     {
-        $request->addParameters($this->toArray());
+        $request->addAttributes($this->toArray());
 
         return $this;
     }

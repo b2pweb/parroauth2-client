@@ -1,9 +1,11 @@
 <?php
 
-namespace Parroauth2\Client;
+namespace Parroauth2\Client\Credentials;
+
+use Parroauth2\Client\Request;
 
 /**
- * Class ClientCredentials
+ * ClientCredentials
  */
 class ClientCredentials
 {
@@ -44,7 +46,7 @@ class ClientCredentials
     /**
      * @return string
      */
-    public function getId()
+    public function id()
     {
         return $this->id;
     }
@@ -64,8 +66,20 @@ class ClientCredentials
     /**
      * @return string
      */
-    public function getSecret()
+    public function secret()
     {
         return $this->secret;
+    }
+
+    /**
+     * Prepare the request
+     *
+     * @param Request $request
+     */
+    public function prepare(Request $request)
+    {
+        $request->addHeaders([
+            'Authorization' => 'Basic '.base64_encode($this->id.':'.$this->secret)
+        ]);
     }
 }

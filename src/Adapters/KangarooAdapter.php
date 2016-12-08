@@ -19,7 +19,7 @@ use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 
 /**
- * Class KangarooAdapter
+ * KangarooAdapter
  */
 class KangarooAdapter implements AdapterInterface
 {
@@ -45,14 +45,7 @@ class KangarooAdapter implements AdapterInterface
      */
     public function token(Request $request)
     {
-        $headers = [];
-
-        if ($request->getCredentials()) {
-            $headers['PHP_AUTH_USER'] = $request->getCredentials()->getId();
-            $headers['PHP_AUTH_PW'] = $request->getCredentials()->getSecret();
-        }
-
-        $response = $this->api->post('token', $request->getParameters(), [], $headers);
+        $response = $this->api->post('token', $request->attributes(), $request->queries(), $request->headers());
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc6749#section-5.2
@@ -69,7 +62,7 @@ class KangarooAdapter implements AdapterInterface
      */
     public function authorize(Request $request, callable $onSuccess = null)
     {
-        $location = $this->api->url('authorize', $request->getParameters());
+        $location = $this->api->url('authorize', $request->queries());
 
         if ($onSuccess) {
             return call_user_func(
@@ -89,14 +82,7 @@ class KangarooAdapter implements AdapterInterface
      */
     public function introspect(Request $request)
     {
-        $headers = [];
-
-        if ($request->getCredentials()) {
-            $headers['PHP_AUTH_USER'] = $request->getCredentials()->getId();
-            $headers['PHP_AUTH_PW'] = $request->getCredentials()->getSecret();
-        }
-
-        $response = $this->api->post('introspect', $request->getParameters(), [], $headers);
+        $response = $this->api->post('introspect', $request->attributes(), $request->queries(), $request->headers());
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc7662#section-2.3
@@ -113,14 +99,7 @@ class KangarooAdapter implements AdapterInterface
      */
     public function revoke(Request $request)
     {
-        $headers = [];
-
-        if ($request->getCredentials()) {
-            $headers['PHP_AUTH_USER'] = $request->getCredentials()->getId();
-            $headers['PHP_AUTH_PW'] = $request->getCredentials()->getSecret();
-        }
-
-        $response = $this->api->post('revoke', $request->getParameters(), [], $headers);
+        $response = $this->api->post('revoke', $request->attributes(), $request->queries(), $request->headers());
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc7009#section-2.2
@@ -140,7 +119,7 @@ class KangarooAdapter implements AdapterInterface
         if ($body = $response->getBody()) {
             if (is_object($body)) {
                 if (is_object($body->error)) {
-                    return new Parroauth2Exception('An error has occurred:' . PHP_EOL . print_r($body->error), 400);
+                    return new Parroauth2Exception('An error has occurred:' . PHP_EOL . print_r($body->error, true), 400);
                 } else {
                     switch ($body->error) {
                         case 'access_denied':

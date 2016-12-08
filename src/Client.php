@@ -4,13 +4,14 @@ namespace Parroauth2\Client;
 
 use InvalidArgumentException;
 use Parroauth2\Client\Adapters\AdapterInterface;
+use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
 use Parroauth2\Client\GrantTypes\GrantTypeInterface;
 use Parroauth2\Client\GrantTypes\PasswordGrantType;
 use Parroauth2\Client\GrantTypes\RefreshGrantType;
 
 /**
- * Class Client
+ * Client
  */
 class Client
 {
@@ -85,7 +86,7 @@ class Client
      */
     public function token(GrantTypeInterface $grantType)
     {
-        $request = new Request([], $this->credentials);
+        $request = new Request([], [], $this->credentials);
 
         $grantType->acquaint($request);
 
@@ -109,19 +110,17 @@ class Client
      */
     public function authorize($redirectUri, array $scopes = [], $state = '', $clientId = '', callable $onSuccess = null)
     {
-        $request = (new Request())
-            ->setParameters([
-                'response_type' => 'code',
-                'redirect_uri' => $redirectUri,
-            ])
-        ;
+        $request = new Request([
+            'response_type' => 'code',
+            'redirect_uri' => $redirectUri,
+        ]);
 
         if ($scopes) {
-            $request->setParameter('scope', implode(' ', $scopes));
+            $request->addQuery('scope', implode(' ', $scopes));
         }
 
         if ($state) {
-            $request->setParameter('state', $state);
+            $request->addQuery('state', $state);
         }
 
         if (!$clientId && $this->credentials) {
@@ -132,7 +131,7 @@ class Client
             throw new InvalidArgumentException('Client id is required');
         }
 
-        $request->setParameter('client_id', $clientId);
+        $request->addQuery('client_id', $clientId);
 
         $this->adapter->authorize($request, $onSuccess);
     }
@@ -143,20 +142,20 @@ class Client
      * 
      * @return mixed
      */
-    public function introspect($token, $hint = '')
+    public function introspect($token, $hint = null)
     {
         if ($token instanceof Authorization) {
-            if (!$hint && $hint == 'access_token') {
+            if ($hint === null || $hint === 'access_token') {
                 $token = $token->getAccess();
             } else {
                 $token = $token->getRefresh();
             }
         }
 
-        $request = new Request(['token' => $token], $this->credentials);
+        $request = new Request(['token' => $token], [], $this->credentials);
         
         if ($hint) {
-            $request->setParameter('token_type_hint', $hint);
+            $request->addQuery('token_type_hint', $hint);
         }
 
         return Introspection::fromResponse($this->adapter->introspect($request));
@@ -166,20 +165,20 @@ class Client
      * @param Authorization|string $token
      * @param string $hint
      */
-    public function revoke($token, $hint = '')
+    public function revoke($token, $hint = null)
     {
         if ($token instanceof Authorization) {
-            if (!$hint && $hint == 'access_token') {
+            if ($hint === null || $hint === 'access_token') {
                 $token = $token->getAccess();
             } else {
                 $token = $token->getRefresh();
             }
         }
 
-        $request = new Request(['token' => $token], $this->credentials);
+        $request = new Request(['token' => $token], [], $this->credentials);
 
         if ($hint) {
-            $request->setParameter('token_type_hint', $hint);
+            $request->addQuery('token_type_hint', $hint);
         }
 
         $this->adapter->revoke($request);

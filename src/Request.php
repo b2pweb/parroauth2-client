@@ -2,109 +2,220 @@
 
 namespace Parroauth2\Client;
 
+use Parroauth2\Client\Credentials\ClientCredentials;
+
 /**
- * Class Request
+ * Request
  */
 class Request
 {
     /**
+     * The request query parameters
+     *
      * @var array
      */
-    protected $parameters = [];
+    protected $queries = [];
 
     /**
+     * The request post parameters
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * The request headers
+     *
+     * @var array
+     */
+    protected $headers = [];
+
+    /**
+     * The app client credentials
+     *
      * @var ClientCredentials
      */
-    protected $credentials = [];
+    protected $credentials;
 
     /**
      * Request constructor.
      * 
-     * @param array $parameters
-     * @param null $credentials
+     * @param array $queries
+     * @param array $attributes
+     * @param null|ClientCredentials $credentials
      */
-    public function __construct($parameters = [], $credentials = null)
+    public function __construct(array $queries = [], array $attributes = [], ClientCredentials $credentials = null)
     {
-        $this->parameters = $parameters;
+        $this->queries = $queries;
+        $this->attributes = $attributes;
         $this->credentials = $credentials;
+
+        if ($credentials !== null) {
+            $credentials->prepare($this);
+        }
     }
 
     /**
-     * @param array $parameters
+     * Add query parameters
+     *
+     * @param array $queries
      *
      * @return $this
      */
-    public function setParameters($parameters)
+    public function addQueries(array $queries)
     {
-        $this->parameters = $parameters;
+        $this->queries += $queries;
 
         return $this;
     }
 
     /**
+     * Add query parameter
+     *
      * @param string $key
      * @param string $value
      *
      * @return $this
      */
-    public function setParameter($key, $value)
+    public function addQuery($key, $value)
     {
-        $this->parameters[$key] = $value;
+        $this->queries[$key] = $value;
 
         return $this;
     }
 
     /**
-     * @param array $parameters
+     * Get the query parameters
      *
-     * @return $this
-     */
-    public function addParameters($parameters)
-    {
-        $this->parameters += $parameters;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
-    public function getParameters()
+    public function queries()
     {
-        return $this->parameters;
+        return $this->queries;
     }
 
     /**
+     * Get a query parameter
+     *
      * @param string $key
-     * @param string $value
+     * @param string $default
      *
      * @return array
      */
-    public function getParameter($key, $value = null)
+    public function query($key, $default = null)
     {
-        if (!isset($this->parameters[$key])) {
-            return $value;
+        if (!isset($this->queries[$key])) {
+            return $default;
         }
 
-        return $this->parameters[$key];
+        return $this->queries[$key];
     }
 
     /**
-     * @param ClientCredentials $credentials
+     * Add post parameters
      *
-     * @return Request
+     * @param array $attributes
+     *
+     * @return $this
      */
-    public function setCredentials($credentials)
+    public function addAttributes(array $attributes)
     {
-        $this->credentials = $credentials;
+        $this->attributes += $attributes;
 
         return $this;
     }
 
     /**
-     * @return ClientCredentials
+     * Add post parameter
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * @return $this
      */
-    public function getCredentials()
+    public function addAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get the post parameters
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Get a post parameter
+     *
+     * @param string $key
+     * @param mixed  $default
+     *
+     * @return array
+     */
+    public function attribute($key, $default = null)
+    {
+        if (!isset($this->attributes[$key])) {
+            return $default;
+        }
+
+        return $this->attributes[$key];
+    }
+
+    /**
+     * Add headers
+     *
+     * @param array $headers
+     *
+     * @return $this
+     */
+    public function addHeaders(array $headers)
+    {
+        $this->headers += $headers;
+
+        return $this;
+    }
+
+    /**
+     * Get the request headers
+     *
+     * @return array
+     */
+    public function headers()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * Get a header from key
+     *
+     * @todo Gerer un format unique des headers
+     *
+     * @param string $key
+     * @param mixed  $default
+     *
+     * @return array
+     */
+    public function header($key, $default = null)
+    {
+        if (!isset($this->headers[$key])) {
+            return $default;
+        }
+
+        return $this->headers[$key];
+    }
+
+    /**
+     * Get the request credentials
+     *
+     * @return null|ClientCredentials
+     */
+    public function credentials()
     {
         return $this->credentials;
     }

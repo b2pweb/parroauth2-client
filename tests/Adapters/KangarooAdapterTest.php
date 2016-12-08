@@ -8,7 +8,7 @@ use Kangaroo\Client;
 use Kangaroo\Request as KangarooRequest;
 use Kangaroo\Response as KangarooResponse;
 use Parroauth2\Client\Adapters\KangarooAdapter;
-use Parroauth2\Client\ClientCredentials;
+use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\Exception\AccessDeniedException;
 use Parroauth2\Client\Exception\InvalidClientException;
 use Parroauth2\Client\Exception\InvalidGrantException;
@@ -129,25 +129,22 @@ class KangarooAdapterTest extends TestCase
             return new KangarooResponse(
                 [
                     'path'          => $request->getPath(),
-                    'postFields'    => $request->getPostFields(),
+                    'postFields'    => $request->getBody()->data(),
                     'queries'       => $request->getQueries(),
-                    'client_id'     => $request->getHeader('PHP_AUTH_USER'),
-                    'client_secret' => $request->getHeader('PHP_AUTH_PW'),
+                    'authorization' => $request->getHeader('Authorization'),
                 ],
                 200
             );
         });
 
-        $request = new Request(['some' => 'parameter'], new ClientCredentials('id', 'secret'));
+        $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
         $responseData = $this->adapter->token($request)->getBody();
 
         $this->assertEquals('/' . $this->basePath . '/token', $responseData['path']);
 
-        $this->assertEquals($request->getParameters(), $responseData['postFields']);
-        $this->assertEquals([], $responseData['queries']);
-
-        $this->assertEquals($request->getCredentials()->getId(), $responseData['client_id']);
-        $this->assertEquals($request->getCredentials()->getSecret(), $responseData['client_secret']);
+        $this->assertEquals($request->attributes(), $responseData['postFields']);
+        $this->assertEquals($request->queries(), $responseData['queries']);
+        $this->assertEquals($request->header('Authorization', 'notnull'), $responseData['authorization']);
     }
 
     /**
@@ -225,25 +222,22 @@ class KangarooAdapterTest extends TestCase
             return new KangarooResponse(
                 [
                     'path'          => $request->getPath(),
-                    'postFields'    => $request->getPostFields(),
+                    'postFields'    => $request->getBody()->data(),
                     'queries'       => $request->getQueries(),
-                    'client_id'     => $request->getHeader('PHP_AUTH_USER'),
-                    'client_secret' => $request->getHeader('PHP_AUTH_PW'),
+                    'authorization' => $request->getHeader('Authorization'),
                 ],
                 200
             );
         });
 
-        $request = new Request(['some' => 'parameter'], new ClientCredentials('id', 'secret'));
+        $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
         $responseData = $this->adapter->introspect($request)->getBody();
 
         $this->assertEquals('/' . $this->basePath . '/introspect', $responseData['path']);
 
-        $this->assertEquals($request->getParameters(), $responseData['postFields']);
-        $this->assertEquals([], $responseData['queries']);
-
-        $this->assertEquals($request->getCredentials()->getId(), $responseData['client_id']);
-        $this->assertEquals($request->getCredentials()->getSecret(), $responseData['client_secret']);
+        $this->assertEquals($request->attributes(), $responseData['postFields']);
+        $this->assertEquals($request->queries(), $responseData['queries']);
+        $this->assertEquals($request->header('Authorization', 'notnull'), $responseData['authorization']);
     }
 
     /**
@@ -282,16 +276,14 @@ class KangarooAdapterTest extends TestCase
     public function test_revoke_sends_request_data_properly()
     {
         $asserted = false;
-        $request = new Request(['some' => 'parameter'], new ClientCredentials('id', 'secret'));
+        $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
 
         $this->http->setResponse(function (KangarooRequest $kangarooRequest) use ($request, &$asserted) {
             $this->assertEquals('/' . $this->basePath . '/revoke', $kangarooRequest->getPath());
 
-            $this->assertEquals([], $kangarooRequest->getQueries());
-            $this->assertEquals($request->getParameters(), $kangarooRequest->getPostFields());
-
-            $this->assertEquals($request->getCredentials()->getId(), $kangarooRequest->getHeader('PHP_AUTH_USER'));
-            $this->assertEquals($request->getCredentials()->getSecret(), $kangarooRequest->getHeader('PHP_AUTH_PW'));
+            $this->assertEquals($request->attributes(), $kangarooRequest->getBody()->data());
+            $this->assertEquals($request->queries(), $kangarooRequest->getQueries());
+            $this->assertEquals($request->header('Authorization', 'notnull'), $kangarooRequest->getHeader('Authorization'));
 
             $asserted = true;
 

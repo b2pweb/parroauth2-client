@@ -8,7 +8,7 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Parroauth2\Client\Adapters\SelfAdapter;
-use Parroauth2\Client\ClientCredentials;
+use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\Exception\InvalidRequestException;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
@@ -111,7 +111,7 @@ class SelfAdapterTest extends TestCase
 
         $this->assertEquals(
             new Response(['active' => false]),
-            $this->adapter->introspect(new Request(['token' => $token], new ClientCredentials('clientId', 'clientSecret')))
+            $this->adapter->introspect(new Request(['token' => $token], [], new ClientCredentials('clientId', 'clientSecret')))
         );
     }
 
