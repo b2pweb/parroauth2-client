@@ -79,13 +79,13 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
         try {
             $data = $this->unserializer->unserialize($request->query('token'));
 
-            if (isset($data['exp'])) {
+            if ($data['exp'] >= 0) {
                 $data['active'] = 0 < ($data['exp'] - time());
             } else {
                 $data['active'] = true;
             }
 
-            if ($data['active'] && !empty($data['client_id']) && $request->credentials()) {
+            if ($data['active'] && $data['client_id'] !== '' && $request->credentials()) {
                 $data['active'] = $request->credentials()->id() == $data['client_id'];
             }
 
