@@ -72,30 +72,35 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
      */
     public function introspect(Request $request)
     {
-        if ($request->query('token_type_hint') == 'refresh_token') {
+        // L'introspection doit elle être sécurisée par client credentials ?
+        // L'introspection est faite localement, et les informations décodées ne sortent pas du périmètre de l'application
+        // La gestion des crédentials client n'a donc pas été implémenté.
+
+//        if ($request->credentials() === null) {
+//            return new Response(['active' => false]);
+//        }
+
+        if ($request->query('token_type_hint') === 'refresh_token') {
             throw new InvalidRequestException('Refresh token introspect is not available. You can only introspect access tokens', 400);
         }
 
-        try {
-            $data = $this->unserializer->unserialize($request->query('token'));
+        $data = $this->unserializer->unserialize($request->query('token'));
 
-            if ($data['exp'] >= 0) {
-                $data['active'] = 0 < ($data['exp'] - time());
-            } else {
-                $data['active'] = true;
-            }
-
-            if ($data['active'] && $data['client_id'] !== '' && $request->credentials()) {
-                $data['active'] = $request->credentials()->id() == $data['client_id'];
-            }
-
-            if ($data['active']) {
-                return new Response($data);
-            }
-        } catch (ParsingException $e) {
+        if (null === $data) {
+            return new Response(['active' => false]);
         }
 
-        return new Response(['active' => false]);
+        //si pas resource owner et pas le propriétaire du tokent
+//        if ($request->credentials()->id() !== $data['client_id']) {
+//            return new Response(['active' => false]);
+//        }
+
+        if ($data['exp'] >= 0 && $data['exp'] < time()) {
+            return new Response(['active' => false]);
+        }
+
+        $data['active'] = true;
+        return new Response($data);
     }
 
     /**

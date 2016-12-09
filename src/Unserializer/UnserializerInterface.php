@@ -3,14 +3,16 @@
 namespace Parroauth2\Client\Unserializer;
 
 /**
- * Interface UnserializerInterface
+ * UnserializerInterface
  */
 interface UnserializerInterface
 {
     /**
+     * Unserialize a token
+     *
      * @param string $token
      *
-     * @return array
+     * @return null|array
      */
     public function unserialize($token);
 }

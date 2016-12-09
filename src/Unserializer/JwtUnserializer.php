@@ -6,10 +6,9 @@ use Exception;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use Parroauth2\Client\Exception\ParsingException;
 
 /**
- * Class JwtUnserializer
+ * JwtUnserializer
  */
 class JwtUnserializer implements UnserializerInterface
 {
@@ -42,11 +41,11 @@ class JwtUnserializer implements UnserializerInterface
     {
         try {
             $token = $this->parser->parse($token);
-        } catch (Exception $e) {
-            throw new ParsingException('Unable to unserialize token', 0, $e);
-        }
 
-        $this->verify($token);
+            $this->checkSignature($token);
+        } catch (Exception $e) {
+            return null;
+        }
 
         return [
             'scope'      => $token->getClaim('scope', ''),
@@ -65,20 +64,14 @@ class JwtUnserializer implements UnserializerInterface
     }
 
     /**
-     * @param Token $token
+     * Check the token signature
      *
-     * @throws ParsingException
+     * @param Token $token
      */
-    protected function verify($token)
+    protected function checkSignature($token)
     {
-        if (!$this->publicKey) {
-            return;
-        }
-
-        try {
+        if ($this->publicKey !== null) {
             $token->verify(new Sha256(), $this->publicKey);
-        } catch (Exception $e) {
-            throw new ParsingException('Unable to verify token', 0, $e);
         }
     }
 }

@@ -62,10 +62,7 @@ class JwtUnserializerTest extends TestCase
      */
     public function test_decode_throws_parsing_exception_if_an_error_occurs()
     {
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Unable to unserialize token');
-
-        $this->unserializer->unserialize('SomeWrongToken');
+        $this->assertNull($this->unserializer->unserialize('SomeWrongToken'));
     }
 
     /**
@@ -73,19 +70,18 @@ class JwtUnserializerTest extends TestCase
      */
     public function test_decode_throws_parsing_exception_if_token__cannot_be_verified()
     {
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Unable to verify token');
-
         $token = (new Builder())
             ->sign(new Sha256(), $this->privateKey)
             ->getToken()
             ->__toString()
         ;
 
-        (new JwtUnserializer(
+        $result = (new JwtUnserializer(
             new Parser(),
             'file://' . __DIR__ . '/../oauth-public-wrong.key'
         ))->unserialize($token);
+
+        $this->assertNull($result);
     }
 
     /**
