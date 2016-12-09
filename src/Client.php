@@ -34,8 +34,6 @@ class Client
      *
      * @param ClientAdapterInterface $adapter
      * @param null|ClientCredentials $credentials
-     *
-     * @todo Manage credentials like acquaint grant type (if possible, due to 'prepare' method param)
      */
     public function __construct(ClientAdapterInterface $client, ClientCredentials $credentials = null)
     {

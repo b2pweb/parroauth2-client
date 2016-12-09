@@ -29,13 +29,30 @@ class KangarooClientAdapter implements ClientAdapterInterface
     protected $api;
 
     /**
+     * The oauth2 end points
+     *
+     * @var array
+     */
+    protected $endPoints = [
+        'token' => 'token',
+        'authorize' => 'authorize',
+        'introspect' => 'introspect',
+        'revoke' => 'revoke',
+    ];
+
+    /**
      * KangarooClientAdapter constructor.
      *
      * @param ApiScope $api
+     * @param array $endPoints
      */
-    public function __construct(ApiScope $api)
+    public function __construct(ApiScope $api, array $endPoints = null)
     {
         $this->api = $api;
+
+        if ($endPoints !== null) {
+            $this->endPoints = $endPoints;
+        }
     }
 
     /**
@@ -45,7 +62,7 @@ class KangarooClientAdapter implements ClientAdapterInterface
      */
     public function token(Request $request)
     {
-        $response = $this->api->post('token', $request->attributes(), $request->queries(), $request->headers());
+        $response = $this->api->post($this->endPoints['token'], $request->attributes(), $request->queries(), $request->headers());
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc6749#section-5.2
@@ -62,7 +79,7 @@ class KangarooClientAdapter implements ClientAdapterInterface
      */
     public function authorize(Request $request, callable $onSuccess = null)
     {
-        $location = $this->api->url('authorize', $request->queries());
+        $location = $this->api->url($this->endPoints['authorize'], $request->queries());
 
         if ($onSuccess) {
             return call_user_func(
@@ -82,7 +99,7 @@ class KangarooClientAdapter implements ClientAdapterInterface
      */
     public function introspect(Request $request)
     {
-        $response = $this->api->post('introspect', $request->attributes(), $request->queries(), $request->headers());
+        $response = $this->api->post($this->endPoints['introspect'], $request->attributes(), $request->queries(), $request->headers());
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc7662#section-2.3
@@ -99,7 +116,7 @@ class KangarooClientAdapter implements ClientAdapterInterface
      */
     public function revoke(Request $request)
     {
-        $response = $this->api->post('revoke', $request->attributes(), $request->queries(), $request->headers());
+        $response = $this->api->post($this->endPoints['revoke'], $request->attributes(), $request->queries(), $request->headers());
 
         if ($response->isError()) {
             // @see https://tools.ietf.org/html/rfc7009#section-2.2
