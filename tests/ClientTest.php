@@ -5,8 +5,8 @@ namespace Parroauth2\Client\Tests;
 use Bdf\PHPUnit\TestCase;
 use Kangaroo\Client as KangarooClient;
 use Kangaroo\Response as KangarooResponse;
-use Parroauth2\Client\Adapters\AdapterInterface;
-use Parroauth2\Client\Adapters\KangarooAdapter;
+use Parroauth2\Client\ClientAdapters\ClientAdapterInterface;
+use Parroauth2\Client\ClientAdapters\KangarooClientAdapter;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\Authorization;
 use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
@@ -31,7 +31,7 @@ class ClientTest extends TestCase
     protected $http;
 
     /**
-     * @var AdapterInterface
+     * @var ClientAdapterInterface
      */
     protected $adapter;
 
@@ -46,7 +46,7 @@ class ClientTest extends TestCase
     public function setUp()
     {
         $this->http = new TestableHttpClientAdapter();
-        $this->adapter = new KangarooAdapter((new KangarooClient('http://localhost', $this->http))->api('/oauth2'));
+        $this->adapter = new KangarooClientAdapter((new KangarooClient('http://localhost', $this->http))->api('/oauth2'));
         $this->client = new Client($this->adapter);
     }
 
@@ -219,7 +219,7 @@ class ClientTest extends TestCase
         $token = 'token';
         $hint = 'access_token';
 
-        $this->adapter = $this->createPartialMock(AdapterInterface::class, ['token', 'authorize', 'introspect', 'revoke']);
+        $this->adapter = $this->createPartialMock(ClientAdapterInterface::class, ['token', 'authorize', 'introspect', 'revoke']);
         $this->adapter
             ->expects($this->once())
             ->method('revoke')

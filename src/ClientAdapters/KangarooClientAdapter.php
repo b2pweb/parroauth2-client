@@ -1,6 +1,6 @@
 <?php
 
-namespace Parroauth2\Client\Adapters;
+namespace Parroauth2\Client\ClientAdapters;
 
 use Kangaroo\ApiScope;
 use Kangaroo\Response as KangarooResponse;
@@ -19,9 +19,9 @@ use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 
 /**
- * KangarooAdapter
+ * KangarooClientAdapter
  */
-class KangarooAdapter implements AdapterInterface
+class KangarooClientAdapter implements ClientAdapterInterface
 {
     /**
      * @var ApiScope
@@ -29,7 +29,7 @@ class KangarooAdapter implements AdapterInterface
     protected $api;
 
     /**
-     * KangarooAdapter constructor.
+     * KangarooClientAdapter constructor.
      *
      * @param ApiScope $api
      */

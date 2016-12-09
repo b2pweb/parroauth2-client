@@ -3,7 +3,7 @@
 namespace Parroauth2\Client;
 
 use InvalidArgumentException;
-use Parroauth2\Client\Adapters\AdapterInterface;
+use Parroauth2\Client\ClientAdapters\ClientAdapterInterface;
 use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
 use Parroauth2\Client\GrantTypes\GrantTypeInterface;
@@ -11,31 +11,35 @@ use Parroauth2\Client\GrantTypes\PasswordGrantType;
 use Parroauth2\Client\GrantTypes\RefreshGrantType;
 
 /**
- * Client
+ * The oauth2 client
  */
 class Client
 {
     /**
-     * @var AdapterInterface
+     * The http client
+     *
+     * @var ClientAdapterInterface
      */
-    protected $adapter;
+    protected $client;
 
     /**
-     * @var ClientCredentials
+     * The client credentials
+     *
+     * @var null|ClientCredentials
      */
     protected $credentials;
 
     /**
      * Client constructor.
      *
-     * @param AdapterInterface $adapter
-     * @param ClientCredentials $credentials
+     * @param ClientAdapterInterface $adapter
+     * @param null|ClientCredentials $credentials
      *
      * @todo Manage credentials like acquaint grant type (if possible, due to 'prepare' method param)
      */
-    public function __construct(AdapterInterface $adapter, ClientCredentials $credentials = null)
+    public function __construct(ClientAdapterInterface $client, ClientCredentials $credentials = null)
     {
-        $this->adapter = $adapter;
+        $this->client = $client;
         $this->credentials = $credentials;
     }
 
@@ -90,7 +94,7 @@ class Client
 
         $grantType->acquaint($request);
 
-        $response = $this->adapter->token($request);
+        $response = $this->client->token($request);
 
         return new Authorization(
             $response->getBodyItem('access_token'),
@@ -124,7 +128,7 @@ class Client
         }
 
         if (!$clientId && $this->credentials) {
-            $clientId = $this->credentials->getId();
+            $clientId = $this->credentials->id();
         }
 
         if (!$clientId) {
@@ -133,7 +137,7 @@ class Client
 
         $request->addQuery('client_id', $clientId);
 
-        $this->adapter->authorize($request, $onSuccess);
+        $this->client->authorize($request, $onSuccess);
     }
 
     /**
@@ -158,7 +162,7 @@ class Client
             $request->addQuery('token_type_hint', $hint);
         }
 
-        return Introspection::fromResponse($this->adapter->introspect($request));
+        return Introspection::fromResponse($this->client->introspect($request));
     }
 
     /**
@@ -181,6 +185,6 @@ class Client
             $request->addQuery('token_type_hint', $hint);
         }
 
-        $this->adapter->revoke($request);
+        $this->client->revoke($request);
     }
 }

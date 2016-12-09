@@ -1,16 +1,18 @@
 <?php
 
-namespace Parroauth2\Client\Adapters;
+namespace Parroauth2\Client\ClientAdapters;
 
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 
 /**
- * Interface AdapterInterface
+ * ClientAdapterInterface
  */
-interface AdapterInterface
+interface ClientAdapterInterface
 {
     /**
+     * Request a oauth2 token
+     *
      * @param Request $request
      *
      * @return Response
@@ -18,6 +20,8 @@ interface AdapterInterface
     public function token(Request $request);
 
     /**
+     * Request a oauth2 authorization code
+     *
      * @param Request $request
      * @param callable $onSuccess
      *
@@ -26,6 +30,8 @@ interface AdapterInterface
     public function authorize(Request $request, callable $onSuccess = null);
 
     /**
+     * Introspect a token
+     *
      * @param Request $request
      *
      * @return Response
@@ -33,6 +39,8 @@ interface AdapterInterface
     public function introspect(Request $request);
 
     /**
+     * Revoke a token
+     *
      * @param Request $request
      *
      * @return Response

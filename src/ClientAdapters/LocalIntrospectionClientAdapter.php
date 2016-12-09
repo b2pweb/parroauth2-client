@@ -1,6 +1,6 @@
 <?php
 
-namespace Parroauth2\Client\Adapters;
+namespace Parroauth2\Client\ClientAdapters;
 
 use Parroauth2\Client\Exception\ParsingException;
 use Parroauth2\Client\Request;
@@ -9,9 +9,11 @@ use Parroauth2\Client\Unserializer\UnserializerInterface;
 use Parroauth2\Client\Exception\InvalidRequestException;
 
 /**
- * Class SelfAdapter
+ * LocalIntrospectionClientAdapter
+ *
+ * Introspect serialize access token.
  */
-class SelfAdapter implements AdapterInterface
+class LocalIntrospectionClientAdapter implements ClientAdapterInterface
 {
     /**
      * @var UnserializerInterface
@@ -21,17 +23,17 @@ class SelfAdapter implements AdapterInterface
     /**
      * the delegate adapter
      *
-     * @var AdapterInterface
+     * @var ClientAdapterInterface
      */
     protected $delegate;
 
     /**
-     * SelfIntrospectionStrategy constructor.
+     * LocalIntrospectionClientAdapter constructor.
      *
      * @param UnserializerInterface $unserializer
-     * @param AdapterInterface $delegate
+     * @param ClientAdapterInterface $delegate
      */
-    public function __construct(UnserializerInterface $unserializer, AdapterInterface $delegate = null)
+    public function __construct(UnserializerInterface $unserializer, ClientAdapterInterface $delegate = null)
     {
         $this->unserializer = $unserializer;
         $this->delegate = $delegate;
@@ -79,20 +81,17 @@ class SelfAdapter implements AdapterInterface
 
             if (isset($data['exp'])) {
                 $data['active'] = 0 < ($data['exp'] - time());
+            } else {
+                $data['active'] = true;
             }
 
             if ($data['active'] && !empty($data['client_id']) && $request->credentials()) {
                 $data['active'] = $request->credentials()->id() == $data['client_id'];
             }
 
-            if (!isset($data['active'])) {
-                $data['active'] = true;
-            }
-
             if ($data['active']) {
                 return new Response($data);
             }
-
         } catch (ParsingException $e) {
         }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Parroauth2\Client\Tests\Adapters;
+namespace Parroauth2\Client\Tests\ClientAdapters;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Parroauth2\Client\Adapters\SelfAdapter;
+use Parroauth2\Client\ClientAdapters\LocalIntrospectionClientAdapter;
 use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\Exception\InvalidRequestException;
 use Parroauth2\Client\Request;
@@ -15,19 +15,17 @@ use Parroauth2\Client\Response;
 use Parroauth2\Client\Unserializer\JwtUnserializer;
 
 /**
- * Class SelfAdapterTest
- *
  * @group Parroauth2
  * @group Parroauth2/Client
- * @group Parroauth2/Client/Adapters
- * @group Parroauth2/Client/Adapters/SelfAdapter
+ * @group Parroauth2/Client/HttpClient
+ * @group Parroauth2/Client/HttpClient/LocalIntrospectionClientAdapter
  */
-class SelfAdapterTest extends TestCase
+class LocalIntrospectionClientAdapterTest extends TestCase
 {
     /**
-     * @var SelfAdapter
+     * @var LocalIntrospectionClientAdapter
      */
-    protected $adapter;
+    protected $client;
 
     /**
      * @var string
@@ -49,7 +47,7 @@ class SelfAdapterTest extends TestCase
 
         $unserializer = new JwtUnserializer(new Parser(), $this->publicKey);
 
-        $this->adapter = new SelfAdapter($unserializer);
+        $this->client = new LocalIntrospectionClientAdapter($unserializer);
     }
 
     /**
@@ -60,7 +58,7 @@ class SelfAdapterTest extends TestCase
         $this->expectException(InvalidRequestException::class);
         $this->expectExceptionMessage('Access granting is not available');
 
-        $this->adapter->token(new Request());
+        $this->client->token(new Request());
     }
 
     /**
@@ -71,7 +69,7 @@ class SelfAdapterTest extends TestCase
         $this->expectException(InvalidRequestException::class);
         $this->expectExceptionMessage('Authorize procedure is not available');
 
-        $this->adapter->authorize(new Request());
+        $this->client->authorize(new Request());
     }
 
     /**
@@ -82,7 +80,7 @@ class SelfAdapterTest extends TestCase
         $this->expectException(InvalidRequestException::class);
         $this->expectExceptionMessage('Access revoking is not available');
 
-        $this->adapter->revoke(new Request());
+        $this->client->revoke(new Request());
     }
 
     /**
@@ -96,7 +94,7 @@ class SelfAdapterTest extends TestCase
 
         $this->assertEquals(
             new Response(['active' => false]),
-            $this->adapter->introspect(new Request(['token' => $token]))
+            $this->client->introspect(new Request(['token' => $token]))
         );
     }
 
@@ -111,7 +109,7 @@ class SelfAdapterTest extends TestCase
 
         $this->assertEquals(
             new Response(['active' => false]),
-            $this->adapter->introspect(new Request(['token' => $token], [], new ClientCredentials('clientId', 'clientSecret')))
+            $this->client->introspect(new Request(['token' => $token], [], new ClientCredentials('clientId', 'clientSecret')))
         );
     }
 
@@ -138,7 +136,7 @@ class SelfAdapterTest extends TestCase
 
         $this->assertEquals(
             new Response(['active' => true, 'client_id' => $data['aud']] + $data),
-            $this->adapter->introspect(new Request(['token' => $token]))
+            $this->client->introspect(new Request(['token' => $token]))
         );
     }
 

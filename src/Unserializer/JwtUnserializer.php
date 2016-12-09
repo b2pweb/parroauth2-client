@@ -42,7 +42,6 @@ class JwtUnserializer implements UnserializerInterface
     {
         try {
             $token = $this->parser->parse($token);
-
         } catch (Exception $e) {
             throw new ParsingException('Unable to unserialize token', 0, $e);
         }
@@ -78,7 +77,6 @@ class JwtUnserializer implements UnserializerInterface
 
         try {
             $token->verify(new Sha256(), $this->publicKey);
-
         } catch (Exception $e) {
             throw new ParsingException('Unable to verify token', 0, $e);
         }

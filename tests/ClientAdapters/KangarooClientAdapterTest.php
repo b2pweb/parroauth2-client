@@ -1,13 +1,13 @@
 <?php
 
-namespace Parroauth2\Client\Tests\Adapters;
+namespace Parroauth2\Client\Tests\ClientAdapters;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
 use Kangaroo\Client;
 use Kangaroo\Request as KangarooRequest;
 use Kangaroo\Response as KangarooResponse;
-use Parroauth2\Client\Adapters\KangarooAdapter;
+use Parroauth2\Client\ClientAdapters\KangarooClientAdapter;
 use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\Exception\AccessDeniedException;
 use Parroauth2\Client\Exception\InvalidClientException;
@@ -24,14 +24,12 @@ use Parroauth2\Client\Response;
 use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
 
 /**
- * Class KangarooAdapterTest
- *
  * @group Parroauth2
  * @group Parroauth2/Client
- * @group Parroauth2/Client/Adapters
- * @group Parroauth2/Client/Adapters/KangarooAdapter
+ * @group Parroauth2/Client/HttpClient
+ * @group Parroauth2/Client/HttpClient/KangarooClientAdapter
  */
-class KangarooAdapterTest extends TestCase
+class KangarooClientAdapterTest extends TestCase
 {
     /**
      * @var TestableHttpClientAdapter
@@ -44,9 +42,9 @@ class KangarooAdapterTest extends TestCase
     protected $basePath;
 
     /**
-     * @var KangarooAdapter
+     * @var KangarooClientAdapter
      */
-    protected $adapter;
+    protected $client;
 
     /**
      *
@@ -55,7 +53,7 @@ class KangarooAdapterTest extends TestCase
     {
         $this->http = new TestableHttpClientAdapter();
         $this->basePath = 'oauth2';
-        $this->adapter = new KangarooAdapter((new Client('http://localhost', $this->http))->api($this->basePath));
+        $this->client = new KangarooClientAdapter((new Client('http://localhost', $this->http))->api($this->basePath));
     }
 
     /**
@@ -75,7 +73,7 @@ class KangarooAdapterTest extends TestCase
                 ->setBody($error)
         );
 
-        $this->adapter->token(new Request());
+        $this->client->token(new Request());
     }
 
     /**
@@ -115,7 +113,7 @@ class KangarooAdapterTest extends TestCase
                 ->setBody($expectedResponse->getBody())
         );
 
-        $response = $this->adapter->token(new Request());
+        $response = $this->client->token(new Request());
 
         $this->assertEquals($expectedResponse, $response);
     }
@@ -138,7 +136,7 @@ class KangarooAdapterTest extends TestCase
         });
 
         $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
-        $responseData = $this->adapter->token($request)->getBody();
+        $responseData = $this->client->token($request)->getBody();
 
         $this->assertEquals('/' . $this->basePath . '/token', $responseData['path']);
 
@@ -154,7 +152,7 @@ class KangarooAdapterTest extends TestCase
     {
         $request = new Request(['some' => 'parameter']);
 
-        $this->adapter->authorize($request);
+        $this->client->authorize($request);
 
         $this->fail('Adapter should have exited the script');
     }
@@ -168,7 +166,7 @@ class KangarooAdapterTest extends TestCase
 
         $data = [];
 
-        $this->adapter->authorize($request, function($location) use (&$data) {
+        $this->client->authorize($request, function($location) use (&$data) {
             $data['location'] = $location;
         });
 
@@ -192,7 +190,7 @@ class KangarooAdapterTest extends TestCase
                 ->setBody($error)
         );
 
-        $this->adapter->introspect(new Request());
+        $this->client->introspect(new Request());
     }
 
     /**
@@ -208,7 +206,7 @@ class KangarooAdapterTest extends TestCase
                 ->setBody($expectedResponse->getBody())
         );
 
-        $response = $this->adapter->introspect(new Request());
+        $response = $this->client->introspect(new Request());
 
         $this->assertEquals($expectedResponse, $response);
     }
@@ -231,7 +229,7 @@ class KangarooAdapterTest extends TestCase
         });
 
         $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
-        $responseData = $this->adapter->introspect($request)->getBody();
+        $responseData = $this->client->introspect($request)->getBody();
 
         $this->assertEquals('/' . $this->basePath . '/introspect', $responseData['path']);
 
@@ -257,7 +255,7 @@ class KangarooAdapterTest extends TestCase
                 ->setBody($error)
         );
 
-        $this->adapter->revoke(new Request());
+        $this->client->revoke(new Request());
     }
 
     /**
@@ -267,7 +265,7 @@ class KangarooAdapterTest extends TestCase
     {
         $this->http->setResponse((new KangarooResponse('', 200)));
 
-        $this->assertEquals(new Response(), $this->adapter->revoke(new Request()));
+        $this->assertEquals(new Response(), $this->client->revoke(new Request()));
     }
 
     /**
@@ -290,10 +288,10 @@ class KangarooAdapterTest extends TestCase
             return new KangarooResponse('', 200);
         });
 
-        $this->adapter->revoke($request)->getBody();
+        $this->client->revoke($request)->getBody();
 
         if (!$asserted) {
-            $this->fail('Http adapter send method seems not to be called');
+            $this->fail('Http client send method seems not to be called');
         }
     }
 }
