@@ -64,7 +64,7 @@ class Client
     public function refresh($token, array $scopes = [])
     {
         if ($token instanceof Authorization) {
-            $token = $token->getRefresh();
+            $token = $token->refreshToken();
         }
 
         return $this->token(new RefreshGrantType($token, $scopes));
@@ -150,9 +150,9 @@ class Client
     {
         if ($token instanceof Authorization) {
             if ($hint === null || $hint === 'access_token') {
-                $token = $token->getAccess();
+                $token = $token->accessToken();
             } else {
-                $token = $token->getRefresh();
+                $token = $token->refreshToken();
             }
         }
 
@@ -173,9 +173,9 @@ class Client
     {
         if ($token instanceof Authorization) {
             if ($hint === null || $hint === 'access_token') {
-                $token = $token->getAccess();
+                $token = $token->accessToken();
             } else {
-                $token = $token->getRefresh();
+                $token = $token->refreshToken();
             }
         }
 

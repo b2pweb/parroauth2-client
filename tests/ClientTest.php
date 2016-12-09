@@ -63,11 +63,11 @@ class ClientTest extends TestCase
         $client
             ->expects($this->once())
             ->method('token')
-            ->with(new PasswordGrantType($username, $password, $expectedAuthorization->getScopes()))
+            ->with(new PasswordGrantType($username, $password, $expectedAuthorization->scopes()))
             ->willReturn($expectedAuthorization)
         ;
 
-        $this->assertSame($expectedAuthorization, $client->login($username, $password, $expectedAuthorization->getScopes()));
+        $this->assertSame($expectedAuthorization, $client->login($username, $password, $expectedAuthorization->scopes()));
     }
 
     /**
@@ -82,11 +82,11 @@ class ClientTest extends TestCase
         $client
             ->expects($this->once())
             ->method('token')
-            ->with(new RefreshGrantType($token, $expectedAuthorization->getScopes()))
+            ->with(new RefreshGrantType($token, $expectedAuthorization->scopes()))
             ->willReturn($expectedAuthorization)
         ;
 
-        $this->assertSame($expectedAuthorization, $client->refresh($token, $expectedAuthorization->getScopes()));
+        $this->assertSame($expectedAuthorization, $client->refresh($token, $expectedAuthorization->scopes()));
     }
 
     /**
@@ -120,14 +120,14 @@ class ClientTest extends TestCase
         $password = 'password';
 
         $this->http->setResponse(new KangarooResponse((object)[
-            'access_token'  => $expectedAuthorization->getAccess(),
-            'token_type'    => $expectedAuthorization->getType(),
-            'expires_in'    => $expectedAuthorization->getLifetime(),
-            'refresh_token' => $expectedAuthorization->getRefresh(),
-            'scope'         => implode(' ', $expectedAuthorization->getScopes()),
+            'access_token'  => $expectedAuthorization->accessToken(),
+            'token_type'    => $expectedAuthorization->tokenType(),
+            'expires_in'    => $expectedAuthorization->lifetime(),
+            'refresh_token' => $expectedAuthorization->refreshToken(),
+            'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
         
-        $this->assertEquals($expectedAuthorization, $this->client->token(new PasswordGrantType($username, $password, $expectedAuthorization->getScopes())));
+        $this->assertEquals($expectedAuthorization, $this->client->token(new PasswordGrantType($username, $password, $expectedAuthorization->scopes())));
     }
 
     /**
@@ -139,14 +139,14 @@ class ClientTest extends TestCase
         $token = 'token';
 
         $this->http->setResponse(new KangarooResponse((object)[
-            'access_token'  => $expectedAuthorization->getAccess(),
-            'token_type'    => $expectedAuthorization->getType(),
-            'expires_in'    => $expectedAuthorization->getLifetime(),
-            'refresh_token' => $expectedAuthorization->getRefresh(),
-            'scope'         => implode(' ', $expectedAuthorization->getScopes()),
+            'access_token'  => $expectedAuthorization->accessToken(),
+            'token_type'    => $expectedAuthorization->tokenType(),
+            'expires_in'    => $expectedAuthorization->lifetime(),
+            'refresh_token' => $expectedAuthorization->refreshToken(),
+            'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
 
-        $this->assertEquals($expectedAuthorization, $this->client->token(new RefreshGrantType($token, $expectedAuthorization->getScopes())));
+        $this->assertEquals($expectedAuthorization, $this->client->token(new RefreshGrantType($token, $expectedAuthorization->scopes())));
     }
 
     /**
@@ -160,11 +160,11 @@ class ClientTest extends TestCase
         $clientId = 'clientId';
 
         $this->http->setResponse(new KangarooResponse((object)[
-            'access_token'  => $expectedAuthorization->getAccess(),
-            'token_type'    => $expectedAuthorization->getType(),
-            'expires_in'    => $expectedAuthorization->getLifetime(),
-            'refresh_token' => $expectedAuthorization->getRefresh(),
-            'scope'         => implode(' ', $expectedAuthorization->getScopes()),
+            'access_token'  => $expectedAuthorization->accessToken(),
+            'token_type'    => $expectedAuthorization->tokenType(),
+            'expires_in'    => $expectedAuthorization->lifetime(),
+            'refresh_token' => $expectedAuthorization->refreshToken(),
+            'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
 
         $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationGrantType($code, $redirectUri, $clientId)));
@@ -181,11 +181,11 @@ class ClientTest extends TestCase
         $clientId = 'some_id';
 
         $this->http->setResponse(new KangarooResponse((object)[
-            'access_token'  => $expectedAuthorization->getAccess(),
-            'token_type'    => $expectedAuthorization->getType(),
-            'expires_in'    => $expectedAuthorization->getLifetime(),
-            'refresh_token' => $expectedAuthorization->getRefresh(),
-            'scope'         => implode(' ', $expectedAuthorization->getScopes()),
+            'access_token'  => $expectedAuthorization->accessToken(),
+            'token_type'    => $expectedAuthorization->tokenType(),
+            'expires_in'    => $expectedAuthorization->lifetime(),
+            'refresh_token' => $expectedAuthorization->refreshToken(),
+            'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
 
         $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationGrantType($code, $redirectUri, $clientId)));
@@ -204,8 +204,8 @@ class ClientTest extends TestCase
 
         $this->http->setResponse(new KangarooResponse((object)[
             'active'   => true,
-            'scope' => implode(' ', $expectedIntrospection->getScopes()),
-            'metadata' => (object)$expectedIntrospection->getMetadata(),
+            'scope' => implode(' ', $expectedIntrospection->scopes()),
+            'metadata' => (object)$expectedIntrospection->metadata(),
         ]));
 
         $this->assertEquals($expectedIntrospection, $this->client->introspect('token'));

@@ -56,18 +56,18 @@ class IntrospectionTest extends TestCase
         
         $response = new Response([
             'active'     => $expected->isActive(),
-            'scope'      => implode(' ', $expected->getScopes()),
-            'client_id'  => $expected->getClientId(),
-            'username'   => $expected->getUsername(),
-            'token_type' => $expected->getTokenType(),
-            'exp'        => $expected->getExpireIn(),
-            'iat'        => $expected->getIssuedAt(),
-            'nbf'        => $expected->getNotBefore(),
-            'sub'        => $expected->getSubject(),
-            'aud'        => $expected->getAudience(),
-            'iss'        => $expected->getIssuer(),
-            'jti'        => $expected->getJwtId(),
-            'metadata'   => $expected->getMetadata(),
+            'scope'      => implode(' ', $expected->scopes()),
+            'client_id'  => $expected->clientId(),
+            'username'   => $expected->username(),
+            'token_type' => $expected->tokenType(),
+            'exp'        => $expected->expireIn(),
+            'iat'        => $expected->issuedAt(),
+            'nbf'        => $expected->notBefore(),
+            'sub'        => $expected->subject(),
+            'aud'        => $expected->audience(),
+            'iss'        => $expected->issuer(),
+            'jti'        => $expected->jwtId(),
+            'metadata'   => $expected->metadata(),
         ]);
 
         $this->assertEquals($expected, Introspection::fromResponse($response));

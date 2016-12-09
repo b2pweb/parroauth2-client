@@ -2,7 +2,6 @@
 
 namespace Parroauth2\Client\ClientAdapters;
 
-use Parroauth2\Client\Exception\ParsingException;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 use Parroauth2\Client\Unserializer\UnserializerInterface;

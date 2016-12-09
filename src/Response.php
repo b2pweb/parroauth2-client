@@ -3,7 +3,7 @@
 namespace Parroauth2\Client;
 
 /**
- * Class Response
+ * Response
  */
 class Response
 {
@@ -17,7 +17,7 @@ class Response
      * 
      * @param array $body
      */
-    public function __construct($body = [])
+    public function __construct(array $body = [])
     {
         $this->body = $body;
     }
@@ -27,7 +27,7 @@ class Response
      * 
      * @return Response
      */
-    public function setBody($body)
+    public function setBody(array $body)
     {
         $this->body = $body;
 

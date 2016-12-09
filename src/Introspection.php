@@ -3,7 +3,7 @@
 namespace Parroauth2\Client;
 
 /**
- * Class Introspection
+ * Introspection
  */
 class Introspection
 {
@@ -107,7 +107,7 @@ class Introspection
     /**
      * @return string[]
      */
-    public function getScopes()
+    public function scopes()
     {
         return $this->scopes;
     }
@@ -137,7 +137,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getClientId()
+    public function clientId()
     {
         return $this->clientId;
     }
@@ -157,7 +157,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getUsername()
+    public function username()
     {
         return $this->username;
     }
@@ -177,7 +177,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getTokenType()
+    public function tokenType()
     {
         return $this->tokenType;
     }
@@ -197,7 +197,7 @@ class Introspection
     /**
      * @return int
      */
-    public function getExpireIn()
+    public function expireIn()
     {
         return $this->expireIn;
     }
@@ -217,7 +217,7 @@ class Introspection
     /**
      * @return int
      */
-    public function getIssuedAt()
+    public function issuedAt()
     {
         return $this->issuedAt;
     }
@@ -237,7 +237,7 @@ class Introspection
     /**
      * @return int
      */
-    public function getNotBefore()
+    public function notBefore()
     {
         return $this->notBefore;
     }
@@ -257,7 +257,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getSubject()
+    public function subject()
     {
         return $this->subject;
     }
@@ -277,7 +277,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getAudience()
+    public function audience()
     {
         return $this->audience;
     }
@@ -297,7 +297,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getIssuer()
+    public function issuer()
     {
         return $this->issuer;
     }
@@ -317,7 +317,7 @@ class Introspection
     /**
      * @return string
      */
-    public function getJwtId()
+    public function jwtId()
     {
         return $this->jwtId;
     }
@@ -337,7 +337,7 @@ class Introspection
     /**
      * @return array
      */
-    public function getMetadata()
+    public function metadata()
     {
         return $this->metadata;
     }
