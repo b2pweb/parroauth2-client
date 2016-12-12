@@ -48,14 +48,14 @@ class Authorization
      * @param string $accessToken
      * @param string $tokenType
      * @param int $lifetime
-     * @param string $refreshToken
+     * @param null|string $refreshToken
      * @param string[] $scopes
      */
-    public function __construct($accessToken, $tokenType, $lifetime = null, $refreshToken = '', array $scopes = [])
+    public function __construct($accessToken, $tokenType, $lifetime = 0, $refreshToken = null, array $scopes = [])
     {
         $this->accessToken = $accessToken;
         $this->tokenType = $tokenType;
-        $this->lifetime = $lifetime;
+        $this->lifetime = (int)$lifetime;
         $this->refreshToken = $refreshToken;
         $this->scopes = $scopes;
     }
@@ -121,25 +121,11 @@ class Authorization
     }
 
     /**
-     * Check whether the token is expired
-     *
-     * @return bool
-     */
-    public function isExpired()
-    {
-        if (null === $this->lifetime) {
-            return false;
-        }
-
-        return 0 > $this->lifetime;
-    }
-
-    /**
      * Set the refresh token
      *
      * @param string $refreshToken
      */
-    public function setRefresh($refreshToken)
+    public function setRefreshToken($refreshToken)
     {
         $this->refreshToken = $refreshToken;
     }
