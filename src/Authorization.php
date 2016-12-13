@@ -51,11 +51,11 @@ class Authorization
      * @param null|string $refreshToken
      * @param string[] $scopes
      */
-    public function __construct($accessToken, $tokenType, $lifetime = 0, $refreshToken = null, array $scopes = [])
+    public function __construct($accessToken, $tokenType, $lifetime = -1, $refreshToken = null, array $scopes = [])
     {
         $this->accessToken = $accessToken;
         $this->tokenType = $tokenType;
-        $this->lifetime = (int)$lifetime;
+        $this->lifetime = $lifetime;
         $this->refreshToken = $refreshToken;
         $this->scopes = $scopes;
     }
@@ -174,5 +174,41 @@ class Authorization
     public function hasScope($scope)
     {
         return in_array($scope, $this->scopes);
+    }
+
+    /**
+     * Check whether the authorization is expired
+     *
+     * @param int $delta A life time tolerance
+     *
+     * @return boolean
+     */
+    public function isExpired($delta = 0)
+    {
+        return $this->lifetime >= 0 && $this->lifetime <= (time() + $delta);
+    }
+
+    /**
+     * Check whether the authorization can be refreshed
+     *
+     * @param int $delta A life time tolerance
+     *
+     * @return boolean
+     */
+    public function canBeRefreshed()
+    {
+        return $this->refreshToken !== null;
+    }
+
+    /**
+     * Check whether the authorization should be refreshed
+     *
+     * @param int $delta A life time tolerance
+     *
+     * @return boolean
+     */
+    public function shouldBeRefreshed($delta = 1)
+    {
+        return $this->canBeRefreshed() && $this->isExpired($delta);
     }
 }
