@@ -126,7 +126,8 @@ class KangarooClientAdapterTest extends TestCase
         $this->http->setResponse(function (KangarooRequest $request) {
             return new KangarooResponse(
                 [
-                    'path'          => $request->getPath(),
+                    'path'          => $request->getBasePath(),
+                    'pathInfo'      => $request->getPathInfo(),
                     'postFields'    => $request->getBody()->data(),
                     'queries'       => $request->getQueries(),
                     'authorization' => $request->getHeader('Authorization'),
@@ -138,8 +139,8 @@ class KangarooClientAdapterTest extends TestCase
         $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
         $responseData = $this->client->token($request)->getBody();
 
-        $this->assertEquals('/' . $this->basePath . '/token', $responseData['path']);
-
+        $this->assertEquals('/'.$this->basePath, $responseData['path']);
+        $this->assertEquals('/token', $responseData['pathInfo']);
         $this->assertEquals($request->attributes(), $responseData['postFields']);
         $this->assertEquals($request->queries(), $responseData['queries']);
         $this->assertEquals($request->header('Authorization', 'notnull'), $responseData['authorization']);
@@ -219,7 +220,8 @@ class KangarooClientAdapterTest extends TestCase
         $this->http->setResponse(function (KangarooRequest $request) {
             return new KangarooResponse(
                 [
-                    'path'          => $request->getPath(),
+                    'path'          => $request->getBasePath(),
+                    'pathInfo'      => $request->getPathInfo(),
                     'postFields'    => $request->getBody()->data(),
                     'queries'       => $request->getQueries(),
                     'authorization' => $request->getHeader('Authorization'),
@@ -231,8 +233,8 @@ class KangarooClientAdapterTest extends TestCase
         $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
         $responseData = $this->client->introspect($request)->getBody();
 
-        $this->assertEquals('/' . $this->basePath . '/introspect', $responseData['path']);
-
+        $this->assertEquals('/'.$this->basePath, $responseData['path']);
+        $this->assertEquals('/introspect', $responseData['pathInfo']);
         $this->assertEquals($request->attributes(), $responseData['postFields']);
         $this->assertEquals($request->queries(), $responseData['queries']);
         $this->assertEquals($request->header('Authorization', 'notnull'), $responseData['authorization']);
@@ -277,8 +279,8 @@ class KangarooClientAdapterTest extends TestCase
         $request = new Request(['some' => 'query'], ['some' => 'post'], new ClientCredentials('id', 'secret'));
 
         $this->http->setResponse(function (KangarooRequest $kangarooRequest) use ($request, &$asserted) {
-            $this->assertEquals('/' . $this->basePath . '/revoke', $kangarooRequest->getPath());
-
+            $this->assertEquals('/'.$this->basePath, $kangarooRequest->getBasePath());
+            $this->assertEquals('/revoke', $kangarooRequest->getPathInfo());
             $this->assertEquals($request->attributes(), $kangarooRequest->getBody()->data());
             $this->assertEquals($request->queries(), $kangarooRequest->getQueries());
             $this->assertEquals($request->header('Authorization', 'notnull'), $kangarooRequest->getHeader('Authorization'));
