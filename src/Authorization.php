@@ -107,7 +107,7 @@ class Authorization
      */
     public function setLifetime($lifetime)
     {
-        $this->lifetime = (int)$lifetime;
+        $this->lifetime = $lifetime;
     }
 
     /**
