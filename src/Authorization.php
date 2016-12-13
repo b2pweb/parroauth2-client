@@ -12,35 +12,42 @@ class Authorization
      *
      * @var string
      */
-    protected $accessToken;
+    private $accessToken;
 
     /**
      * The type of token
      *
      * @var string
      */
-    protected $tokenType;
+    private $tokenType;
 
     /**
      * The token lifetime
      *
      * @var int
      */
-    protected $lifetime;
+    private $lifetime;
+
+    /**
+     * The token expiration date time
+     *
+     * @var int
+     */
+    private $expireAt;
 
     /**
      * The refresh token
      *
      * @var string
      */
-    protected $refreshToken;
+    private $refreshToken;
 
     /**
      * The scopes
      *
      * @var string[]
      */
-    protected $scopes;
+    private $scopes;
 
     /**
      * Authorization constructor.
@@ -53,21 +60,12 @@ class Authorization
      */
     public function __construct($accessToken, $tokenType, $lifetime = -1, $refreshToken = null, array $scopes = [])
     {
+        $this->lifetime = (int)$lifetime;
+        $this->expireAt = time() + $this->lifetime;
         $this->accessToken = $accessToken;
         $this->tokenType = $tokenType;
-        $this->lifetime = $lifetime;
         $this->refreshToken = $refreshToken;
         $this->scopes = $scopes;
-    }
-
-    /**
-     * Set the access token
-     *
-     * @param string $accessToken
-     */
-    public function setAccessToken($accessToken)
-    {
-        $this->accessToken = $accessToken;
     }
 
     /**
@@ -81,16 +79,6 @@ class Authorization
     }
 
     /**
-     * Set the token type
-     *
-     * @param string $type
-     */
-    public function setTokenType($type)
-    {
-        $this->tokenType = $type;
-    }
-
-    /**
      * Get the token type
      *
      * @return string
@@ -98,16 +86,6 @@ class Authorization
     public function tokenType()
     {
         return $this->tokenType;
-    }
-
-    /**
-     * Set the token life time
-     *
-     * @param int $lifetime
-     */
-    public function setLifetime($lifetime)
-    {
-        $this->lifetime = $lifetime;
     }
 
     /**
@@ -121,16 +99,6 @@ class Authorization
     }
 
     /**
-     * Set the refresh token
-     *
-     * @param string $refreshToken
-     */
-    public function setRefreshToken($refreshToken)
-    {
-        $this->refreshToken = $refreshToken;
-    }
-
-    /**
      * Get the refresh token
      *
      * @return string
@@ -138,20 +106,6 @@ class Authorization
     public function refreshToken()
     {
         return $this->refreshToken;
-    }
-
-    /**
-     * Set the scopes
-     *
-     * @param string[] $scopes
-     *
-     * @return Authorization
-     */
-    public function setScopes(array $scopes)
-    {
-        $this->scopes = $scopes;
-
-        return $this;
     }
 
     /**
@@ -185,7 +139,7 @@ class Authorization
      */
     public function isExpired($delta = 0)
     {
-        return $this->lifetime >= 0 && $this->lifetime <= (time() + $delta);
+        return $this->lifetime !== -1 && $this->expireAt <= (time() + $delta);
     }
 
     /**

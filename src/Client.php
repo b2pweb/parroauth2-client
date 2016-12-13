@@ -97,7 +97,7 @@ class Client
         return new Authorization(
             $response->getBodyItem('access_token'),
             $response->getBodyItem('token_type'),
-            $response->getBodyItem('expires_in'),
+            $response->getBodyItem('expires_in', -1),
             $response->getBodyItem('refresh_token'),
             explode(' ', $response->getBodyItem('scope', ''))
         );

@@ -33,49 +33,9 @@ class AuthorizationTest extends TestCase
     {
         $authorization = new Authorization('access_token', 'bearer', 20, 'refresh_token', ['email']);
 
+        $this->assertEquals(20, $authorization->lifetime());
         $this->assertEquals('refresh_token', $authorization->refreshToken());
-        $this->assertEquals(20, $authorization->lifetime());
         $this->assertEquals(['email'], $authorization->scopes());
-    }
-
-    /**
-     *
-     */
-    public function test_set_get_access_token()
-    {
-        $authorization = new Authorization('access_token', 'bearer');
-        $authorization->setAccessToken('other_token');
-        $this->assertEquals('other_token', $authorization->accessToken());
-    }
-
-    /**
-     *
-     */
-    public function test_set_get_refresh_token()
-    {
-        $authorization = new Authorization('access_token', 'bearer');
-        $authorization->setRefreshToken('other_token');
-        $this->assertEquals('other_token', $authorization->refreshToken());
-    }
-
-    /**
-     *
-     */
-    public function test_set_get_lifetime_token()
-    {
-        $authorization = new Authorization('access_token', 'bearer');
-        $authorization->setLifetime(20);
-        $this->assertEquals(20, $authorization->lifetime());
-    }
-
-    /**
-     *
-     */
-    public function test_set_get_token_type()
-    {
-        $authorization = new Authorization('access_token', 'bearer');
-        $authorization->setTokenType('basic');
-        $this->assertEquals('basic', $authorization->tokenType());
     }
 
     /**
@@ -83,9 +43,8 @@ class AuthorizationTest extends TestCase
      */
     public function test_set_get_has_scopes()
     {
-        $authorization = new Authorization('access_token', 'bearer');
-        $authorization->setScopes(['email']);
-        $this->assertEquals(['email'], $authorization->scopes());
+        $authorization = new Authorization('access_token', 'bearer', 20, 'refresh_token', ['email']);
+
         $this->assertTrue($authorization->hasScope('email'));
         $this->assertFalse($authorization->hasScope('name'));
     }
@@ -110,13 +69,13 @@ class AuthorizationTest extends TestCase
         $authorization = new Authorization('access_token', 'bearer');
         $this->assertFalse($authorization->isExpired());
 
-        $authorization->setLifetime(1);
+        $authorization = new Authorization('access_token', 'bearer', 0);
         $this->assertTrue($authorization->isExpired());
 
-        $authorization->setLifetime(time() + 20);
+        $authorization = new Authorization('access_token', 'bearer', 20);
         $this->assertFalse($authorization->isExpired());
 
-        $authorization->setLifetime(time() + 20);
+        $authorization = new Authorization('access_token', 'bearer', 20);
         $this->assertTrue($authorization->isExpired(30));
     }
 }
