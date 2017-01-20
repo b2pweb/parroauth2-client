@@ -14,6 +14,7 @@ use Parroauth2\Client\GrantTypes\PasswordGrantType;
 use Parroauth2\Client\GrantTypes\RefreshGrantType;
 use Parroauth2\Client\Introspection;
 use Parroauth2\Client\Request;
+use Parroauth2\Client\Response;
 use Parroauth2\Client\Tests\Stubs\TestableHttpClientAdapter;
 
 /**
@@ -214,6 +215,28 @@ class ClientTest extends TestCase
     /**
      *
      */
+    public function test_unit_introspection()
+    {
+        $token = 'token';
+        $hint = 'access_token';
+
+        $this->adapter = $this->createPartialMock(ClientAdapterInterface::class, ['token', 'authorize', 'introspect', 'revoke']);
+        $this->adapter
+            ->expects($this->once())
+            ->method('introspect')
+            ->with(new Request([], [
+                'token'           => $token,
+                'token_type_hint' => $hint,
+            ]))
+            ->willReturn(new Response())
+        ;
+
+        (new Client($this->adapter))->introspect($token, $hint);
+    }
+
+    /**
+     *
+     */
     public function test_unit_revoke()
     {
         $token = 'token';
@@ -223,7 +246,7 @@ class ClientTest extends TestCase
         $this->adapter
             ->expects($this->once())
             ->method('revoke')
-            ->with(new Request([
+            ->with(new Request([], [
                 'token'           => $token,
                 'token_type_hint' => $hint,
             ]))

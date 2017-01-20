@@ -154,10 +154,10 @@ class Client
             }
         }
 
-        $request = new Request(['token' => $token], [], $this->credentials);
+        $request = new Request([], ['token' => $token], $this->credentials);
         
         if ($hint) {
-            $request->addQuery('token_type_hint', $hint);
+            $request->addAttribute('token_type_hint', $hint);
         }
 
         return Introspection::fromResponse($this->client->introspect($request));
@@ -177,10 +177,10 @@ class Client
             }
         }
 
-        $request = new Request(['token' => $token], [], $this->credentials);
+        $request = new Request([], ['token' => $token], $this->credentials);
 
         if ($hint) {
-            $request->addQuery('token_type_hint', $hint);
+            $request->addAttribute('token_type_hint', $hint);
         }
 
         $this->client->revoke($request);
