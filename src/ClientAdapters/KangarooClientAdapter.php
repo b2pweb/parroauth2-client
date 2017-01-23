@@ -9,6 +9,7 @@ use Parroauth2\Client\Exception\InvalidClientException;
 use Parroauth2\Client\Exception\InvalidGrantException;
 use Parroauth2\Client\Exception\InvalidRequestException;
 use Parroauth2\Client\Exception\InvalidScopeException;
+use Parroauth2\Client\Exception\OAuthServerException;
 use Parroauth2\Client\Exception\Parroauth2Exception;
 use Parroauth2\Client\Exception\ServerErrorException;
 use Parroauth2\Client\Exception\TemporarilyUnavailableException;
@@ -138,43 +139,10 @@ class KangarooClientAdapter implements ClientAdapterInterface
                 if (is_object($body->error)) {
                     return new Parroauth2Exception('An error has occurred:' . PHP_EOL . print_r($body->error, true), 400);
                 } else {
-                    switch ($body->error) {
-                        case 'access_denied':
-                            return new AccessDeniedException(isset($body->error_description) ? $body->error_description : 'Access denied', $response->getStatusCode());
-
-                        case 'invalid_client':
-                            return new InvalidClientException(isset($body->error_description) ? $body->error_description : 'Invalid client', $response->getStatusCode());
-
-                        case 'invalid_grant':
-                            return new InvalidGrantException(isset($body->error_description) ? $body->error_description : 'Invalid grant', $response->getStatusCode());
-
-                        case 'invalid_request':
-                            return new InvalidRequestException(isset($body->error_description) ? $body->error_description : 'Invalid request', $response->getStatusCode());
-
-                        case 'invalid_scope':
-                            return new InvalidScopeException(isset($body->error_description) ? $body->error_description : 'Invalid scope', $response->getStatusCode());
-
-                        case 'server_error':
-                            return new ServerErrorException(isset($body->error_description) ? $body->error_description : 'Server error', $response->getStatusCode());
-
-                        case 'temporarily_unavailable':
-                            return new TemporarilyUnavailableException(isset($body->error_description) ? $body->error_description : 'Temporarily unavailable', $response->getStatusCode());
-
-                        case 'unauthorized_client':
-                            return new UnauthorizedClientException(isset($body->error_description) ? $body->error_description : 'Unauthorized client', $response->getStatusCode());
-
-                        case 'unsupported_grant_type':
-                            return new UnsupportedGrantTypeException(isset($body->error_description) ? $body->error_description : 'Unsupported grant type', $response->getStatusCode());
-
-                        case 'unsupported_response_type':
-                            return new UnsupportedResponseTypeException(isset($body->error_description) ? $body->error_description : 'Unsupported response type', $response->getStatusCode());
-
-                        default:
-                            return new Parroauth2Exception(isset($body->error_description) ? $body->error_description : 'An error has occurred', 400);
-                    }
+                    return OAuthServerException::createFromResponse($body, $response->getStatusCode());
                 }
             } else {
-                return new Parroauth2Exception($body->error, 400);
+                return new Parroauth2Exception($body, 400);
             }
         }
 

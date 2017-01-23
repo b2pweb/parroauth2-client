@@ -49,7 +49,7 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
             return $this->delegate->token($request);
         }
 
-        throw new InvalidRequestException('Access granting is not available');
+        throw new InvalidRequestException(400, 'Access granting is not available');
     }
 
     /**
@@ -63,7 +63,7 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
             return $this->delegate->authorize($request, $onSuccess);
         }
 
-        throw new InvalidRequestException('Authorize procedure is not available');
+        throw new InvalidRequestException(400, 'Authorize procedure is not available');
     }
 
     /**
@@ -113,6 +113,6 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
             return $this->delegate->revoke($request);
         }
 
-        throw new InvalidRequestException('Access revoking is not available');
+        throw new InvalidRequestException(400, 'Access revoking is not available');
     }
 }
