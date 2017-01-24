@@ -42,6 +42,8 @@ class Client
     }
 
     /**
+     * Request for token from username / password
+     *
      * @param string $username
      * @param string $password
      * @param string[] $scopes
@@ -54,6 +56,8 @@ class Client
     }
 
     /**
+     * Refresh the token
+     *
      * @param Authorization|string $token
      * @param string[] $scopes
      *
@@ -69,6 +73,8 @@ class Client
     }
 
     /**
+     * Request the token from authorization code
+     *
      * @param string $code
      * @param string $redirectUri
      * @param string $clientId
@@ -82,6 +88,8 @@ class Client
     }
 
     /**
+     * Request a token from the oauth2 grant type
+     *
      * @param GrantTypeInterface $grantType
      *
      * @return Authorization
@@ -104,13 +112,16 @@ class Client
     }
 
     /**
+     * Get the authorization uri
+     *
      * @param string $redirectUri
      * @param string[] $scopes
      * @param string $state
      * @param string $clientId
-     * @param callable $onSuccess
+     *
+     * @return string
      */
-    public function authorize($redirectUri, array $scopes = [], $state = '', $clientId = '', callable $onSuccess = null)
+    public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null)
     {
         $request = new Request([
             'response_type' => 'code',
@@ -121,24 +132,26 @@ class Client
             $request->addQuery('scope', implode(' ', $scopes));
         }
 
-        if ($state) {
+        if ($state !== null) {
             $request->addQuery('state', $state);
         }
 
-        if (!$clientId && $this->credentials) {
+        if ($clientId === null && $this->credentials) {
             $clientId = $this->credentials->id();
         }
 
-        if (!$clientId) {
+        if ($clientId === null) {
             throw new InvalidArgumentException('Client id is required');
         }
 
         $request->addQuery('client_id', $clientId);
 
-        $this->client->authorize($request, $onSuccess);
+        return $this->client->getAuthorizationUri($request);
     }
 
     /**
+     * Introspect a token
+     *
      * @param Authorization|string $token
      * @param string $hint
      * 
@@ -164,6 +177,8 @@ class Client
     }
 
     /**
+     * Revoke the token
+     *
      * @param Authorization|string $token
      * @param string $hint
      */
