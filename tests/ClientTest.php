@@ -254,4 +254,29 @@ class ClientTest extends TestCase
 
         (new Client($this->adapter))->revoke($token, $hint);
     }
+
+    /**
+     *
+     */
+    public function test_get_authorization_uri()
+    {
+        $uri = 'http://localhost/foo/bar';
+        $clientId = 'b2pweb';
+
+        $this->adapter = $this->createMock(ClientAdapterInterface::class);
+        $this->adapter
+            ->expects($this->once())
+            ->method('getAuthorizationUri')
+            ->with(new Request([
+                'response_type' => 'code',
+                'redirect_uri'  => $uri,
+                'client_id'  => $clientId,
+            ]))
+            ->willReturn($uri)
+        ;
+
+        $redirect = (new Client($this->adapter))->getAuthorizationUri($uri, null, null, $clientId);
+
+        $this->assertEquals($uri, $redirect);
+    }
 }

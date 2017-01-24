@@ -115,9 +115,9 @@ class Client
      * Get the authorization uri
      *
      * @param string $redirectUri
-     * @param string[] $scopes
-     * @param string $state
-     * @param string $clientId
+     * @param null|string[] $scopes
+     * @param null|string $state
+     * @param null|string $clientId
      *
      * @return string
      */
@@ -128,7 +128,7 @@ class Client
             'redirect_uri' => $redirectUri,
         ]);
 
-        if ($scopes) {
+        if ($scopes !== null) {
             $request->addQuery('scope', implode(' ', $scopes));
         }
 
