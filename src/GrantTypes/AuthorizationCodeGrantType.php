@@ -5,9 +5,9 @@ namespace Parroauth2\Client\GrantTypes;
 use Parroauth2\Client\Request;
 
 /**
- * AuthorizationGrantType
+ * AuthorizationCodeGrantType
  */
-class AuthorizationGrantType implements GrantTypeInterface
+class AuthorizationCodeGrantType implements GrantTypeInterface
 {
     /**
      * @var string
@@ -25,24 +25,17 @@ class AuthorizationGrantType implements GrantTypeInterface
     protected $clientId;
 
     /**
-     * @var string[]
-     */
-    protected $scopes;
-
-    /**
      * AuthorizationGrantType constructor.
      *
      * @param string $code
-     * @param string $redirectUri
-     * @param string $clientId
-     * @param string[] $scopes
+     * @param null|string $redirectUri
+     * @param null|string $clientId
      */
-    public function __construct($code, $redirectUri, $clientId, array $scopes = [])
+    public function __construct($code, $redirectUri = null, $clientId = null)
     {
         $this->code = $code;
         $this->redirectUri = $redirectUri;
         $this->clientId = $clientId;
-        $this->scopes = $scopes;
     }
 
     /**
@@ -67,16 +60,12 @@ class AuthorizationGrantType implements GrantTypeInterface
             'code'       => $this->code,
         ];
 
-        if ($this->redirectUri) {
+        if ($this->redirectUri !== null) {
             $data['redirect_uri'] = $this->redirectUri;
         }
 
-        if ($this->clientId) {
+        if ($this->clientId !== null) {
             $data['client_id'] = $this->clientId;
-        }
-
-        if ($this->scopes) {
-            $data['scope'] = implode(' ', $this->scopes);
         }
 
         return $data;

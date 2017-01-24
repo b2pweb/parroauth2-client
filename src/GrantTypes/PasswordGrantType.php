@@ -29,9 +29,9 @@ class PasswordGrantType implements GrantTypeInterface
      * 
      * @param string $username
      * @param string $password
-     * @param string[] $scopes
+     * @param null|string[] $scopes
      */
-    public function __construct($username, $password, array $scopes = [])
+    public function __construct($username, $password, array $scopes = null)
     {
         $this->username = $username;
         $this->password = $password;
@@ -59,7 +59,7 @@ class PasswordGrantType implements GrantTypeInterface
             'password'   => $this->password,
         ];
 
-        if ($this->scopes) {
+        if ($this->scopes !== null) {
             $data['scope'] = implode(' ', $this->scopes);
         }
 

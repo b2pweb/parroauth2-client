@@ -5,10 +5,10 @@ namespace Parroauth2\Client;
 use InvalidArgumentException;
 use Parroauth2\Client\ClientAdapters\ClientAdapterInterface;
 use Parroauth2\Client\Credentials\ClientCredentials;
-use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
+use Parroauth2\Client\GrantTypes\AuthorizationCodeGrantType;
 use Parroauth2\Client\GrantTypes\GrantTypeInterface;
 use Parroauth2\Client\GrantTypes\PasswordGrantType;
-use Parroauth2\Client\GrantTypes\RefreshGrantType;
+use Parroauth2\Client\GrantTypes\RefreshTokenGrantType;
 
 /**
  * The oauth2 client
@@ -46,11 +46,11 @@ class Client
      *
      * @param string $username
      * @param string $password
-     * @param string[] $scopes
+     * @param null|string[] $scopes
      * 
      * @return Authorization
      */
-    public function login($username, $password, array $scopes = [])
+    public function login($username, $password, array $scopes = null)
     {
         return $this->token(new PasswordGrantType($username, $password, $scopes));
     }
@@ -59,32 +59,31 @@ class Client
      * Refresh the token
      *
      * @param Authorization|string $token
-     * @param string[] $scopes
+     * @param null|string[] $scopes
      *
      * @return Authorization
      */
-    public function refresh($token, array $scopes = [])
+    public function refresh($token, array $scopes = null)
     {
         if ($token instanceof Authorization) {
             $token = $token->refreshToken();
         }
 
-        return $this->token(new RefreshGrantType($token, $scopes));
+        return $this->token(new RefreshTokenGrantType($token, $scopes));
     }
 
     /**
      * Request the token from authorization code
      *
      * @param string $code
-     * @param string $redirectUri
-     * @param string $clientId
-     * @param string[] $scopes
+     * @param null|string $redirectUri
+     * @param null|string $clientId
      *
      * @return Authorization
      */
-    public function tokenFromAuthorizationCode($code, $redirectUri, $clientId, array $scopes = [])
+    public function tokenFromAuthorizationCode($code, $redirectUri = null, $clientId = null)
     {
-        return $this->token(new AuthorizationGrantType($code, $redirectUri, $clientId, $scopes));
+        return $this->token(new AuthorizationCodeGrantType($code, $redirectUri, $clientId));
     }
 
     /**

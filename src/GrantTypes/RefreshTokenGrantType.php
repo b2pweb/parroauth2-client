@@ -5,9 +5,9 @@ namespace Parroauth2\Client\GrantTypes;
 use Parroauth2\Client\Request;
 
 /**
- * RefreshGrantType
+ * RefreshTokenGrantType
  */
-class RefreshGrantType implements GrantTypeInterface
+class RefreshTokenGrantType implements GrantTypeInterface
 {
     /**
      * @var string
@@ -23,9 +23,9 @@ class RefreshGrantType implements GrantTypeInterface
      * RefreshGrantType constructor.
      * 
      * @param string $token
-     * @param string[] $scopes
+     * @param null|string[] $scopes
      */
-    public function __construct($token, array $scopes = [])
+    public function __construct($token, array $scopes = null)
     {
         $this->token = $token;
         $this->scopes = $scopes;
@@ -51,7 +51,7 @@ class RefreshGrantType implements GrantTypeInterface
             'token'      => $this->token,
         ];
 
-        if ($this->scopes) {
+        if ($this->scopes !== null) {
             $data['scope'] = implode(' ', $this->scopes);
         }
 

@@ -9,9 +9,9 @@ use Parroauth2\Client\ClientAdapters\ClientAdapterInterface;
 use Parroauth2\Client\ClientAdapters\KangarooClientAdapter;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\Authorization;
-use Parroauth2\Client\GrantTypes\AuthorizationGrantType;
+use Parroauth2\Client\GrantTypes\AuthorizationCodeGrantType;
 use Parroauth2\Client\GrantTypes\PasswordGrantType;
-use Parroauth2\Client\GrantTypes\RefreshGrantType;
+use Parroauth2\Client\GrantTypes\RefreshTokenGrantType;
 use Parroauth2\Client\Introspection;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
@@ -83,7 +83,7 @@ class ClientTest extends TestCase
         $client
             ->expects($this->once())
             ->method('token')
-            ->with(new RefreshGrantType($token, $expectedAuthorization->scopes()))
+            ->with(new RefreshTokenGrantType($token, $expectedAuthorization->scopes()))
             ->willReturn($expectedAuthorization)
         ;
 
@@ -104,7 +104,7 @@ class ClientTest extends TestCase
         $client
             ->expects($this->once())
             ->method('token')
-            ->with(new AuthorizationGrantType($code, $redirectUri, $clientId))
+            ->with(new AuthorizationCodeGrantType($code, $redirectUri, $clientId))
             ->willReturn($expectedAuthorization)
         ;
 
@@ -147,7 +147,7 @@ class ClientTest extends TestCase
             'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
 
-        $this->assertEquals($expectedAuthorization, $this->client->token(new RefreshGrantType($token, $expectedAuthorization->scopes())));
+        $this->assertEquals($expectedAuthorization, $this->client->token(new RefreshTokenGrantType($token, $expectedAuthorization->scopes())));
     }
 
     /**
@@ -168,7 +168,7 @@ class ClientTest extends TestCase
             'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
 
-        $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationGrantType($code, $redirectUri, $clientId)));
+        $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationCodeGrantType($code, $redirectUri, $clientId)));
     }
 
     /**
@@ -189,7 +189,7 @@ class ClientTest extends TestCase
             'scope'         => implode(' ', $expectedAuthorization->scopes()),
         ]));
 
-        $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationGrantType($code, $redirectUri, $clientId)));
+        $this->assertEquals($expectedAuthorization, $this->client->token(new AuthorizationCodeGrantType($code, $redirectUri, $clientId)));
     }
 
     /**
