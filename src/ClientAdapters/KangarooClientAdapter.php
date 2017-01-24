@@ -4,18 +4,8 @@ namespace Parroauth2\Client\ClientAdapters;
 
 use Kangaroo\ApiScope;
 use Kangaroo\Response as KangarooResponse;
-use Parroauth2\Client\Exception\AccessDeniedException;
-use Parroauth2\Client\Exception\InvalidClientException;
-use Parroauth2\Client\Exception\InvalidGrantException;
-use Parroauth2\Client\Exception\InvalidRequestException;
-use Parroauth2\Client\Exception\InvalidScopeException;
 use Parroauth2\Client\Exception\OAuthServerException;
 use Parroauth2\Client\Exception\Parroauth2Exception;
-use Parroauth2\Client\Exception\ServerErrorException;
-use Parroauth2\Client\Exception\TemporarilyUnavailableException;
-use Parroauth2\Client\Exception\UnauthorizedClientException;
-use Parroauth2\Client\Exception\UnsupportedGrantTypeException;
-use Parroauth2\Client\Exception\UnsupportedResponseTypeException;
 use Parroauth2\Client\Request;
 use Parroauth2\Client\Response;
 
@@ -75,22 +65,10 @@ class KangarooClientAdapter implements ClientAdapterInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws Parroauth2Exception
      */
-    public function authorize(Request $request, callable $onSuccess = null)
+    public function getAuthorizationUri(Request $request, callable $onSuccess = null)
     {
-        $location = $this->api->url($this->endPoints['authorize'], $request->queries());
-
-        if ($onSuccess) {
-            return call_user_func(
-                $onSuccess,
-                $location
-            );
-        }
-
-        header('Location: ' . $location);
-        exit;
+        return $this->api->url($this->endPoints['authorize'], $request->queries());
     }
 
     /**

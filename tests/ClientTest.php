@@ -220,7 +220,7 @@ class ClientTest extends TestCase
         $token = 'token';
         $hint = 'access_token';
 
-        $this->adapter = $this->createPartialMock(ClientAdapterInterface::class, ['token', 'authorize', 'introspect', 'revoke']);
+        $this->adapter = $this->createMock(ClientAdapterInterface::class);
         $this->adapter
             ->expects($this->once())
             ->method('introspect')
@@ -242,7 +242,7 @@ class ClientTest extends TestCase
         $token = 'token';
         $hint = 'access_token';
 
-        $this->adapter = $this->createPartialMock(ClientAdapterInterface::class, ['token', 'authorize', 'introspect', 'revoke']);
+        $this->adapter = $this->createMock(ClientAdapterInterface::class);
         $this->adapter
             ->expects($this->once())
             ->method('revoke')

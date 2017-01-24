@@ -20,14 +20,13 @@ interface ClientAdapterInterface
     public function token(Request $request);
 
     /**
-     * Request a oauth2 authorization code
+     * Get the oauth2 uri for authorization code
      *
      * @param Request $request
-     * @param callable $onSuccess
      *
-     * @return Response
+     * @return string
      */
-    public function authorize(Request $request, callable $onSuccess = null);
+    public function getAuthorizationUri(Request $request);
 
     /**
      * Introspect a token

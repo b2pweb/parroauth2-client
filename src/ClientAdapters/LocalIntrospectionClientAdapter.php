@@ -57,10 +57,10 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
      *
      * @throws InvalidRequestException
      */
-    public function authorize(Request $request, callable $onSuccess = null)
+    public function getAuthorizationUri(Request $request)
     {
         if ($this->delegate !== null) {
-            return $this->delegate->authorize($request, $onSuccess);
+            return $this->delegate->getAuthorizationUri($request);
         }
 
         throw new InvalidRequestException(400, 'Authorize procedure is not available');

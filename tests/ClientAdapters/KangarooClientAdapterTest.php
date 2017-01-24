@@ -147,31 +147,15 @@ class KangarooClientAdapterTest extends TestCase
     }
 
     /**
-     * @runInSeparateProcess
-     */
-    public function test_authorize_redirects()
-    {
-        $request = new Request(['some' => 'parameter']);
-
-        $this->client->authorize($request);
-
-        $this->fail('Adapter should have exited the script');
-    }
-
-    /**
      *
      */
-    public function test_authorize_redirects_runs_user_callback()
+    public function test_get_authorizeation_uri()
     {
         $request = new Request(['some' => 'parameter']);
 
-        $data = [];
+        $location = $this->client->getAuthorizationUri($request);
 
-        $this->client->authorize($request, function($location) use (&$data) {
-            $data['location'] = $location;
-        });
-
-        $this->assertEquals('http://localhost/oauth2/authorize?some=parameter', $data['location']);
+        $this->assertEquals('http://localhost/oauth2/authorize?some=parameter', $location);
     }
 
     /**

@@ -69,7 +69,24 @@ class LocalIntrospectionClientAdapterTest extends TestCase
         $this->expectException(InvalidRequestException::class);
         $this->expectExceptionMessage('Authorize procedure is not available');
 
-        $this->client->authorize(new Request());
+        $this->client->getAuthorizationUri(new Request());
+    }
+
+    /**
+     *
+     */
+    public function test_get_authorization_uri()
+    {
+        $unserializer = $this->createMock(JwtUnserializer::class);
+        $delegate = $this->createMock(LocalIntrospectionClientAdapter::class);
+        $delegate->expects($this->once())->method('getAuthorizationUri')->willReturn('bar');
+
+        $this->client = new LocalIntrospectionClientAdapter($unserializer, $delegate);
+        $request = new Request(['some' => 'parameter']);
+
+        $location = $this->client->getAuthorizationUri($request);
+
+        $this->assertEquals('bar', $location);
     }
 
     /**
