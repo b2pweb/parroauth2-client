@@ -47,8 +47,8 @@ class RefreshTokenGrantType implements GrantTypeInterface
     protected function toArray()
     {
         $data = [
-            'grant_type' => 'refresh_token',
-            'token'      => $this->token,
+            'grant_type'    => 'refresh_token',
+            'refresh_token' => $this->token,
         ];
 
         if ($this->scopes !== null) {
