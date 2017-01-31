@@ -49,7 +49,7 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
             return $this->delegate->token($request);
         }
 
-        throw new InvalidRequestException(400, 'Access granting is not available');
+        throw new InvalidRequestException('Access granting is not available');
     }
 
     /**
@@ -63,7 +63,7 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
             return $this->delegate->getAuthorizationUri($request);
         }
 
-        throw new InvalidRequestException(400, 'Authorize procedure is not available');
+        throw new InvalidRequestException('Authorize procedure is not available');
     }
 
     /**
@@ -80,7 +80,7 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
 //        }
 
         if ($request->query('token_type_hint') === 'refresh_token') {
-            throw new InvalidRequestException('Refresh token introspect is not available. You can only introspect access tokens', 400);
+            throw new InvalidRequestException('Refresh token introspect is not available. You can only introspect access tokens');
         }
 
         $data = $this->unserializer->unserialize($request->query('token'));
@@ -113,6 +113,6 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
             return $this->delegate->revoke($request);
         }
 
-        throw new InvalidRequestException(400, 'Access revoking is not available');
+        throw new InvalidRequestException('Access revoking is not available');
     }
 }

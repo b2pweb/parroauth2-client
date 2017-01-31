@@ -115,20 +115,19 @@ class KangarooClientAdapter implements ClientAdapterInterface
         if ($body = $response->getBody()) {
             if (is_object($body)) {
                 if (is_object($body->error)) {
-                    return new Parroauth2Exception('An error has occurred:' . PHP_EOL . print_r($body->error, true), 400);
+                    return new Parroauth2Exception('An error has occurred:' . PHP_EOL . print_r($body->error, true));
                 } else {
                     return OAuthServerException::create(
-                        $response->getStatusCode(),
                         $body->error,
                         isset($body->error_description) ? $body->error_description : null,
                         isset($body->hint) ? $body->hint : null
                     );
                 }
             } else {
-                return new Parroauth2Exception($body, 400);
+                return new Parroauth2Exception($body);
             }
         }
 
-        return new Parroauth2Exception('An error has occurred', 400);
+        return new Parroauth2Exception('An error has occurred');
     }
 }

@@ -12,13 +12,13 @@ class AccessDeniedException extends OAuthServerException
     /**
      * AccessDeniedException constructor.
      *
-     * @param string $code
-     * @param int $message
-     * @param null $hint
+     * @param string $message
+     * @param string|null $hint
      * @param \Exception|null $previous
+     * @param int $code
      */
-    public function __construct($code, $message, $hint = null, \Exception $previous = null)
+    public function __construct($message, $hint = null, \Exception $previous = null, $code = 0)
     {
-        parent::__construct(self::ERROR_TYPE, $code, $message, $hint, $previous);
+        parent::__construct(403, self::ERROR_TYPE, $message, $hint, $previous, $code);
     }
 }

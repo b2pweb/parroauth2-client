@@ -8,6 +8,13 @@ namespace Parroauth2\Client\Exception;
 class OAuthServerException extends Parroauth2Exception
 {
     /**
+     * The http status code
+     *
+     * @var int
+     */
+    private $statusCode;
+
+    /**
      * @var string
      */
     private $errorType;
@@ -21,18 +28,30 @@ class OAuthServerException extends Parroauth2Exception
     /**
      * OAuthServerException constructor.
      *
+     * @param int $statusCode
      * @param string $errorType
-     * @param int $code
      * @param string $message
      * @param string $hint
      * @param \Exception $previous
+     * @param int $code
      */
-    public function __construct($errorType, $code, $message, $hint = null, \Exception $previous = null)
+    public function __construct($statusCode, $errorType, $message, $hint = null, \Exception $previous = null, $code = 0)
     {
         parent::__construct($message, $code, $previous);
 
+        $this->statusCode = $statusCode;
         $this->errorType = $errorType;
         $this->hint = $hint;
+    }
+
+    /**
+     * Get the http status code
+     *
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
     }
 
     /**
@@ -58,7 +77,6 @@ class OAuthServerException extends Parroauth2Exception
     /**
      * Create the exception from a standard OAuth2 error response
      *
-     * @param int $statusCode
      * @param string $type
      * @param string $message
      * @param string|null $hint
@@ -66,41 +84,41 @@ class OAuthServerException extends Parroauth2Exception
      *
      * @return OAuthServerException
      */
-    public static function create($statusCode, $type, $message, $hint = null, \Exception $previous = null)
+    public static function create($type, $message, $hint = null, \Exception $previous = null, $code = 0)
     {
         switch ($type) {
             case AccessDeniedException::ERROR_TYPE:
-                return new AccessDeniedException($statusCode, $message ?: 'Access denied', $hint, $previous);
+                return new AccessDeniedException($message ?: 'Access denied', $hint, $previous, $code);
 
             case InvalidClientException::ERROR_TYPE:
-                return new InvalidClientException($statusCode, $message ?: 'Invalid client', $hint, $previous);
+                return new InvalidClientException($message ?: 'Invalid client', $hint, $previous, $code);
 
             case InvalidGrantException::ERROR_TYPE:
-                return new InvalidGrantException($statusCode, $message ?: 'Invalid grant', $hint, $previous);
+                return new InvalidGrantException($message ?: 'Invalid grant', $hint, $previous, $code);
 
             case InvalidRequestException::ERROR_TYPE:
-                return new InvalidRequestException($statusCode, $message ?: 'Invalid request', $hint, $previous);
+                return new InvalidRequestException($message ?: 'Invalid request', $hint, $previous, $code);
 
             case InvalidScopeException::ERROR_TYPE:
-                return new InvalidScopeException($statusCode, $message ?: 'Invalid scope', $hint, $previous);
+                return new InvalidScopeException($message ?: 'Invalid scope', $hint, $previous, $code);
 
             case ServerErrorException::ERROR_TYPE:
-                return new ServerErrorException($statusCode, $message ?: 'Server error', $hint, $previous);
+                return new ServerErrorException($message ?: 'Server error', $hint, $previous, $code);
 
             case TemporarilyUnavailableException::ERROR_TYPE:
-                return new TemporarilyUnavailableException($statusCode, $message ?: 'Temporarily unavailable', $hint, $previous);
+                return new TemporarilyUnavailableException($message ?: 'Temporarily unavailable', $hint, $previous, $code);
 
             case UnauthorizedClientException::ERROR_TYPE:
-                return new UnauthorizedClientException($statusCode, $message ?: 'Unauthorized client', $hint, $previous);
+                return new UnauthorizedClientException($message ?: 'Unauthorized client', $hint, $previous, $code);
 
             case UnsupportedGrantTypeException::ERROR_TYPE:
-                return new UnsupportedGrantTypeException($statusCode, $message ?: 'Unsupported grant type', $hint, $previous);
+                return new UnsupportedGrantTypeException($message ?: 'Unsupported grant type', $hint, $previous, $code);
 
             case UnsupportedResponseTypeException::ERROR_TYPE:
-                return new UnsupportedResponseTypeException($statusCode, $message ?: 'Unsupported response type', $hint, $previous);
+                return new UnsupportedResponseTypeException($message ?: 'Unsupported response type', $hint, $previous, $code);
 
             default:
-                return new static($type, $statusCode, $message ?: 'An error has occurred', $hint, $previous);
+                return new static(400, $type, $message ?: 'An error has occurred', $hint, $previous, $code);
         }
     }
 }
