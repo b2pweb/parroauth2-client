@@ -10,12 +10,12 @@ class OAuthServerException extends Parroauth2Exception
     /**
      * @var string
      */
-    protected $errorType;
+    private $errorType;
 
     /**
      * @var string
      */
-    protected $hint;
+    private $hint;
 
 
     /**
@@ -25,27 +25,32 @@ class OAuthServerException extends Parroauth2Exception
      * @param int $code
      * @param string $message
      * @param string $hint
+     * @param \Exception $previous
      */
-    public function __construct($errorType, $code, $message, $hint = "")
+    public function __construct($errorType, $code, $message, $hint = null, \Exception $previous = null)
     {
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
 
         $this->errorType = $errorType;
         $this->hint = $hint;
     }
 
     /**
+     * Get the error type
+     *
      * @return string
      */
-    public function errorType()
+    public function getErrorType()
     {
         return $this->errorType;
     }
 
     /**
+     * Get the error hint
+     *
      * @return string
      */
-    public function hint()
+    public function getHint()
     {
         return $this->hint;
     }
@@ -53,46 +58,49 @@ class OAuthServerException extends Parroauth2Exception
     /**
      * Create the exception from a standard OAuth2 error response
      *
-     * @param object $response The error response body. Should contains "error" and "error_description" attributes. May contains "hint" attribute
      * @param int $statusCode
+     * @param string $type
+     * @param string $message
+     * @param string|null $hint
+     * @param \Exception|null $previous
      *
      * @return OAuthServerException
      */
-    public static function createFromResponse($response, $statusCode)
+    public static function create($statusCode, $type, $message, $hint = null, \Exception $previous = null)
     {
-        switch ($response->error) {
+        switch ($type) {
             case AccessDeniedException::ERROR_TYPE:
-                return new AccessDeniedException($statusCode, isset($response->error_description) ? $response->error_description : 'Access denied', isset($response->hint) ? $response->hint : "");
+                return new AccessDeniedException($statusCode, $message ?: 'Access denied', $hint, $previous);
 
             case InvalidClientException::ERROR_TYPE:
-                return new InvalidClientException($statusCode, isset($response->error_description) ? $response->error_description : 'Invalid client', isset($response->hint) ? $response->hint : "");
+                return new InvalidClientException($statusCode, $message ?: 'Invalid client', $hint, $previous);
 
             case InvalidGrantException::ERROR_TYPE:
-                return new InvalidGrantException($statusCode, isset($response->error_description) ? $response->error_description : 'Invalid grant', isset($response->hint) ? $response->hint : "");
+                return new InvalidGrantException($statusCode, $message ?: 'Invalid grant', $hint, $previous);
 
             case InvalidRequestException::ERROR_TYPE:
-                return new InvalidRequestException($statusCode, isset($response->error_description) ? $response->error_description : 'Invalid request', isset($response->hint) ? $response->hint : "");
+                return new InvalidRequestException($statusCode, $message ?: 'Invalid request', $hint, $previous);
 
             case InvalidScopeException::ERROR_TYPE:
-                return new InvalidScopeException($statusCode, isset($response->error_description) ? $response->error_description : 'Invalid scope', isset($response->hint) ? $response->hint : "");
+                return new InvalidScopeException($statusCode, $message ?: 'Invalid scope', $hint, $previous);
 
             case ServerErrorException::ERROR_TYPE:
-                return new ServerErrorException($statusCode, isset($response->error_description) ? $response->error_description : 'Server error', isset($response->hint) ? $response->hint : "");
+                return new ServerErrorException($statusCode, $message ?: 'Server error', $hint, $previous);
 
             case TemporarilyUnavailableException::ERROR_TYPE:
-                return new TemporarilyUnavailableException($statusCode, isset($response->error_description) ? $response->error_description : 'Temporarily unavailable', isset($response->hint) ? $response->hint : "");
+                return new TemporarilyUnavailableException($statusCode, $message ?: 'Temporarily unavailable', $hint, $previous);
 
             case UnauthorizedClientException::ERROR_TYPE:
-                return new UnauthorizedClientException($statusCode, isset($response->error_description) ? $response->error_description : 'Unauthorized client', isset($response->hint) ? $response->hint : "");
+                return new UnauthorizedClientException($statusCode, $message ?: 'Unauthorized client', $hint, $previous);
 
             case UnsupportedGrantTypeException::ERROR_TYPE:
-                return new UnsupportedGrantTypeException($statusCode, isset($response->error_description) ? $response->error_description : 'Unsupported grant type', isset($response->hint) ? $response->hint : "");
+                return new UnsupportedGrantTypeException($statusCode, $message ?: 'Unsupported grant type', $hint, $previous);
 
             case UnsupportedResponseTypeException::ERROR_TYPE:
-                return new UnsupportedResponseTypeException($statusCode, isset($response->error_description) ? $response->error_description : 'Unsupported response type', isset($response->hint) ? $response->hint : "");
+                return new UnsupportedResponseTypeException($statusCode, $message ?: 'Unsupported response type', $hint, $previous);
 
             default:
-                return new static($response->error, $statusCode, isset($response->error_description) ? $response->error_description : 'An error has occurred', isset($response->hint) ? $response->hint : "");
+                return new static($type, $statusCode, $message ?: 'An error has occurred', $hint, $previous);
         }
     }
 }
