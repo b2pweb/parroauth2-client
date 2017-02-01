@@ -79,11 +79,11 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
 //            return new Response(['active' => false]);
 //        }
 
-        if ($request->query('token_type_hint') === 'refresh_token') {
+        if ($request->attribute('token_type_hint') === 'refresh_token') {
             throw new InvalidRequestException('Refresh token introspect is not available. You can only introspect access tokens');
         }
 
-        $data = $this->unserializer->unserialize($request->query('token'));
+        $data = $this->unserializer->unserialize($request->attribute('token'));
 
         if (null === $data) {
             return new Response(['active' => false]);
