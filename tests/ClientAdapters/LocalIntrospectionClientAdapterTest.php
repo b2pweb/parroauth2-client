@@ -153,7 +153,7 @@ class LocalIntrospectionClientAdapterTest extends TestCase
 
         $this->assertEquals(
             new Response(['active' => true, 'client_id' => $data['aud']] + $data),
-            $this->client->introspect(new Request(['token' => $token]))
+            $this->client->introspect(new Request([], ['token' => $token]))
         );
     }
 

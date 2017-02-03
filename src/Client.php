@@ -117,25 +117,17 @@ class Client
      * @param null|string[] $scopes
      * @param null|string $state
      * @param null|string $clientId
+     * @param array $parameters
      *
      * @return string
      */
-    public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null)
+    public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null, array $parameters = [])
     {
-        $request = new Request([
-            'response_type' => 'code',
-            'redirect_uri' => $redirectUri,
-        ]);
-
         if ($scopes !== null) {
-            $request->addQuery('scope', implode(' ', $scopes));
+            $scopes = implode(' ', $scopes);
         }
 
-        if ($state !== null) {
-            $request->addQuery('state', $state);
-        }
-
-        if ($clientId === null && $this->credentials) {
+        if ($clientId === null && $this->credentials !== null) {
             $clientId = $this->credentials->id();
         }
 
@@ -143,7 +135,13 @@ class Client
             throw new InvalidArgumentException('Client id is required');
         }
 
-        $request->addQuery('client_id', $clientId);
+        $parameters['response_type'] = 'code';
+        $parameters['redirect_uri'] = $redirectUri;
+        $parameters['scope'] = $scopes;
+        $parameters['state'] = $state;
+        $parameters['client_id'] = $clientId;
+
+        $request = new Request(array_filter($parameters));
 
         return $this->client->getAuthorizationUri($request);
     }
@@ -168,7 +166,7 @@ class Client
 
         $request = new Request([], ['token' => $token], $this->credentials);
         
-        if ($hint) {
+        if ($hint !== null) {
             $request->addAttribute('token_type_hint', $hint);
         }
 

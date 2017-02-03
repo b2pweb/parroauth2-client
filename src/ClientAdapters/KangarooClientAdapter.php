@@ -66,7 +66,7 @@ class KangarooClientAdapter implements ClientAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getAuthorizationUri(Request $request, callable $onSuccess = null)
+    public function getAuthorizationUri(Request $request)
     {
         return $this->api->url($this->endPoints['authorize'], $request->queries());
     }
