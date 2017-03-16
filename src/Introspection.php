@@ -335,11 +335,22 @@ class Introspection
     }
 
     /**
-     * @return array
+     * Get the metadata from key
+     *
+     * Returns a key value is key is not null
+     *
+     * @param string|null $key
+     * @param mixed $default
+     *
+     * @return mixed
      */
-    public function metadata()
+    public function metadata($key = null, $default = null)
     {
-        return $this->metadata;
+        if ($key === null) {
+            return $this->metadata;
+        }
+
+        return isset($this->metadata[$key]) ? $this->metadata[$key] : $default;
     }
 
     /**

@@ -34,10 +34,24 @@ class IntrospectionTest extends TestCase
     /**
      * 
      */
+    public function test_metadata()
+    {
+        $introspection = new Introspection();
+        $introspection->setMetadata(['foo' => 'bar']);
+
+        $this->assertSame(['foo' => 'bar'], $introspection->metadata());
+        $this->assertSame('bar', $introspection->metadata('foo'));
+        $this->assertSame(null, $introspection->metadata('unknown'));
+        $this->assertSame('bar', $introspection->metadata('unknown', 'bar'));
+    }
+
+    /**
+     *
+     */
     public function testFromResponse()
     {
         $time = time();
-        
+
         $expected = (new Introspection())
             ->setActive(true)
             ->setScopes(['scope1', 'scope2'])
