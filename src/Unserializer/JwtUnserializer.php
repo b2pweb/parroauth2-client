@@ -36,18 +36,18 @@ class JwtUnserializer implements UnserializerInterface
         }
 
         return [
-            'scope'      => $token->scope ?: '',
-            'client_id'  => $token->aud ?: '',
-            'username'   => $token->username ?: '',
-            'token_type' => $token->token_type ?: '',
-            'exp'        => $token->exp ?: 0,
-            'iat'        => $token->iat ?: 0,
-            'nbf'        => $token->nbf ?: 0,
-            'sub'        => $token->sub ?: '',
-            'aud'        => $token->aud ?: '',
-            'iss'        => $token->iss ?: '',
-            'jti'        => $token->jti ?: '',
-            'metadata'   => $token->metadata ?: [],
+            'scope'      => $token->scope ?? '',
+            'client_id'  => $token->aud ?? '',
+            'username'   => $token->username ?? '',
+            'token_type' => $token->token_type ?? '',
+            'exp'        => $token->exp ?? 0,
+            'iat'        => $token->iat ?? 0,
+            'nbf'        => $token->nbf ?? 0,
+            'sub'        => $token->sub ?? '',
+            'aud'        => $token->aud ?? '',
+            'iss'        => $token->iss ?? '',
+            'jti'        => $token->jti ?? '',
+            'metadata'   => $token->metadata ?? [],
         ];
     }
 }
