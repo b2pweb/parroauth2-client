@@ -106,7 +106,8 @@ class Client
             $response->getBodyItem('token_type'),
             $response->getBodyItem('expires_in', -1),
             $response->getBodyItem('refresh_token'),
-            explode(' ', $response->getBodyItem('scope', ''))
+            explode(' ', $response->getBodyItem('scope', '')),
+            $response->getBodyItem('id_token')
         );
     }
 

@@ -50,6 +50,13 @@ class Authorization
     private $scopes;
 
     /**
+     * The OpenID Connect idToken
+     *
+     * @var string
+     */
+    private $idToken;
+
+    /**
      * Authorization constructor.
      *
      * @param string $accessToken
@@ -57,8 +64,9 @@ class Authorization
      * @param int $lifetime
      * @param null|string $refreshToken
      * @param string[] $scopes
+     * @param null|string $idToken
      */
-    public function __construct($accessToken, $tokenType, $lifetime = -1, $refreshToken = null, array $scopes = [])
+    public function __construct($accessToken, $tokenType, $lifetime = -1, $refreshToken = null, array $scopes = [], string $idToken = null)
     {
         $this->lifetime = (int)$lifetime;
         $this->expireAt = time() + $this->lifetime;
@@ -66,6 +74,7 @@ class Authorization
         $this->tokenType = $tokenType;
         $this->refreshToken = $refreshToken;
         $this->scopes = $scopes;
+        $this->idToken = $idToken;
     }
 
     /**
@@ -106,6 +115,16 @@ class Authorization
     public function refreshToken()
     {
         return $this->refreshToken;
+    }
+
+    /**
+     * Get the id token
+     *
+     * @return string
+     */
+    public function idToken()
+    {
+        return $this->idToken;
     }
 
     /**

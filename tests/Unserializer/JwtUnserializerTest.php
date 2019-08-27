@@ -4,10 +4,6 @@ namespace Parroauth2\Client\Tests\Unserializer;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Parroauth2\Client\Exception\ParsingException;
 use Parroauth2\Client\Unserializer\JwtUnserializer;
 
 /**
@@ -43,18 +39,7 @@ class JwtUnserializerTest extends TestCase
         $this->privateKey = 'file://' . __DIR__ . '/../oauth-private.key';
         $this->publicKey = 'file://' . __DIR__ . '/../oauth-public.key';
 
-        $this->unserializer = new JwtUnserializer(new Parser(), $this->publicKey);
-    }
-
-    /**
-     *
-     */
-    public function test_csrf()
-    {
-        $signer = new Sha256();
-        $token = base64_encode($signer->sign('http://localhost', $this->privateKey)->__toString());
-
-        $this->assertTrue($signer->verify(base64_decode($token), 'http://localhost', $this->publicKey));
+        $this->unserializer = new JwtUnserializer($this->publicKey);
     }
 
     /**
@@ -68,18 +53,11 @@ class JwtUnserializerTest extends TestCase
     /**
      *
      */
-    public function test_decode_throws_parsing_exception_if_token__cannot_be_verified()
+    public function test_decode_throws_parsing_exception_if_token_cannot_be_verified()
     {
-        $token = (new Builder())
-            ->sign(new Sha256(), $this->privateKey)
-            ->getToken()
-            ->__toString()
-        ;
+        $token = \JWT::encode([], $this->privateKey, 'RS256');
 
-        $result = (new JwtUnserializer(
-            new Parser(),
-            'file://' . __DIR__ . '/../oauth-public-wrong.key'
-        ))->unserialize($token);
+        $result = (new JwtUnserializer('file://' . __DIR__ . '/../oauth-public-wrong.key'))->unserialize($token);
 
         $this->assertNull($result);
     }
@@ -104,25 +82,7 @@ class JwtUnserializerTest extends TestCase
             'metadata'   => (object)['userId' => 'id'],
         ];
 
-        $token = (new Builder())
-            ->setExpiration($expected['exp'])
-            ->setIssuedAt($expected['iat'])
-            ->setNotBefore($expected['nbf'])
-            ->setSubject($expected['sub'])
-            ->setAudience($expected['aud'])
-            ->setIssuer($expected['iss'])
-            ->setId($expected['jti'], true)
-
-            ->set('scope', $expected['scope'])
-            ->set('client_id', $expected['client_id'])
-            ->set('username', $expected['username'])
-            ->set('token_type', $expected['token_type'])
-            ->set('metadata', $expected['metadata'])
-
-            ->sign(new Sha256(), $this->privateKey)
-            ->getToken()
-            ->__toString()
-        ;
+        $token = \JWT::encode($expected, $this->privateKey, 'RS256');
 
         $this->assertEquals($expected, $this->unserializer->unserialize($token));
     }

@@ -4,9 +4,6 @@ namespace Parroauth2\Client\Tests\ClientAdapters;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Parroauth2\Client\ClientAdapters\LocalIntrospectionClientAdapter;
 use Parroauth2\Client\Credentials\ClientCredentials;
 use Parroauth2\Client\Exception\InvalidRequestException;
@@ -45,7 +42,7 @@ class LocalIntrospectionClientAdapterTest extends TestCase
         $this->privateKey = file_get_contents(__DIR__ . '/../oauth-private.key');
         $this->publicKey = file_get_contents(__DIR__ . '/../oauth-public.key');
 
-        $unserializer = new JwtUnserializer(new Parser(), $this->publicKey);
+        $unserializer = new JwtUnserializer($this->publicKey);
 
         $this->client = new LocalIntrospectionClientAdapter($unserializer);
     }
@@ -164,41 +161,7 @@ class LocalIntrospectionClientAdapterTest extends TestCase
      */
     protected function buildToken($data)
     {
-        $builder = (new Builder())
-            ->setExpiration($this->extract($data, 'exp'))
-            ->setIssuedAt($this->extract($data, 'iat'))
-            ->setNotBefore($this->extract($data, 'nbf'))
-            ->setSubject($this->extract($data, 'sub'))
-            ->setAudience($this->extract($data, 'aud'))
-            ->setIssuer($this->extract($data, 'iss'))
-            ->setId($this->extract($data, 'jti', true))
-        ;
-
-        if (isset($data['scope'])) {
-            $builder->set('scope', $data['scope']);
-        }
-
-        if (isset($data['client_id'])) {
-            $builder->set('client_id', $data['client_id']);
-        }
-
-        if (isset($data['username'])) {
-            $builder->set('username', $data['username']);
-        }
-
-        if (isset($data['token_type'])) {
-            $builder->set('token_type', $data['token_type']);
-        }
-
-        if (isset($data['metadata'])) {
-            $builder->set('metadata', $data['metadata']);
-        }
-
-        return $builder
-            ->sign(new Sha256(), $this->privateKey)
-            ->getToken()
-            ->__toString()
-        ;
+        return \JWT::encode($data, $this->privateKey, 'RS256');
     }
 
     /**

@@ -25,6 +25,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.6",
+        "ext-json": "*",
         "b2p/kangaroo": "~1.0"
     },
     "extra": {
@@ -34,9 +35,9 @@
     },
     "require-dev": {
         "b2p/bdf-phpunit": "~1.0",
-        "lcobucci/jwt": "^3.2"
+        "firebase/php-jwt": "~2.2"
     },
     "suggest": {
-        "lcobucci/jwt": "Required to use the SelfAdapter"
+        "firebase/php-jwt": "Required to use the self introspection"
     }
 }
