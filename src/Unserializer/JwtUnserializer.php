@@ -30,7 +30,7 @@ class JwtUnserializer implements UnserializerInterface
     public function unserialize($token)
     {
         try {
-            $token = \JWT::decode($token, $this->publicKey, ['HS256', 'HS512', 'HS384', 'RS256']);
+            $token = \JWT::decode($token, $this->publicKey, array_keys(\JWT::$supported_algs));
         } catch (Exception $e) {
             return null;
         }
