@@ -30,10 +30,11 @@
   },
   "require-dev": {
     "b2p/bdf-phpunit": "~1.0",
+    "lcobucci/jwt": "^3.2",
     "firebase/php-jwt": "~2.2"
   },
   "suggest": {
-    "firebase/php-jwt": "Required to use the self introspection"
+    "lcobucci/jwt": "Required to use the self introspection"
   },
   "extra": {
     "branch-alias": {

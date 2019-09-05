@@ -75,31 +75,37 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
         // L'introspection est faite localement, et les informations décodées ne sortent pas du périmètre de l'application
         // La gestion des crédentials client n'a donc pas été implémenté.
 
-//        if ($request->credentials() === null) {
-//            return new Response(['active' => false]);
-//        }
-
         if ($request->attribute('token_type_hint') === 'refresh_token') {
             throw new InvalidRequestException('Refresh token introspect is not available. You can only introspect access tokens');
         }
 
-        $data = $this->unserializer->unserialize($request->attribute('token'));
+        $token = $this->unserializer->unserialize($request->attribute('token'));
 
-        if (null === $data) {
+        if (null === $token) {
             return new Response(['active' => false]);
         }
 
-        //si pas resource owner et pas le propriétaire du tokent
-//        if ($request->credentials()->id() !== $data['client_id']) {
-//            return new Response(['active' => false]);
-//        }
+        $expired = $token->getClaim('exp', 0);
 
-        if ($data['exp'] >= 0 && $data['exp'] < time()) {
+        if ($expired >= 0 && $expired < time()) {
             return new Response(['active' => false]);
         }
 
-        $data['active'] = true;
-        return new Response($data);
+        return new Response([
+            'active'     => true,
+            'scope'      => $token->getClaim('scope', ''),
+            'client_id'  => $token->getClaim('aud', ''),
+            'username'   => $token->getClaim('username', ''),
+            'token_type' => $token->getClaim('token_type', ''),
+            'exp'        => $expired,
+            'iat'        => $token->getClaim('iat', 0),
+            'nbf'        => $token->getClaim('nbf', 0),
+            'sub'        => $token->getClaim('sub', ''),
+            'aud'        => $token->getClaim('aud', ''),
+            'iss'        => $token->getClaim('iss', ''),
+            'jti'        => $token->getClaim('jti', ''),
+            'metadata'   => $token->getClaim('metadata', []),
+        ]);
     }
 
     /**

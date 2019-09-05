@@ -3,6 +3,10 @@
 namespace Parroauth2\Client\Unserializer;
 
 use Exception;
+use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Signer;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token;
 
 /**
  * JwtUnserializer
@@ -10,18 +14,32 @@ use Exception;
 class JwtUnserializer implements UnserializerInterface
 {
     /**
+     * @var Parser
+     */
+    private $parser;
+
+    /**
+     * @var Signer
+     */
+    private $signer;
+
+    /**
      * @var string
      */
-    protected $publicKey;
+    private $publicKey;
 
     /**
      * JwtUnserializer constructor.
      *
-     * @param string $publicKey
+     * @param null|string $publicKey
+     * @param null|Signer $signer
+     * @param null|Parser $parser
      */
-    public function __construct($publicKey = null)
+    public function __construct(string $publicKey = null, Signer $signer = null, Parser $parser = null)
     {
         $this->publicKey = $publicKey;
+        $this->signer = $signer;
+        $this->parser = $parser ?: new Parser();
     }
 
     /**
@@ -30,24 +48,25 @@ class JwtUnserializer implements UnserializerInterface
     public function unserialize($token)
     {
         try {
-            $token = \JWT::decode($token, $this->publicKey, array_keys(\JWT::$supported_algs));
+            $token = $this->parser->parse($token);
+
+            $this->checkSignature($token);
         } catch (Exception $e) {
             return null;
         }
 
-        return [
-            'scope'      => $token->scope ?? '',
-            'client_id'  => $token->aud ?? '',
-            'username'   => $token->username ?? '',
-            'token_type' => $token->token_type ?? '',
-            'exp'        => $token->exp ?? 0,
-            'iat'        => $token->iat ?? 0,
-            'nbf'        => $token->nbf ?? 0,
-            'sub'        => $token->sub ?? '',
-            'aud'        => $token->aud ?? '',
-            'iss'        => $token->iss ?? '',
-            'jti'        => $token->jti ?? '',
-            'metadata'   => $token->metadata ?? [],
-        ];
+        return $token;
+    }
+
+    /**
+     * Check the token signature
+     *
+     * @param Token $token
+     */
+    protected function checkSignature($token)
+    {
+        if ($this->publicKey !== null) {
+            $token->verify($this->signer ?: new Sha256(), $this->publicKey);
+        }
     }
 }

@@ -4,6 +4,9 @@ namespace Parroauth2\Client\Tests\Unserializer;
 
 use Bdf\PHPUnit\TestCase;
 use DateTime;
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Parroauth2\Client\Unserializer\JwtUnserializer;
 
 /**
@@ -45,6 +48,17 @@ class JwtUnserializerTest extends TestCase
     /**
      *
      */
+    public function test_csrf()
+    {
+        $signer = new Sha256();
+        $token = base64_encode($signer->sign('http://localhost', $this->privateKey)->__toString());
+
+        $this->assertTrue($signer->verify(base64_decode($token), 'http://localhost', $this->publicKey));
+    }
+
+    /**
+     *
+     */
     public function test_decode_throws_parsing_exception_if_an_error_occurs()
     {
         $this->assertNull($this->unserializer->unserialize('SomeWrongToken'));
@@ -67,7 +81,7 @@ class JwtUnserializerTest extends TestCase
      */
     public function test_decode()
     {
-        $expected = [
+        $data = [
             'scope'      => 'scope',
             'client_id'  => 'audience',
             'username'   => 'username',
@@ -82,8 +96,13 @@ class JwtUnserializerTest extends TestCase
             'metadata'   => (object)['userId' => 'id'],
         ];
 
-        $token = \JWT::encode($expected, $this->privateKey, 'RS256');
+        $token = \JWT::encode($data, $this->privateKey, 'RS256');
 
-        $this->assertEquals($expected, $this->unserializer->unserialize($token));
+        $builder = new Builder();
+        foreach ($data as $key => $value) {
+            $builder->withClaim($key, $value);
+        }
+
+        $this->assertEquals($builder->getToken(new Sha256(), new Key($this->privateKey)), $this->unserializer->unserialize($token));
     }
 }

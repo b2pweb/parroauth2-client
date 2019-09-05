@@ -2,6 +2,8 @@
 
 namespace Parroauth2\Client\Unserializer;
 
+use Lcobucci\JWT\Token;
+
 /**
  * UnserializerInterface
  */
@@ -12,7 +14,7 @@ interface UnserializerInterface
      *
      * @param string $token
      *
-     * @return null|array
+     * @return null|Token
      */
     public function unserialize($token);
 }
