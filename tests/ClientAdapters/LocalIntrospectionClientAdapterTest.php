@@ -100,6 +100,17 @@ class LocalIntrospectionClientAdapterTest extends TestCase
     /**
      *
      */
+    public function test_userinfo_is_not_available()
+    {
+        $this->expectException(InvalidRequestException::class);
+        $this->expectExceptionMessage('Access to userinfo is not available');
+
+        $this->client->userinfo(new Request());
+    }
+
+    /**
+     *
+     */
     public function test_introspect_with_expired_token()
     {
         $data = ['exp' => (new DateTime('-1 hour'))->getTimestamp()];

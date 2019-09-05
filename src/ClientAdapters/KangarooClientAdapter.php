@@ -29,6 +29,7 @@ class KangarooClientAdapter implements ClientAdapterInterface
         'authorize' => 'authorize',
         'introspect' => 'introspect',
         'revoke' => 'revoke',
+        'userinfo' => 'userinfo',
     ];
 
     /**
@@ -103,6 +104,23 @@ class KangarooClientAdapter implements ClientAdapterInterface
         }
         
         return new Response();
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws Parroauth2Exception
+     */
+    public function userinfo(Request $request)
+    {
+        $response = $this->api->get($this->endPoints['userinfo'], $request->queries(), $request->headers());
+
+        if ($response->isError()) {
+            // @see https://tools.ietf.org/html/rfc7662#section-2.3
+            throw $this->internalError($response);
+        }
+
+        return new Response((array) $response->getBody());
     }
 
     /**

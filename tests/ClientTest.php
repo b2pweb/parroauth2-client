@@ -279,4 +279,31 @@ class ClientTest extends TestCase
 
         $this->assertEquals($uri, $redirect);
     }
+
+    /**
+     *
+     */
+    public function test_unit_userinfo()
+    {
+        $request = new Request();
+        $request->addHeaders(['Authorization' => 'Bearer token']);
+
+        $this->adapter = $this->createMock(ClientAdapterInterface::class);
+        $this->adapter
+            ->expects($this->once())
+            ->method('userinfo')
+            ->with($request)
+            ->willReturn(new Response([
+                'sub' => 1,
+                'first_name' => 'foo',
+            ]))
+        ;
+
+        $authorization = new Authorization('token', 'access_token');
+
+        $userinfo = (new Client($this->adapter))->userinfo($authorization);
+
+        $this->assertSame(1, $userinfo->subject());
+        $this->assertSame('foo', $userinfo->info('first_name'));
+    }
 }

@@ -1,43 +1,46 @@
 {
-    "name": "b2p/parroauth2-client",
-    "description": "B2P OAuth 2 client implementation",
-    "type": "library",
-    "license": "proprietary",
-    "config": {
-        "secure-http": false
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://packagist.b2pweb.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Parroauth2\\Client\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Parroauth2\\Client\\Tests\\": "tests/"
-        }
-    },
-    "minimum-stability": "dev",
-    "require": {
-        "php": ">=5.6",
-        "ext-json": "*",
-        "b2p/kangaroo": "~1.0"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
-    },
-    "require-dev": {
-        "b2p/bdf-phpunit": "~1.0",
-        "firebase/php-jwt": "~2.2"
-    },
-    "suggest": {
-        "firebase/php-jwt": "Required to use the self introspection"
+  "name": "b2p/parroauth2-client",
+  "description": "B2P OAuth 2 client implementation",
+  "type": "library",
+  "license": "proprietary",
+  "config": {
+    "secure-http": false
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://packagist.b2pweb.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Parroauth2\\Client\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Parroauth2\\Client\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.6",
+    "ext-json": "*",
+    "b2p/kangaroo": "~1.0"
+  },
+  "require-dev": {
+    "b2p/bdf-phpunit": "~1.0",
+    "firebase/php-jwt": "~2.2"
+  },
+  "suggest": {
+    "firebase/php-jwt": "Required to use the self introspection"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  },
+  "scripts": {
+    "tests": "phpunit"
+  }
 }

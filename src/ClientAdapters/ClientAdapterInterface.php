@@ -45,4 +45,13 @@ interface ClientAdapterInterface
      * @return Response
      */
     public function revoke(Request $request);
+
+    /**
+     * Gets the user info
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function userinfo(Request $request);
 }

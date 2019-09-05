@@ -158,7 +158,7 @@ class Client
     public function introspect($token, $hint = null)
     {
         if ($token instanceof Authorization) {
-            if ($hint === null || $hint === 'access_token') {
+            if ($hint === null || $hint === Authorization::ACCESS_TOKEN) {
                 $token = $token->accessToken();
             } else {
                 $token = $token->refreshToken();
@@ -183,7 +183,7 @@ class Client
     public function revoke($token, $hint = null)
     {
         if ($token instanceof Authorization) {
-            if ($hint === null || $hint === 'access_token') {
+            if ($hint === null || $hint === Authorization::ACCESS_TOKEN) {
                 $token = $token->accessToken();
             } else {
                 $token = $token->refreshToken();
@@ -197,5 +197,26 @@ class Client
         }
 
         $this->client->revoke($request);
+    }
+
+    /**
+     * Gets user info from the access token
+     *
+     * @param string Authorization $token
+     *
+     * @return Userinfo
+     */
+    public function userinfo($token)
+    {
+        if ($token instanceof Authorization) {
+            $token = $token->accessToken();
+        }
+
+        $request = new Request();
+        $request->addHeaders([
+            'Authorization' => 'Bearer '.$token
+        ]);
+
+        return Userinfo::fromResponse($this->client->userinfo($request));
     }
 }

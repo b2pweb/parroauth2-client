@@ -115,4 +115,18 @@ class LocalIntrospectionClientAdapter implements ClientAdapterInterface
 
         throw new InvalidRequestException('Access revoking is not available');
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws InvalidRequestException
+     */
+    public function userinfo(Request $request)
+    {
+        if ($this->delegate !== null) {
+            return $this->delegate->userinfo($request);
+        }
+
+        throw new InvalidRequestException('Access to userinfo is not available');
+    }
 }

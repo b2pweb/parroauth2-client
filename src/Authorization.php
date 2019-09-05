@@ -7,6 +7,9 @@ namespace Parroauth2\Client;
  */
 class Authorization
 {
+    const ACCESS_TOKEN = 'access_token';
+    const REFRESH_TOKEN = 'refresh_token';
+
     /**
      * The access token
      *
