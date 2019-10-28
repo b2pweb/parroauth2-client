@@ -1,0 +1,187 @@
+<?php
+
+namespace Parroauth2\Client\Jwt;
+
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\Core\JWKSet;
+use Jose\Component\KeyManagement\JWKFactory;
+use Jose\Component\Signature\Algorithm\HS256;
+use Jose\Component\Signature\Algorithm\RS256;
+use Jose\Component\Signature\JWSBuilder;
+use Jose\Component\Signature\Serializer\CompactSerializer;
+use Parroauth2\Client\Tests\UnitTestCase;
+
+/**
+ * Class JwtDecoderTest
+ */
+class JwtDecoderTest extends UnitTestCase
+{
+    /**
+     * @var JwtDecoder
+     */
+    private $decoder;
+
+    /**
+     * @var CompactSerializer
+     */
+    private $serializer;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->decoder = new JwtDecoder();
+        $this->serializer = new CompactSerializer();
+    }
+
+    /**
+     *
+     */
+    public function test_decode_success()
+    {
+        $jws = (new JWSBuilder(null, new AlgorithmManager([new RS256()])))
+            ->create()
+            ->addSignature(JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-private.key'), ['alg' => 'RS256'])
+            ->withPayload('{"foo":"bar"}')
+            ->build()
+        ;
+
+        $jws = $this->serializer->serialize($jws);
+
+        $decoded = $this->decoder->decode($jws, new JWKSet([
+            JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-public.key', null, ['alg' => 'RS256'])
+        ]));
+
+        $this->assertEquals($jws, $decoded->encoded());
+        $this->assertEquals(['foo' => 'bar'], $decoded->payload());
+        $this->assertEquals(['alg' => 'RS256'], $decoded->headers());
+    }
+
+    /**
+     *
+     */
+    public function test_decode_success_with_symmetric_signature()
+    {
+        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+            ->create()
+            ->addSignature(JWKFactory::createFromSecret('my-key'), ['alg' => 'HS256'])
+            ->withPayload('{"foo":"bar"}')
+            ->build()
+        ;
+
+        $jws = $this->serializer->serialize($jws);
+
+        $decoded = $this->decoder->decode($jws, new JWKSet([
+            JWKFactory::createFromSecret('my-key')
+        ]));
+
+        $this->assertEquals($jws, $decoded->encoded());
+        $this->assertEquals(['foo' => 'bar'], $decoded->payload());
+        $this->assertEquals(['alg' => 'HS256'], $decoded->headers());
+    }
+
+    /**
+     *
+     */
+    public function test_decode_key_type_do_not_match()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid ID Token or signature');
+
+        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+            ->create()
+            ->addSignature(JWKFactory::createFromSecret(file_get_contents(__DIR__.'/../../keys/oauth-private.key')), ['alg' => 'HS256'])
+            ->withPayload('{"foo":"bar"}')
+            ->build()
+        ;
+
+        $jws = $this->serializer->serialize($jws);
+
+        $this->decoder->decode($jws, new JWKSet([
+            JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-public.key', null, ['alg' => 'RS256'])
+        ]));
+    }
+
+    /**
+     *
+     */
+    public function test_decode_invalid_key()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid ID Token or signature');
+
+        $jws = (new JWSBuilder(null, new AlgorithmManager([new RS256()])))
+            ->create()
+            ->addSignature(JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-private.key'), ['alg' => 'RS256'])
+            ->withPayload('{"foo":"bar"}')
+            ->build()
+        ;
+
+        $jws = $this->serializer->serialize($jws);
+
+        $this->decoder->decode($jws, new JWKSet([
+            JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-public-wrong.key', null, ['alg' => 'RS256'])
+        ]));
+    }
+
+    /**
+     *
+     */
+    public function test_decode_invalid_key_with_symmetric()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid ID Token or signature');
+
+        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+            ->create()
+            ->addSignature(JWKFactory::createFromSecret('secret'), ['alg' => 'HS256'])
+            ->withPayload('{"foo":"bar"}')
+            ->build()
+        ;
+
+        $jws = $this->serializer->serialize($jws);
+
+        $this->decoder->decode($jws, new JWKSet([
+            JWKFactory::createFromSecret('invalid', ['alg' => 'HS256'])
+        ]));
+    }
+
+    /**
+     *
+     */
+    public function test_decode_not_a_jwt()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid ID Token or signature');
+
+        $this->decoder->decode('invalid', new JWKSet([
+            JWKFactory::createFromSecret('invalid', ['alg' => 'HS256'])
+        ]));
+    }
+
+    /**
+     *
+     */
+    public function test_supportedAlgorithms()
+    {
+        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+            ->create()
+            ->addSignature(JWKFactory::createFromSecret('secret'), ['alg' => 'HS256'])
+            ->withPayload('{"foo":"bar"}')
+            ->build()
+        ;
+        $jws = $this->serializer->serialize($jws);
+
+        $jwks = new JWKSet([JWKFactory::createFromSecret('secret', ['alg' => 'HS256'])]);
+
+        $this->assertNotSame($this->decoder, $this->decoder->supportedAlgorithms(['HS256']));
+        $this->assertEquals(['HS256'], $this->decoder->supportedAlgorithms(['HS256'])->jwa()->manager()->list());
+
+        $this->assertInstanceOf(JWT::class, $this->decoder->supportedAlgorithms(['HS256'])->decode($jws, $jwks));
+
+        try {
+            $this->decoder->supportedAlgorithms(['RS256'])->decode($jws, $jwks);
+            $this->fail('Expects InvalidArgumentException');
+        } catch (\InvalidArgumentException $e) {}
+    }
+}

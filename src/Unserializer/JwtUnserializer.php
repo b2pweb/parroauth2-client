@@ -10,6 +10,8 @@ use Lcobucci\JWT\Token;
 
 /**
  * JwtUnserializer
+ *
+ * @deprecated Use JwtDecoder
  */
 class JwtUnserializer implements UnserializerInterface
 {
@@ -66,7 +68,9 @@ class JwtUnserializer implements UnserializerInterface
     protected function checkSignature($token)
     {
         if ($this->publicKey !== null) {
-            $token->verify($this->signer ?: new Sha256(), $this->publicKey);
+            if (!$token->verify($this->signer ?: new Sha256(), $this->publicKey)) {
+                throw new \InvalidArgumentException('Invalid signature');
+            }
         }
     }
 }

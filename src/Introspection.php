@@ -2,8 +2,12 @@
 
 namespace Parroauth2\Client;
 
+use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
+
 /**
  * Introspection
+ *
+ * @deprecated Use IntrospectionResponse instead
  */
 class Introspection
 {
@@ -354,36 +358,36 @@ class Introspection
     }
 
     /**
-     * @param Response $response
+     * @param IntrospectionResponse $response
      * 
-     * @return self
+     * @internal
      */
-    static public function fromResponse(Response $response)
+    static public function fromResponse(IntrospectionResponse $response)
     {
         $introspection = (new self())
-            ->setActive($response->getBodyItem('active', false))
+            ->setActive($response->active())
         ;
 
         if (!$introspection->isActive()) {
             return $introspection;
         }
 
-        if ($response->hasBodyItem('scope')) {
-            $introspection->setScopes(explode(' ', $response->getBodyItem('scope')));
+        if ($response->scopes()) {
+            $introspection->setScopes($response->scopes());
         }
 
         $introspection
-            ->setClientId($response->getBodyItem('client_id'))
-            ->setUsername($response->getBodyItem('username'))
-            ->setTokenType($response->getBodyItem('token_type'))
-            ->setExpireIn($response->getBodyItem('exp'))
-            ->setIssuedAt($response->getBodyItem('iat'))
-            ->setNotBefore($response->getBodyItem('nbf'))
-            ->setSubject($response->getBodyItem('sub'))
-            ->setAudience($response->getBodyItem('aud'))
-            ->setIssuer($response->getBodyItem('iss'))
-            ->setJwtId($response->getBodyItem('jti'))
-            ->setMetadata((array)$response->getBodyItem('metadata', []))
+            ->setClientId($response->clientId())
+            ->setUsername($response->username())
+            ->setTokenType($response->tokenType())
+            ->setExpireIn($response->expireAt())
+            ->setIssuedAt($response->issuedAt())
+            ->setNotBefore($response->notBefore())
+            ->setSubject($response->subject())
+            ->setAudience($response->audience())
+            ->setIssuer($response->issuer())
+            ->setJwtId($response->jwtId())
+            ->setMetadata((array)(($response->claims()['metadata'] ?? [])))
         ;
 
         return $introspection;

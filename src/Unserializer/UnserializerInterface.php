@@ -6,6 +6,8 @@ use Lcobucci\JWT\Token;
 
 /**
  * UnserializerInterface
+ *
+ * @deprecated Use JwtDecoder
  */
 interface UnserializerInterface
 {

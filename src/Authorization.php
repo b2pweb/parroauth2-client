@@ -2,8 +2,12 @@
 
 namespace Parroauth2\Client;
 
+use Parroauth2\Client\EndPoint\Token\TokenResponse;
+
 /**
  * Authorization
+ *
+ * @deprecated Use TokenResponse
  */
 class Authorization
 {
@@ -186,5 +190,20 @@ class Authorization
     public function shouldBeRefreshed($delta = 1)
     {
         return $this->canBeRefreshed() && $this->isExpired($delta);
+    }
+
+    /**
+     * @internal
+     */
+    public static function fromTokenResponse(TokenResponse $response): self
+    {
+        return new self(
+            $response->accessToken(),
+            $response->type(),
+            $response->get('expires_in'),
+            $response->refreshToken(),
+            $response->scopes() ?: [],
+            $response->get('id_token')
+        );
     }
 }

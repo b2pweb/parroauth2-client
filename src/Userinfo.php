@@ -2,8 +2,12 @@
 
 namespace Parroauth2\Client;
 
+use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoResponse;
+
 /**
  * Userinfo
+ *
+ * @deprecated Use UserinfoResponse
  */
 class Userinfo
 {
@@ -69,17 +73,19 @@ class Userinfo
     }
 
     /**
-     * @param Response $response
+     * @param UserinfoResponse $response
      * 
      * @return self
+     *
+     * @internal
      */
-    static public function fromResponse(Response $response)
+    static public function fromResponse(UserinfoResponse $response)
     {
         $userinfo = new self();
 
         $userinfo
-            ->setSubject($response->getBodyItem('sub'))
-            ->setInfo($response->getBody())
+            ->setSubject($response->subject())
+            ->setInfo($response->claims())
         ;
 
         return $userinfo;

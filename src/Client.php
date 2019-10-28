@@ -2,13 +2,11 @@
 
 namespace Parroauth2\Client;
 
-use InvalidArgumentException;
-use Parroauth2\Client\ClientAdapters\ClientAdapterInterface;
-use Parroauth2\Client\Credentials\ClientCredentials;
-use Parroauth2\Client\GrantTypes\AuthorizationCodeGrantType;
-use Parroauth2\Client\GrantTypes\GrantTypeInterface;
-use Parroauth2\Client\GrantTypes\PasswordGrantType;
-use Parroauth2\Client\GrantTypes\RefreshTokenGrantType;
+use Jose\Component\Core\JWKSet;
+use Parroauth2\Client\EndPoint\EndPoints;
+use Parroauth2\Client\Extension\ExtensionInterface;
+use Parroauth2\Client\Provider\Provider;
+use Parroauth2\Client\Storage\StorageInterface;
 
 /**
  * The oauth2 client
@@ -16,29 +14,135 @@ use Parroauth2\Client\GrantTypes\RefreshTokenGrantType;
 class Client
 {
     /**
-     * The http client
-     *
-     * @var ClientAdapterInterface
+     * @var Provider
      */
-    protected $client;
+    private $provider;
 
     /**
-     * The client credentials
-     *
-     * @var null|ClientCredentials
+     * @var ClientConfig
      */
-    protected $credentials;
+    private $clientConfig;
+
+    /**
+     * @var EndPoints
+     */
+    private $endPoints;
+
+    /**
+     * @var StorageInterface
+     */
+    private $session;
+
 
     /**
      * Client constructor.
      *
-     * @param ClientAdapterInterface $adapter
-     * @param null|ClientCredentials $credentials
+     * @param Provider $provider
+     * @param ClientConfig $clientConfig
+     * @param StorageInterface $session
      */
-    public function __construct(ClientAdapterInterface $client, ClientCredentials $credentials = null)
+    public function __construct(Provider $provider, ClientConfig $clientConfig, StorageInterface $session)
     {
-        $this->client = $client;
-        $this->credentials = $credentials;
+        $this->provider = $provider;
+        $this->clientConfig = $clientConfig;
+        $this->endPoints = new EndPoints($provider);
+        $this->session = $session;
+    }
+
+    /**
+     * Get the client id
+     *
+     * @return string
+     */
+    public function clientId(): string
+    {
+        return $this->clientConfig->clientId();
+    }
+
+    /**
+     * Get the client secret.
+     * May be null on a public client configuration
+     *
+     * @return string|null
+     */
+    public function secret(): ?string
+    {
+        return $this->clientConfig->secret();
+    }
+
+    /**
+     * Get the client data storage
+     *
+     * @return StorageInterface
+     */
+    public function storage(): StorageInterface
+    {
+        return $this->session;
+    }
+
+    /**
+     * Get the configuration of the client
+     *
+     * @return ClientConfig
+     */
+    public function clientConfig(): ClientConfig
+    {
+        return $this->clientConfig;
+    }
+
+    /**
+     * Get the authorization provider
+     *
+     * @return Provider
+     */
+    public function provider(): Provider
+    {
+        return $this->provider;
+    }
+
+    /**
+     * @return EndPoints
+     */
+    public function endPoints(): EndPoints
+    {
+        return $this->endPoints;
+    }
+
+    /**
+     * Get the key set for the client
+     *
+     * @return JWKSet
+     */
+    public function keySet(): JWKSet
+    {
+        if ($jwks = $this->clientConfig->option('jwks')) {
+            return $jwks;
+        }
+
+        return $this->provider->keySet();
+    }
+
+    /**
+     * Get an option from client or provider
+     *
+     * @param string $name The option name
+     * @param mixed $default The default value to return when not found on client and provider parameters
+     *
+     * @return mixed
+     */
+    public function option(string $name, $default = null)
+    {
+        return $this->clientConfig->option($name, $this->provider->metadata($name, $default));
+    }
+
+    /**
+     * Register extension
+     *
+     * @param ExtensionInterface $extension
+     */
+    public function register(ExtensionInterface $extension): void
+    {
+        $extension->configure($this);
     }
 
     /**
@@ -49,10 +153,12 @@ class Client
      * @param null|string[] $scopes
      * 
      * @return Authorization
+     *
+     * @deprecated Use token endpoint
      */
     public function login($username, $password, array $scopes = null)
     {
-        return $this->token(new PasswordGrantType($username, $password, $scopes));
+        return Authorization::fromTokenResponse($this->endPoints->token()->password($username, $password, $scopes)->call());
     }
 
     /**
@@ -62,6 +168,8 @@ class Client
      * @param null|string[] $scopes
      *
      * @return Authorization
+     *
+     * @deprecated Use token endpoint
      */
     public function refresh($token, array $scopes = null)
     {
@@ -69,7 +177,7 @@ class Client
             $token = $token->refreshToken();
         }
 
-        return $this->token(new RefreshTokenGrantType($token, $scopes));
+        return Authorization::fromTokenResponse($this->endPoints->token()->refresh($token, $scopes)->call());
     }
 
     /**
@@ -80,35 +188,12 @@ class Client
      * @param null|string $clientId
      *
      * @return Authorization
+     *
+     * @deprecated Use AuthorizationCodeFlow or token endpoint
      */
     public function tokenFromAuthorizationCode($code, $redirectUri = null, $clientId = null)
     {
-        return $this->token(new AuthorizationCodeGrantType($code, $redirectUri, $clientId));
-    }
-
-    /**
-     * Request a token from the oauth2 grant type
-     *
-     * @param GrantTypeInterface $grantType
-     *
-     * @return Authorization
-     */
-    public function token(GrantTypeInterface $grantType)
-    {
-        $request = new Request([], [], $this->credentials);
-
-        $grantType->acquaint($request);
-
-        $response = $this->client->token($request);
-
-        return new Authorization(
-            $response->getBodyItem('access_token'),
-            $response->getBodyItem('token_type'),
-            $response->getBodyItem('expires_in', -1),
-            $response->getBodyItem('refresh_token'),
-            explode(' ', $response->getBodyItem('scope', '')),
-            $response->getBodyItem('id_token')
-        );
+        return Authorization::fromTokenResponse($this->endPoints->token()->code($code, $redirectUri)->call());
     }
 
     /**
@@ -121,30 +206,26 @@ class Client
      * @param array $parameters
      *
      * @return string
+     *
+     * @deprecated Use AuthorizationCodeFlow or authorization endpoint
      */
     public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null, array $parameters = [])
     {
-        if ($scopes !== null) {
-            $scopes = implode(' ', $scopes);
+        $endpoint = $this->endPoints->authorization()->code($redirectUri, $scopes ?: []);
+
+        if ($state) {
+            $endpoint = $endpoint->state($state);
         }
 
-        if ($clientId === null && $this->credentials !== null) {
-            $clientId = $this->credentials->id();
+        if ($clientId !== null) {
+            $parameters['client_id'] = $clientId;
         }
 
-        if ($clientId === null) {
-            throw new InvalidArgumentException('Client id is required');
+        foreach ($parameters as $key => $value) {
+            $endpoint = $endpoint->set($key, $value);
         }
 
-        $parameters['response_type'] = 'code';
-        $parameters['redirect_uri'] = $redirectUri;
-        $parameters['scope'] = $scopes;
-        $parameters['state'] = $state;
-        $parameters['client_id'] = $clientId;
-
-        $request = new Request(array_filter($parameters));
-
-        return $this->client->getAuthorizationUri($request);
+        return $endpoint->uri();
     }
 
     /**
@@ -153,7 +234,9 @@ class Client
      * @param Authorization|string $token
      * @param string $hint
      * 
-     * @return mixed
+     * @return Introspection
+     *
+     * @deprecated Use introspection endpoint
      */
     public function introspect($token, $hint = null)
     {
@@ -165,13 +248,13 @@ class Client
             }
         }
 
-        $request = new Request([], ['token' => $token], $this->credentials);
-        
-        if ($hint !== null) {
-            $request->addAttribute('token_type_hint', $hint);
+        $endpoint = $this->endPoints->introspection()->token($token);
+
+        if ($hint) {
+            $endpoint = $endpoint->typeHint($hint);
         }
 
-        return Introspection::fromResponse($this->client->introspect($request));
+        return Introspection::fromResponse($endpoint->call());
     }
 
     /**
@@ -179,6 +262,8 @@ class Client
      *
      * @param Authorization|string $token
      * @param string $hint
+     *
+     * @deprecated Use revocation endpoint
      */
     public function revoke($token, $hint = null)
     {
@@ -190,13 +275,13 @@ class Client
             }
         }
 
-        $request = new Request([], ['token' => $token], $this->credentials);
+        $endpoint = $this->endPoints->revocation()->token($token);
 
         if ($hint) {
-            $request->addAttribute('token_type_hint', $hint);
+            $endpoint = $endpoint->typeHint($hint);
         }
 
-        $this->client->revoke($request);
+        $endpoint->call();
     }
 
     /**
@@ -205,6 +290,8 @@ class Client
      * @param string Authorization $token
      *
      * @return Userinfo
+     *
+     * @deprecated Use userinfo endpoint
      */
     public function userinfo($token)
     {
@@ -212,11 +299,6 @@ class Client
             $token = $token->accessToken();
         }
 
-        $request = new Request();
-        $request->addHeaders([
-            'Authorization' => 'Bearer '.$token
-        ]);
-
-        return Userinfo::fromResponse($this->client->userinfo($request));
+        return Userinfo::fromResponse($this->endPoints->userinfo()->token($token)->call());
     }
 }
