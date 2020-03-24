@@ -16,7 +16,7 @@ class AuthorizationEndPointTest extends UnitTestCase
      */
     private $endPoint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

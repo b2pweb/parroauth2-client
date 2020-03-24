@@ -21,7 +21,7 @@ class ProviderTest extends UnitTestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

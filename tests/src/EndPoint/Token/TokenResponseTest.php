@@ -16,6 +16,7 @@ class TokenResponseTest extends TestCase
     {
         $this->assertNull((new TokenResponse([]))->expiresAt());
         $this->assertEquals(new \DateTime('+10 seconds'), (new TokenResponse(['expires_in' => 10]))->expiresAt(), '', 1);
+        $this->assertEquals(new \DateTime(), (new TokenResponse(['expires_in' => 0]))->expiresAt(), '', 1);
     }
 
     /**

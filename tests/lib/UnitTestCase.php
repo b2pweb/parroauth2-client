@@ -26,7 +26,7 @@ class UnitTestCase extends TestCase
      */
     protected $httpClient;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = new ArrayStorage();
         $this->httpClient = new Client();

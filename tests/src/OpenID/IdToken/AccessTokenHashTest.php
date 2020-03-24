@@ -14,7 +14,7 @@ class AccessTokenHashTest extends TestCase
      */
     private $hash;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->hash = new AccessTokenHash();
     }

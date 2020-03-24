@@ -37,7 +37,7 @@ class JwtUnserializerTest extends TestCase
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->privateKey = 'file://' . __DIR__ . '/../../keys/oauth-private.key';
         $this->publicKey = 'file://' . __DIR__ . '/../../keys/oauth-public.key';

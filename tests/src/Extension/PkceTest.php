@@ -17,7 +17,7 @@ class PkceTest extends UnitTestCase
      */
     private $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

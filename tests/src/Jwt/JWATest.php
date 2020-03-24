@@ -16,7 +16,7 @@ class JWATest extends TestCase
      */
     private $jwa;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->jwa = new JWA();
     }
