@@ -77,6 +77,7 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
         $this->assertEquals(time(), $introspection->issuedAt(), '', 10);
         $this->assertEquals('bearer', $introspection->tokenType());
         $this->assertEquals(['email', 'profile'], $introspection->scopes());
+        $this->assertEquals('test', $introspection->clientId());
 
         $dataSet->destroy();
     }
@@ -156,5 +157,29 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
         $this->assertFalse($response->active());
         $this->assertNull($response->subject());
         $this->assertNull($response->jwtId());
+    }
+
+    /**
+     *
+     */
+    public function test_default_claims_values()
+    {
+        $jwa = new JWA();
+        $key = JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key');
+        $builder = new JWSBuilder(null, $jwa->manager());
+
+        $jws = $builder
+            ->withPayload(json_encode([
+                'exp' => time() + 100,
+                'aud' => ['foo', 'bar'],
+            ]))
+            ->addSignature($key, ['alg' => 'RS256'])
+            ->build()
+        ;
+
+        $response = $this->endPoint->accessToken((new CompactSerializer())->serialize($jws))->call();
+
+        $this->assertEquals('foo', $response->clientId());
+        $this->assertEquals('bearer', $response->tokenType());
     }
 }

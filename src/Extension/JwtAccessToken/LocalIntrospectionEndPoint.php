@@ -54,6 +54,12 @@ class LocalIntrospectionEndPoint extends IntrospectionEndPoint
 
         $expired = $claims['exp'] ?? 0;
 
+        $claims += ['token_type' => 'bearer'];
+
+        if (!isset($claims['client_id']) && !empty($claims['aud'])) {
+            $claims['client_id'] = is_array($claims['aud']) ? $claims['aud'][0] : $claims['aud'];
+        }
+
         if ($expired >= 0 && $expired < time()) {
             $response = new IntrospectionResponse(['active' => false]);
         } else {

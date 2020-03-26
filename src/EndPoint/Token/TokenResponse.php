@@ -31,7 +31,7 @@ class TokenResponse
     {
         $this->response = $response;
 
-        if (array_key_exists('expires_in', $response)) {
+        if (isset($response['expires_in']) && $response['expires_in'] >= 0) {
             $this->expiresAt = (new DateTime())->add(new \DateInterval('PT'.(int) $response['expires_in'].'S'));
         }
     }
