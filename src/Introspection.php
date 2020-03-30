@@ -387,7 +387,7 @@ class Introspection
             ->setAudience($response->audience())
             ->setIssuer($response->issuer())
             ->setJwtId($response->jwtId())
-            ->setMetadata((array)(($response->claims()['metadata'] ?? [])))
+            ->setMetadata((array)($response->claim('metadata', [])))
         ;
 
         return $introspection;

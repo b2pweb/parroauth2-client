@@ -116,7 +116,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
             throw new InvalidClaimException('The ID Token is issued too far in the past', 'iat', $idToken->issuedAt());
         }
 
-        if (($nonce = $client->storage()->remove('nonce')) && !hash_equals($nonce, $idToken->nonce())) {
+        if (($nonce = $client->storage()->remove('nonce')) && !$idToken->check('nonce', $nonce)) {
             throw new InvalidClaimException('Invalid nonce', 'nonce', $idToken->nonce());
         }
 

@@ -2,12 +2,14 @@
 
 namespace Parroauth2\Client\OpenID\IdToken;
 
+use Parroauth2\Client\Claim\Claims;
+
 /**
  * Store the ID Token claims
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#IDToken
  */
-final class IdToken
+final class IdToken extends Claims
 {
     /**
      * @var string
@@ -20,11 +22,6 @@ final class IdToken
     private $headers;
 
     /**
-     * @var array
-     */
-    private $claims;
-
-    /**
      * IdToken constructor.
      *
      * @param string $raw
@@ -33,8 +30,9 @@ final class IdToken
      */
     public function __construct(string $raw, array $claims, array $headers)
     {
+        parent::__construct($claims);
+
         $this->raw = $raw;
-        $this->claims = $claims;
         $this->headers = $headers;
     }
 
@@ -45,7 +43,7 @@ final class IdToken
      */
     public function issuer(): string
     {
-        return $this->claims['iss'];
+        return $this['iss'];
     }
 
     /**
@@ -56,7 +54,7 @@ final class IdToken
      */
     public function audience()
     {
-        return $this->claims['aud'];
+        return $this['aud'];
     }
 
     /**
@@ -66,7 +64,7 @@ final class IdToken
      */
     public function accessTokenHash(): ?string
     {
-        return $this->claims['at_hash'] ?? null;
+        return $this->claim('at_hash');
     }
 
     /**
@@ -76,7 +74,7 @@ final class IdToken
      */
     public function authorizedParty(): ?string
     {
-        return $this->claims['azp'] ?? null;
+        return $this->claim('azp');
     }
 
     /**
@@ -87,7 +85,7 @@ final class IdToken
      */
     public function issuedAt(): int
     {
-        return $this->claims['iat'];
+        return $this['iat'];
     }
 
     /**
@@ -97,7 +95,17 @@ final class IdToken
      */
     public function nonce(): string
     {
-        return $this->claims['nonce'] ?? '';
+        return $this->claim('nonce', '');
+    }
+
+    /**
+     * The session id
+     *
+     * @return string|null
+     */
+    public function sid(): ?string
+    {
+        return $this->claim('nonce');
     }
 
     /**
@@ -108,28 +116,6 @@ final class IdToken
     public function raw(): string
     {
         return $this->raw;
-    }
-
-    /**
-     * Get all claims
-     *
-     * @return array
-     */
-    public function claims(): array
-    {
-        return $this->claims;
-    }
-
-    /**
-     * Check if the claim exists
-     *
-     * @param string $claim
-     *
-     * @return bool
-     */
-    public function has(string $claim): bool
-    {
-        return isset($this->claims[$claim]);
     }
 
     /**

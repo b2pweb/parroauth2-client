@@ -2,35 +2,21 @@
 
 namespace Parroauth2\Client\EndPoint\Introspection;
 
+use Parroauth2\Client\Claim\Claims;
+
 /**
  * Response of the introspection endpoint
  *
  * @see https://tools.ietf.org/html/rfc7662#section-2.2
  */
-class IntrospectionResponse
+class IntrospectionResponse extends Claims
 {
-    /**
-     * @var array
-     */
-    private $data;
-
-
-    /**
-     * IntrospectionResponse constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
-
     /**
      * @return boolean
      */
     public function active(): bool
     {
-        return $this->data['active'];
+        return $this['active'];
     }
 
     /**
@@ -38,7 +24,7 @@ class IntrospectionResponse
      */
     public function scopes(): ?array
     {
-        return isset($this->data['scope']) ? explode(' ', $this->data['scope']) : null;
+        return isset($this['scope']) ? explode(' ', $this['scope']) : null;
     }
 
     /**
@@ -46,7 +32,7 @@ class IntrospectionResponse
      */
     public function clientId(): ?string
     {
-        return $this->data['client_id'] ?? null;
+        return $this->claim('client_id');
     }
 
     /**
@@ -54,7 +40,7 @@ class IntrospectionResponse
      */
     public function username(): ?string
     {
-        return $this->data['username'] ?? null;
+        return $this->claim('username');
     }
 
     /**
@@ -62,7 +48,7 @@ class IntrospectionResponse
      */
     public function tokenType(): ?string
     {
-        return $this->data['token_type'] ?? null;
+        return $this->claim('token_type');
     }
 
     /**
@@ -70,7 +56,7 @@ class IntrospectionResponse
      */
     public function expireAt(): ?int
     {
-        return $this->data['exp'] ?? null;
+        return $this->claim('exp');
     }
 
     /**
@@ -78,7 +64,7 @@ class IntrospectionResponse
      */
     public function issuedAt(): ?int
     {
-        return $this->data['iat'] ?? null;
+        return $this->claim('iat');
     }
 
     /**
@@ -86,7 +72,7 @@ class IntrospectionResponse
      */
     public function notBefore(): ?int
     {
-        return $this->data['nbf'] ?? null;
+        return $this->claim('nbf');
     }
 
     /**
@@ -94,7 +80,7 @@ class IntrospectionResponse
      */
     public function subject(): ?string
     {
-        return $this->data['sub'] ?? null;
+        return $this->claim('sub');
     }
 
     /**
@@ -102,7 +88,7 @@ class IntrospectionResponse
      */
     public function audience()
     {
-        return $this->data['aud'] ?? null;
+        return $this->claim('aud');
     }
 
     /**
@@ -110,7 +96,7 @@ class IntrospectionResponse
      */
     public function issuer(): ?string
     {
-        return $this->data['iss'] ?? null;
+        return $this->claim('iss');
     }
 
     /**
@@ -118,16 +104,6 @@ class IntrospectionResponse
      */
     public function jwtId(): ?string
     {
-        return $this->data['jti'] ?? null;
-    }
-
-    /**
-     * Get all claims of the introspection
-     *
-     * @return array
-     */
-    public function claims(): array
-    {
-        return $this->data;
+        return $this->claim('jti');
     }
 }
