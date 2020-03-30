@@ -9,6 +9,7 @@ use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Provider\Provider;
+use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Storage\ArrayStorage;
 
 /**
@@ -34,7 +35,9 @@ class UnitTestCase extends TestCase
 
     public function provider(array $parameters = [], bool $openid = true): Provider
     {
-        return new Provider(new BaseClientFactory($this->session), $this->httpClient, MessageFactoryDiscovery::find(), $parameters + [
+        $loader = new ProviderLoader(new BaseClientFactory($this->session), $this->httpClient);
+
+        return $loader->create($parameters + [
             'issuer'                 => 'http://op.example.com',
             'authorization_endpoint' => 'http://op.example.com/authorize',
             'token_endpoint'         => 'http://op.example.com/token',

@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\Provider;
 
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use GuzzleHttp\Psr7\Response;
 use Http\Discovery\MessageFactoryDiscovery;
 use Parroauth2\Client\Client;
@@ -21,6 +22,11 @@ class ProviderTest extends UnitTestCase
      */
     private $provider;
 
+    /**
+     * @var ProviderConfig
+     */
+    private $config;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,13 +35,16 @@ class ProviderTest extends UnitTestCase
             new BaseClientFactory($this->session),
             $this->httpClient,
             MessageFactoryDiscovery::find(),
-            [
-                'issuer' => 'http://provider.example.com',
-                'authorization_endpoint' => 'http://provider.example.com/authorize',
-                'with_query_endpoint' => 'http://provider.example.com?foo=bar',
-                'foo' => 'bar',
-            ],
-            true
+            $this->config = new ProviderConfig(
+                'http://provider.example.com',
+                [
+                    'issuer' => 'http://provider.example.com',
+                    'authorization_endpoint' => 'http://provider.example.com/authorize',
+                    'with_query_endpoint' => 'http://provider.example.com?foo=bar',
+                    'foo' => 'bar',
+                ],
+                true
+            )
         );
     }
 
@@ -208,5 +217,20 @@ class ProviderTest extends UnitTestCase
 
         $this->assertCount(1, $keySet);
         $this->assertSame($keySet, $provider->keySet());
+    }
+
+    /**
+     *
+     */
+    public function test_keySet_should_cache_the_keySet()
+    {
+        $json = '{"keys":[{"kty":"RSA","n":"uQZWJXZL8gxRQ70j8PO0fixNjdyuDbO_E6b2shcfXMFo46ROTnY9tx2X6MuHlV3VyF3xKG9acGnNNgfjTYcvLFMAF641UmlS5DWsB6BbN-89pA-kYQbjYL2MIAZjrJMRw_xsOMbkhgGaYhw4OfV8RxAQnkkQhLU5zJVCyHt0WTk","e":"AQAB","use":"sig","alg":"RS256"}]}';
+        $this->config['jwks_uri'] = 'http://op.example.com/jwks.json';
+
+        $this->config->setCache($cache = new ArrayCachePool());
+        $this->httpClient->addResponse(new Response(200, ['content-type' => 'application/json'], $json));
+
+        $this->assertCount(1, $this->provider->keySet());
+        $this->assertEquals($this->provider->keySet(), $cache->get(ProviderConfigPool::urlToKey('http://provider.example.com'))['jwks']);
     }
 }

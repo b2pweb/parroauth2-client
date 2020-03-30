@@ -36,14 +36,9 @@ class Provider implements HttpClient
     private $requestFactory;
 
     /**
-     * @var array
+     * @var ProviderConfig
      */
     private $config;
-
-    /**
-     * @var bool
-     */
-    private $openid;
 
 
     /**
@@ -52,16 +47,14 @@ class Provider implements HttpClient
      * @param ClientFactoryInterface $clientFactory
      * @param HttpClient $httpClient
      * @param RequestFactory $requestFactory
-     * @param array $config
-     * @param bool $openid
+     * @param ProviderConfig $config
      */
-    public function __construct(ClientFactoryInterface $clientFactory, HttpClient $httpClient, RequestFactory $requestFactory, array $config, bool $openid)
+    public function __construct(ClientFactoryInterface $clientFactory, HttpClient $httpClient, RequestFactory $requestFactory, ProviderConfig $config)
     {
         $this->clientFactory = $clientFactory;
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
         $this->config = $config;
-        $this->openid = $openid;
     }
 
     /**
@@ -71,7 +64,7 @@ class Provider implements HttpClient
      */
     public function openid(): bool
     {
-        return $this->openid;
+        return $this->config->openid();
     }
 
     /**
@@ -82,7 +75,7 @@ class Provider implements HttpClient
      */
     public function issuer(): string
     {
-        return $this->metadata('issuer');
+        return $this->metadata('issuer') ?: $this->config->url();
     }
 
     /**

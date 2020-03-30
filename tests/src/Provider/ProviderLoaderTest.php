@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\Provider;
 
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use GuzzleHttp\Psr7\Response;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Tests\UnitTestCase;
@@ -97,18 +98,31 @@ class ProviderLoaderTest extends UnitTestCase
     /**
      *
      */
-    public function test_discover_should_cache_the_provider_instance()
+    public function test_discover_should_cache()
     {
+        $this->loader = new ProviderLoader(new BaseClientFactory($this->session), $this->httpClient, null, $pool = new ProviderConfigPool($cache = new ArrayCachePool()));
         $this->httpClient->addResponse(new Response(200, [], json_encode([
             'issuer' => 'http://provider.example.com',
             'authorization_endpoint' => 'http://provider.example.com/authorize'
         ])));
 
-        $this->assertSame(
-            $this->loader->discover('http://provider.example.com'),
-            $this->loader->discover('http://provider.example.com')
-        );
+        $provider = $this->loader->discover('http://provider.example.com');
+
+        $this->assertTrue($provider->openid());
+        $this->assertEquals('http://provider.example.com', $provider->issuer());
+        $this->assertEquals('http://provider.example.com/authorize', $provider->metadata('authorization_endpoint'));
+
+        $this->assertEquals('http://provider.example.com/.well-known/openid-configuration', $this->httpClient->getLastRequest()->getUri());
+
+        $this->assertEquals($provider, $this->loader->discover('http://provider.example.com'));
+
         $this->assertCount(1, $this->httpClient->getRequests());
+        $expectedConfig = new ProviderConfig('http://provider.example.com', [
+            'issuer' => 'http://provider.example.com',
+            'authorization_endpoint' => 'http://provider.example.com/authorize'
+        ], true);
+        $expectedConfig->setCache($cache);
+        $this->assertEquals($expectedConfig, $pool->get('http://provider.example.com'));
     }
 
     /**

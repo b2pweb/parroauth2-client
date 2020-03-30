@@ -6,7 +6,7 @@ use Http\Client\Common\HttpMethodsClient;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\MessageFactory;
+use Http\Message\RequestFactory;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Factory\ClientFactoryInterface;
 
@@ -18,8 +18,6 @@ use Parroauth2\Client\Factory\ClientFactoryInterface;
  * $provider = $loader->discover('http://example.com');
  * $client = $provider->client(...);
  * </code>
- *
- * @todo cache system
  */
 class ProviderLoader
 {
@@ -45,16 +43,14 @@ class ProviderLoader
     private $httpClient;
 
     /**
-     * @var MessageFactory
+     * @var RequestFactory
      */
     private $messageFactory;
 
     /**
-     * Discovered providers indexed  by there URL
-     *
-     * @var Provider[]
+     * @var ProviderConfigPool
      */
-    private $cache;
+    private $configPool;
 
 
     /**
@@ -62,13 +58,15 @@ class ProviderLoader
      *
      * @param ClientFactoryInterface $clientFactory
      * @param HttpClient|null $httpClient The HTTP client to use. If null will discover registered clients
-     * @param MessageFactory|null $messageFactory The HTTP message factory to use. If null will discover registered factories
+     * @param RequestFactory|null $messageFactory The HTTP message factory to use. If null will discover registered factories
+     * @param ProviderConfigPool|null $configPool
      */
-    public function __construct(ClientFactoryInterface $clientFactory = null, HttpClient $httpClient = null, MessageFactory $messageFactory = null)
+    public function __construct(ClientFactoryInterface $clientFactory = null, HttpClient $httpClient = null, RequestFactory $messageFactory = null, ProviderConfigPool $configPool = null)
     {
         $this->clientFactory = $clientFactory ?: new BaseClientFactory();
         $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        $this->configPool = $configPool ?: new ProviderConfigPool();
     }
 
     /**
@@ -82,8 +80,8 @@ class ProviderLoader
      */
     public function discover(string $providerUrl): Provider
     {
-        if (isset($this->cache[$providerUrl])) {
-            return $this->cache[$providerUrl];
+        if ($config = $this->configPool->get($providerUrl)) {
+            return $this->create($config);
         }
 
         $client = new HttpMethodsClient($this->httpClient, $this->messageFactory);
@@ -95,9 +93,10 @@ class ProviderLoader
                 continue;
             }
 
-            $config = json_decode($response->getBody(), true);
+            $config = $this->configPool->createFromJson($providerUrl, $response->getBody(), $openid);
+            $config->save();
 
-            return $this->cache[$providerUrl] = $this->create($config, $openid);
+            return $this->create($config);
         }
 
         throw new \InvalidArgumentException('Authorization provider discovery is not supported by the server');
@@ -107,16 +106,20 @@ class ProviderLoader
      * Creates a provider using a config
      * The configuration format must follow the server metadata form
      *
-     * @param array $config The provider configuration
-     * @param bool $openid Does the provider supports openid ?
+     * @param array|ProviderConfig $config The provider configuration
+     * @param bool|null $openid Does the provider supports openid ?
      *
      * @return Provider
      *
      * @see https://openid.net/specs/openid-connect-discovery-1_0.html The OpenID Connect metadata
      * @see https://tools.ietf.org/html/rfc8414 The OAuth 2.0 server metadata
      */
-    public function create(array $config, bool $openid): Provider
+    public function create($config, ?bool $openid = null): Provider
     {
-        return new Provider($this->clientFactory, $this->httpClient, $this->messageFactory, $config, $openid);
+        if (!$config instanceof ProviderConfig) {
+            $config = $this->configPool->createFromArray($config, $openid);
+        }
+
+        return new Provider($this->clientFactory, $this->httpClient, $this->messageFactory, $config);
     }
 }
