@@ -130,11 +130,6 @@ class ProviderLoaderTest extends UnitTestCase
      */
     public function test_create()
     {
-        $this->httpClient->addResponse(new Response(200, [], json_encode([
-            'issuer' => 'http://provider.example.com',
-            'authorization_endpoint' => 'http://provider.example.com/authorize'
-        ])));
-
         $provider = $this->loader->create([
             'issuer' => 'http://provider.example.com',
             'authorization_endpoint' => 'http://provider.example.com/authorize'
@@ -143,5 +138,21 @@ class ProviderLoaderTest extends UnitTestCase
         $this->assertTrue($provider->openid());
         $this->assertEquals('http://provider.example.com', $provider->issuer());
         $this->assertEquals('http://provider.example.com/authorize', $provider->metadata('authorization_endpoint'));
+    }
+
+    /**
+     *
+     */
+    public function test_builder()
+    {
+        $builder = $this->loader->builder('http://op.example.com');
+
+        $this->assertInstanceOf(ProviderBuilder::class, $builder);
+
+        $provider = $builder->authorizationEndPoint('/authorize')->openid()->create();
+
+        $this->assertTrue($provider->openid());
+        $this->assertEquals('http://op.example.com', $provider->issuer());
+        $this->assertEquals('http://op.example.com/authorize', $provider->metadata('authorization_endpoint'));
     }
 }

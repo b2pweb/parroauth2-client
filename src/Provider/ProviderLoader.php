@@ -111,6 +111,8 @@ class ProviderLoader
      *
      * @return Provider
      *
+     * @see ProviderLoader::builder() For simple configuration of the provider
+     *
      * @see https://openid.net/specs/openid-connect-discovery-1_0.html The OpenID Connect metadata
      * @see https://tools.ietf.org/html/rfc8414 The OAuth 2.0 server metadata
      */
@@ -121,5 +123,29 @@ class ProviderLoader
         }
 
         return new Provider($this->clientFactory, $this->httpClient, $this->messageFactory, $config);
+    }
+
+    /**
+     * Get a provider builder for manual configuration of the provider
+     *
+     * <code>
+     * $provider = $loader->builder('http://op.example.com')
+     *     ->authorizationEndPoint('/authorize')
+     *     ->tokenEndPoint('/token')
+     *     ->addKeyFile('/path/to/rsa.key')
+     *     ->openid()
+     *     ->create()
+     * ;
+     * </code>
+     *
+     * @param string $url The base URL of the provider
+     *
+     * @return ProviderBuilder
+     *
+     * @see ProviderLoader::create() For creation without builder
+     */
+    public function builder(string $url): ProviderBuilder
+    {
+        return new ProviderBuilder($this, $this->configPool, $url);
     }
 }
