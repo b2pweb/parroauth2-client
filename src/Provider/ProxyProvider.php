@@ -5,6 +5,8 @@ namespace Parroauth2\Client\Provider;
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\ClientInterface;
+use Parroauth2\Client\ProxyClient;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -99,10 +101,11 @@ final class ProxyProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function client(ClientConfig $config): Client
+    public function client(ClientConfig $config): ClientInterface
     {
-        // @todo lazy client
-        return $this->provider()->client($config);
+        return new ProxyClient($config, function (ClientConfig $config) {
+            return $this->provider()->client($config);
+        });
     }
 
     /**

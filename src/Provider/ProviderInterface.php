@@ -6,6 +6,7 @@ use Http\Client\HttpClient;
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\Parroauth2Exception;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
 use Psr\Http\Message\RequestInterface;
@@ -87,9 +88,9 @@ interface ProviderInterface extends HttpClient
      *
      * @param ClientConfig $config
      *
-     * @return Client
+     * @return ClientInterface
      */
-    public function client(ClientConfig $config): Client;
+    public function client(ClientConfig $config): ClientInterface;
 
     /**
      * Get the keyset (jwks) of the provider

@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\OpenID\EndPoint\Token;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint as BaseTokenEndPoint;
 use Parroauth2\Client\OpenID\IdToken\IdTokenParserInterface;
 
@@ -14,7 +15,7 @@ use Parroauth2\Client\OpenID\IdToken\IdTokenParserInterface;
 class TokenEndPoint extends BaseTokenEndPoint
 {
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -27,10 +28,10 @@ class TokenEndPoint extends BaseTokenEndPoint
     /**
      * TokenEndPoint constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      * @param IdTokenParserInterface $idTokenParser
      */
-    public function __construct(Client $client, IdTokenParserInterface $idTokenParser)
+    public function __construct(ClientInterface $client, IdTokenParserInterface $idTokenParser)
     {
         parent::__construct($client, [$this, 'parseResponse']);
 

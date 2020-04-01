@@ -4,6 +4,7 @@ namespace Parroauth2\Client\Factory;
 
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
@@ -64,7 +65,7 @@ final class BaseClientFactory implements ClientFactoryInterface
 
         $this->openidConfigurator = new EndPointConfigurator([
             OpenIdAuthorizationEndPoint::NAME => OpenIdAuthorizationEndPoint::class,
-            OpenIdTokenEndPoint::NAME => function (Client $client) { return new OpenIdTokenEndPoint($client, $this->idTokenParser ?: new JwsIdTokenParser()); },
+            OpenIdTokenEndPoint::NAME => function (ClientInterface $client) { return new OpenIdTokenEndPoint($client, $this->idTokenParser ?: new JwsIdTokenParser()); },
             UserinfoEndPoint::NAME => UserinfoEndPoint::class,
         ] + $oauthEndpoints);
     }
@@ -72,7 +73,7 @@ final class BaseClientFactory implements ClientFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function create(ProviderInterface $provider, ClientConfig $config): Client
+    public function create(ProviderInterface $provider, ClientConfig $config): ClientInterface
     {
         $client = new Client($provider, $config, $this->storage);
 

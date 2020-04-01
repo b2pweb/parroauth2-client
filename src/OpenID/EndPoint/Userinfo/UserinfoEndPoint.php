@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\OpenID\EndPoint\Userinfo;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
@@ -24,7 +25,7 @@ class UserinfoEndPoint implements EndPointInterface
     const AUTH_METHOD_QUERY = 'query';
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -47,9 +48,9 @@ class UserinfoEndPoint implements EndPointInterface
     /**
      * UserinfoEndPoint constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    public function __construct(Client $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }

@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Extension;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 
 /**
  * Base type for extension
@@ -16,7 +17,7 @@ interface ExtensionInterface
     /**
      * Configure the client for enable the extension
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    public function configure(Client $client): void;
+    public function configure(ClientInterface $client): void;
 }

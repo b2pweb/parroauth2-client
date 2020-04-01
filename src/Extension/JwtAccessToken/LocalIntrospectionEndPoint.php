@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
 
@@ -18,7 +19,7 @@ class LocalIntrospectionEndPoint extends IntrospectionEndPoint
     private $parser;
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -26,10 +27,10 @@ class LocalIntrospectionEndPoint extends IntrospectionEndPoint
     /**
      * LocalIntrospectionEndPoint constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      * @param JwtParserInterface $parser
      */
-    public function __construct(Client $client, JwtParserInterface $parser)
+    public function __construct(ClientInterface $client, JwtParserInterface $parser)
     {
         parent::__construct($client);
 

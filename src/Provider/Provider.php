@@ -7,6 +7,7 @@ use Http\Message\RequestFactory;
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\OAuthServerException;
 use Parroauth2\Client\Exception\Parroauth2Exception;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
@@ -195,9 +196,9 @@ final class Provider implements ProviderInterface
      *
      * @param ClientConfig $config
      *
-     * @return Client
+     * @return ClientInterface
      */
-    public function client(ClientConfig $config): Client
+    public function client(ClientConfig $config): ClientInterface
     {
         return $this->clientFactory->create($this, $config);
     }

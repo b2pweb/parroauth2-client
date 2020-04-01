@@ -4,6 +4,7 @@ namespace Parroauth2\Client\EndPoint\Authorization;
 
 use Base64Url\Base64Url;
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
@@ -25,16 +26,16 @@ class AuthorizationEndPoint implements EndPointInterface
     const RESPONSE_TYPE_TOKEN = 'token';
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
     /**
      * AuthorizationEndPoint constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    public function __construct(Client $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }

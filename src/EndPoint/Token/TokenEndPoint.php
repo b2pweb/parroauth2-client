@@ -4,6 +4,7 @@ namespace Parroauth2\Client\EndPoint\Token;
 
 use Http\Client\Exception;
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
@@ -27,7 +28,7 @@ class TokenEndPoint implements EndPointInterface
     const GRANT_TYPE_REFRESH = 'refresh_token';
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -45,10 +46,10 @@ class TokenEndPoint implements EndPointInterface
     /**
      * TokenEndPoint constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      * @param callable $responseFactory
      */
-    public function __construct(Client $client, callable $responseFactory = null)
+    public function __construct(ClientInterface $client, callable $responseFactory = null)
     {
         $this->client = $client;
         $this->responseFactory = $responseFactory ?: function (array $response) { return new TokenResponse($response); };

@@ -5,6 +5,7 @@ namespace Parroauth2\Client\Flow;
 use BadMethodCallException;
 use InvalidArgumentException;
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Authorization\AuthorizationCodeResponse;
 use Parroauth2\Client\EndPoint\Token\TokenResponse;
 use Parroauth2\Client\Exception\OAuthServerException;
@@ -38,7 +39,7 @@ use Parroauth2\Client\Exception\OAuthServerException;
 class AuthorizationCodeFlow implements AuthorizationFlowInterface
 {
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -46,9 +47,9 @@ class AuthorizationCodeFlow implements AuthorizationFlowInterface
     /**
      * AuthorizationCodeFlow constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    public function __construct(Client $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }

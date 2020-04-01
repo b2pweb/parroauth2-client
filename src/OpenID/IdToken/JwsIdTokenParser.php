@@ -5,6 +5,7 @@ namespace Parroauth2\Client\OpenID\IdToken;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Jwt\JWA;
 use Parroauth2\Client\Jwt\JwtDecoder;
 
@@ -32,7 +33,7 @@ final class JwsIdTokenParser implements IdTokenParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse(Client $client, string $idToken): IdToken
+    public function parse(ClientInterface $client, string $idToken): IdToken
     {
         $keySet = $client->keySet();
         $decoder = $this->decoder;

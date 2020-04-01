@@ -4,6 +4,7 @@ namespace Parroauth2\Client\Extension\JwtAccessToken;
 
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Jwt\JwtDecoder;
 
 /**
@@ -33,7 +34,7 @@ final class JwtParser implements JwtParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse(string $jwt, Client $client): array
+    public function parse(string $jwt, ClientInterface $client): array
     {
         $keys = ($jwk = $client->option('access_token_jwk')) ? new JWKSet([$jwk]) : $client->keySet();
 

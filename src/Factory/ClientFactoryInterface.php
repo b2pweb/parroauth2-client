@@ -4,6 +4,7 @@ namespace Parroauth2\Client\Factory;
 
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderInterface;
 
@@ -18,7 +19,7 @@ interface ClientFactoryInterface
      * @param ProviderInterface $provider
      * @param ClientConfig $config
      *
-     * @return Client
+     * @return ClientInterface
      */
-    public function create(ProviderInterface $provider, ClientConfig $config): Client;
+    public function create(ProviderInterface $provider, ClientConfig $config): ClientInterface;
 }

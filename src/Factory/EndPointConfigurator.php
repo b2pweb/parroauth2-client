@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Factory;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 
 /**
  * Configure endpoints for a client
@@ -30,9 +31,9 @@ final class EndPointConfigurator
     /**
      * Configure the endpoint on the client
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    public function configure(Client $client): void
+    public function configure(ClientInterface $client): void
     {
         foreach ($this->endpoints as $name => $endpoint) {
             if (!$client->provider()->supportsEndpoint($name)) {

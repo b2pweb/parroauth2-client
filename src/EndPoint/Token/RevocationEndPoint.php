@@ -4,6 +4,7 @@ namespace Parroauth2\Client\EndPoint\Token;
 
 use Http\Client\Exception;
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
@@ -26,7 +27,7 @@ class RevocationEndPoint implements EndPointInterface
     const TYPE_REFRESH_TOKEN = 'refresh_token';
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -34,9 +35,9 @@ class RevocationEndPoint implements EndPointInterface
     /**
      * RevocationEndPoint constructor.
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    public function __construct(Client $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }

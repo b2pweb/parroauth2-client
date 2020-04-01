@@ -15,7 +15,7 @@ class ClientFunctionalTest extends FunctionalTestCase
     /**
      * @var Client
      */
-    private $client;
+    protected $client;
 
     protected function setUp(): void
     {

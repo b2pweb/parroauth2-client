@@ -5,14 +5,13 @@ namespace Parroauth2\Client;
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\EndPoint\EndPoints;
 use Parroauth2\Client\Extension\ExtensionInterface;
-use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Storage\StorageInterface;
 
 /**
  * The oauth2 client
  */
-class Client
+class Client implements ClientInterface
 {
     /**
      * @var ProviderInterface

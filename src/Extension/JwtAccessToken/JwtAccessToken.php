@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Extension\ExtensionInterface;
 
 /**
@@ -28,7 +29,7 @@ final class JwtAccessToken implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function configure(Client $client): void
+    public function configure(ClientInterface $client): void
     {
         $client->endPoints()->add(new LocalIntrospectionEndPoint($client, $this->parser));
     }

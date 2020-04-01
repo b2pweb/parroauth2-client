@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Extension;
 
 use Parroauth2\Client\Client;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 
 /**
@@ -11,14 +12,14 @@ use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 abstract class AbstractEndPointTransformerExtension implements ExtensionInterface, EndPointTransformerInterface
 {
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
     /**
      * {@inheritdoc}
      */
-    final public function configure(Client $client): void
+    final public function configure(ClientInterface $client): void
     {
         $extension = $this->client === null ? $this : clone $this;
         $extension->client = $client;
@@ -29,9 +30,9 @@ abstract class AbstractEndPointTransformerExtension implements ExtensionInterfac
     /**
      * Get the configured client
      *
-     * @return Client
+     * @return ClientInterface
      */
-    final protected function client(): Client
+    final protected function client(): ClientInterface
     {
         return $this->client;
     }

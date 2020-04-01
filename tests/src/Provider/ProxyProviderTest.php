@@ -5,9 +5,9 @@ namespace Parroauth2\Client\Provider;
 use GuzzleHttp\Psr7\Response;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\Factory\BaseClientFactory;
+use Parroauth2\Client\ProxyClient;
 use Parroauth2\Client\Tests\UnitTestCase;
 
 /**
@@ -74,6 +74,12 @@ class ProxyProviderTest extends UnitTestCase
      */
     public function test_client()
     {
-        $this->assertInstanceOf(Client::class, $this->provider->client(new ClientConfig('client_id')));
+        $client = $this->provider->client(new ClientConfig('client_id'));
+
+        $this->assertInstanceOf(ProxyClient::class, $client);
+        $this->assertCount(0, $this->httpClient->getRequests());
+
+        $this->assertEquals('http://provider.example.com/authorize?scope=openid', $client->endPoints()->authorization()->uri());
+        $this->assertCount(1, $this->httpClient->getRequests());
     }
 }
