@@ -18,7 +18,7 @@ use Psr\Http\Message\RequestInterface;
  *
  * Handle the HTTP operations, and create clients
  */
-class Provider implements HttpClient
+final class Provider implements ProviderInterface
 {
     /**
      * @var ClientFactoryInterface

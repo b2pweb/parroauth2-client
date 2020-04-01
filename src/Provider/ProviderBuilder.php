@@ -265,9 +265,9 @@ final class ProviderBuilder
     /**
      * Build the provider
      *
-     * @return Provider
+     * @return ProviderInterface
      */
-    public function create(): Provider
+    public function create(): ProviderInterface
     {
         if (isset($this->config['issuer'])) {
             $this->config['issuer'] = $this->url;

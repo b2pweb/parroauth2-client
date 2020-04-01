@@ -14,6 +14,7 @@ use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\OpenID\IdToken\IdTokenParserInterface;
 use Parroauth2\Client\OpenID\IdToken\JwsIdTokenParser;
 use Parroauth2\Client\Provider\Provider;
+use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Storage\ArrayStorage;
 use Parroauth2\Client\Storage\StorageInterface;
 
@@ -71,7 +72,7 @@ final class BaseClientFactory implements ClientFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function create(Provider $provider, ClientConfig $config): Client
+    public function create(ProviderInterface $provider, ClientConfig $config): Client
     {
         $client = new Client($provider, $config, $this->storage);
 

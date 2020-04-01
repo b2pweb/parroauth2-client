@@ -155,4 +155,27 @@ class ProviderLoaderTest extends UnitTestCase
         $this->assertEquals('http://op.example.com', $provider->issuer());
         $this->assertEquals('http://op.example.com/authorize', $provider->metadata('authorization_endpoint'));
     }
+
+    /**
+     *
+     */
+    public function test_lazy()
+    {
+        $this->httpClient->addResponse(new Response(200, [], json_encode([
+            'issuer' => 'http://provider.example.com',
+            'authorization_endpoint' => 'http://provider.example.com/authorize'
+        ])));
+
+        $provider = $this->loader->lazy('http://provider.example.com');
+        $this->assertInstanceOf(ProxyProvider::class, $provider);
+
+        $this->assertCount(0, $this->httpClient->getRequests());
+
+        $this->assertTrue($provider->openid());
+        $this->assertEquals('http://provider.example.com', $provider->issuer());
+        $this->assertEquals('http://provider.example.com/authorize', $provider->metadata('authorization_endpoint'));
+
+        $this->assertCount(1, $this->httpClient->getRequests());
+        $this->assertEquals('http://provider.example.com/.well-known/openid-configuration', $this->httpClient->getLastRequest()->getUri());
+    }
 }

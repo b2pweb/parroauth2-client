@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\EndPoint\Token;
 
-use Bdf\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class TokenResponseTest

@@ -6,6 +6,7 @@ use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\EndPoint\EndPoints;
 use Parroauth2\Client\Extension\ExtensionInterface;
 use Parroauth2\Client\Provider\Provider;
+use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Storage\StorageInterface;
 
 /**
@@ -14,7 +15,7 @@ use Parroauth2\Client\Storage\StorageInterface;
 class Client
 {
     /**
-     * @var Provider
+     * @var ProviderInterface
      */
     private $provider;
 
@@ -37,11 +38,11 @@ class Client
     /**
      * Client constructor.
      *
-     * @param Provider $provider
+     * @param ProviderInterface $provider
      * @param ClientConfig $clientConfig
      * @param StorageInterface $session
      */
-    public function __construct(Provider $provider, ClientConfig $clientConfig, StorageInterface $session)
+    public function __construct(ProviderInterface $provider, ClientConfig $clientConfig, StorageInterface $session)
     {
         $this->provider = $provider;
         $this->clientConfig = $clientConfig;
@@ -93,9 +94,9 @@ class Client
     /**
      * Get the authorization provider
      *
-     * @return Provider
+     * @return ProviderInterface
      */
-    public function provider(): Provider
+    public function provider(): ProviderInterface
     {
         return $this->provider;
     }

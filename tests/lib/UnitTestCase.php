@@ -2,8 +2,6 @@
 
 namespace Parroauth2\Client\Tests;
 
-use Bdf\PHPUnit\TestCase;
-use Http\Discovery\MessageFactoryDiscovery;
 use Http\Mock\Client;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
@@ -11,6 +9,7 @@ use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Storage\ArrayStorage;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class UnitTestCase

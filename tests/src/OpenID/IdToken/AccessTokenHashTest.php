@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\OpenID\IdToken;
 
-use Bdf\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class AccessTokenHashTest

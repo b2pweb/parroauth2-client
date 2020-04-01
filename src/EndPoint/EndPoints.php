@@ -10,6 +10,7 @@ use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\Provider\Provider;
+use Parroauth2\Client\Provider\ProviderInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -18,7 +19,7 @@ use Psr\Http\Message\RequestInterface;
 class EndPoints
 {
     /**
-     * @var Provider
+     * @var ProviderInterface
      */
     private $provider;
 
@@ -37,9 +38,9 @@ class EndPoints
     /**
      * EndPointsSet constructor.
      *
-     * @param Provider $provider
+     * @param ProviderInterface $provider
      */
-    public function __construct(Provider $provider)
+    public function __construct(ProviderInterface $provider)
     {
         $this->provider = $provider;
     }

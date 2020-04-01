@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Exception;
 
-use Bdf\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class OAuthServerExceptionTest@group Parroauth2

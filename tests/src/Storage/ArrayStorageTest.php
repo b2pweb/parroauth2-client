@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Storage;
 
-use Bdf\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ArrayStorageTest

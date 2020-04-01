@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Jwt;
 
-use Bdf\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Signature\Algorithm\RS256;
 

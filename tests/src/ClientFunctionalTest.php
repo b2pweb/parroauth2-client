@@ -5,7 +5,6 @@ namespace Parroauth2\Client;
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\EndPoint\EndPoints;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
-use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Tests\FunctionalTestCase;
 
 /**

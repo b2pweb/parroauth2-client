@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Tests\Unserializer;
 
-use Bdf\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 use DateTime;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;

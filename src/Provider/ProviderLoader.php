@@ -19,7 +19,7 @@ use Parroauth2\Client\Factory\ClientFactoryInterface;
  * $client = $provider->client(...);
  * </code>
  */
-class ProviderLoader
+final class ProviderLoader
 {
     /**
      * List of well-known paths
@@ -74,11 +74,13 @@ class ProviderLoader
      *
      * @param string $providerUrl
      *
-     * @return Provider
+     * @return ProviderInterface
      *
      * @throws \Http\Client\Exception
+     *
+     * @see ProviderLoader::lazy() For perform a lazy loading of the metadata
      */
-    public function discover(string $providerUrl): Provider
+    public function discover(string $providerUrl): ProviderInterface
     {
         if ($config = $this->configPool->get($providerUrl)) {
             return $this->create($config);
@@ -103,20 +105,34 @@ class ProviderLoader
     }
 
     /**
+     * Creates the provider using server metadata, but loaded in lazy way
+     *
+     * @param string $providerUrl The base provider URL
+     *
+     * @return ProviderInterface
+     *
+     * @see ProviderLoader::discover() Non-lazy provider creation method
+     */
+    public function lazy(string $providerUrl): ProviderInterface
+    {
+        return new ProxyProvider($providerUrl, $this);
+    }
+
+    /**
      * Creates a provider using a config
      * The configuration format must follow the server metadata form
      *
      * @param array|ProviderConfig $config The provider configuration
      * @param bool|null $openid Does the provider supports openid ?
      *
-     * @return Provider
+     * @return ProviderInterface
      *
      * @see ProviderLoader::builder() For simple configuration of the provider
      *
      * @see https://openid.net/specs/openid-connect-discovery-1_0.html The OpenID Connect metadata
      * @see https://tools.ietf.org/html/rfc8414 The OAuth 2.0 server metadata
      */
-    public function create($config, ?bool $openid = null): Provider
+    public function create($config, ?bool $openid = null): ProviderInterface
     {
         if (!$config instanceof ProviderConfig) {
             $config = $this->configPool->createFromArray($config, $openid);

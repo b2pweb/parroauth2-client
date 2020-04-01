@@ -2,7 +2,6 @@
 
 namespace Parroauth2\Client\Tests;
 
-use Bdf\PHPUnit\TestCase;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
@@ -12,6 +11,7 @@ use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Storage\ArrayStorage;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class FunctionalTestCase
