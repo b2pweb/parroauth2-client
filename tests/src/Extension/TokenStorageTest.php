@@ -157,4 +157,29 @@ class TokenStorageTest extends FunctionalTestCase
         $this->assertFalse($introspection->active());
         $this->assertNull($this->extension->token());
     }
+
+    /**
+     *
+     */
+    public function test_endSession_without_token()
+    {
+        $this->assertArrayNotHasKey('id_token_hint', $this->client->endPoints()->endSession()->parameters());
+    }
+
+    /**
+     *
+     */
+    public function test_endSession_success()
+    {
+        $this->dataSet->pushConfig('connected_user', 'bob');
+        $response = $this->provider->sendRequest($this->provider->request('GET', 'authorization', ['response_type' => 'code', 'scope' => 'openid', 'redirect_uri' => 'http://client.example.com', 'client_id' => $this->client->clientId(), 'state' => 'state']));
+
+        parse_str(parse_url($response->getHeaderLine('Location'), PHP_URL_QUERY), $parameters);
+        $token = $this->client->endPoints()->token()->code($parameters['code'], 'http://client.example.com')->call();
+        $endpoint = $this->client->endPoints()->endSession();
+
+        $this->assertSame((string) $token->idToken(), $endpoint->get('id_token_hint'));
+
+        $this->assertEquals('http://localhost:5000/logout?id_token_hint='.$token->idToken(), $endpoint->uri());
+    }
 }

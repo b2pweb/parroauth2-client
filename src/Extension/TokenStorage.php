@@ -8,6 +8,8 @@ use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenResponse;
+use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
+use Parroauth2\Client\OpenID\EndPoint\Token\TokenResponse as OpenIdTokenResponse;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 
 /**
@@ -60,6 +62,20 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
     public function onRevocation(RevocationEndPoint $endPoint): RevocationEndPoint
     {
         return $this->expired() ? $endPoint : $endPoint->accessToken($this->token()->accessToken())->onResponse([$this, 'clear']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onEndSession(EndSessionEndPoint $endPoint): EndSessionEndPoint
+    {
+        $token = $this->token();
+
+        if (!$token instanceof OpenIdTokenResponse || !$token->idToken()) {
+            return $endPoint;
+        }
+
+        return $endPoint->idToken($token->idToken());
     }
 
     /**

@@ -7,6 +7,7 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderLoader;
@@ -56,7 +57,7 @@ class FunctionalTestCase extends TestCase
         $this->dataSet->destroy();
     }
 
-    public function client(ClientConfig $config): Client
+    public function client(ClientConfig $config): ClientInterface
     {
         return $this->provider->client($config);
     }

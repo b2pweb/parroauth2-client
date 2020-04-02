@@ -7,6 +7,7 @@ use Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
+use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\Tests\UnitTestCase;
 
@@ -52,5 +53,6 @@ class BaseClientFactoryTest extends UnitTestCase
         $this->assertEquals(RevocationEndPoint::class, get_class($client->endPoints()->revocation()));
         $this->assertEquals(IntrospectionEndPoint::class, get_class($client->endPoints()->introspection()));
         $this->assertEquals(UserinfoEndPoint::class, get_class($client->endPoints()->userinfo()));
+        $this->assertEquals(EndSessionEndPoint::class, get_class($client->endPoints()->endSession()));
     }
 }

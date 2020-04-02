@@ -6,6 +6,7 @@ use Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
+use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 
 /**
@@ -57,6 +58,14 @@ trait EndPointTransformerTrait
      * @see EndPointTransformerInterface::onUserinfo()
      */
     public function onUserinfo(UserinfoEndPoint $endPoint): UserinfoEndPoint
+    {
+        return $endPoint;
+    }
+
+    /**
+     * @see EndPointTransformerInterface::onEndSession()
+     */
+    public function onEndSession(EndSessionEndPoint $endPoint): EndSessionEndPoint
     {
         return $endPoint;
     }

@@ -7,6 +7,7 @@ use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Provider\Provider;
+use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Storage\ArrayStorage;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,7 @@ class UnitTestCase extends TestCase
         $this->httpClient = new Client();
     }
 
-    public function provider(array $parameters = [], bool $openid = true): Provider
+    public function provider(array $parameters = [], bool $openid = true): ProviderInterface
     {
         $loader = new ProviderLoader(new BaseClientFactory($this->session), $this->httpClient);
 
@@ -43,6 +44,7 @@ class UnitTestCase extends TestCase
             'revocation_endpoint'    => 'http://op.example.com/revoke',
             'userinfo_endpoint'    => 'http://op.example.com/userinfo',
             'introspection_endpoint'    => 'http://op.example.com/introspection',
+            'end_session_endpoint'    => 'http://op.example.com/logout',
             'jwks'                   => new JWKSet([
                 JWKFactory::createFromKeyFile(__DIR__.'/../keys/oauth-public.key', null, ['use' => 'sig', 'alg' => 'RS256']),
             ])

@@ -8,6 +8,7 @@ use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
+use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderInterface;
@@ -184,5 +185,16 @@ class EndPoints
     public function userinfo(): UserinfoEndPoint
     {
         return $this->get(UserinfoEndPoint::NAME);
+    }
+
+    /**
+     * Get the endSession endpoint
+     *
+     * @throws UnsupportedServerOperation When the server is not configured for supports the endpoint
+     * @throws InvalidArgumentException When the client do not implements the endpoint
+     */
+    public function endSession(): EndSessionEndPoint
+    {
+        return $this->get(EndSessionEndPoint::NAME);
     }
 }

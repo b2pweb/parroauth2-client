@@ -83,6 +83,7 @@ switch (trim($_SERVER['SCRIPT_NAME'] ?? '', '/')) {
             'userinfo_endpoint'    => BASE_URL.'/userinfo',
             'jwks_uri'               => BASE_URL.'/.well-known/jwks.json',
             'introspection_endpoint' => BASE_URL.'/introspection', // Added for allow local introspection
+            'end_session_endpoint' => BASE_URL.'/logout',
         ]);
         $response->send();
         break;

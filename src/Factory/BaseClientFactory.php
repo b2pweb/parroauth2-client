@@ -10,11 +10,11 @@ use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\AuthorizationEndPoint as OpenIdAuthorizationEndPoint;
+use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Token\TokenEndPoint as OpenIdTokenEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\OpenID\IdToken\IdTokenParserInterface;
 use Parroauth2\Client\OpenID\IdToken\JwsIdTokenParser;
-use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Storage\ArrayStorage;
 use Parroauth2\Client\Storage\StorageInterface;
@@ -67,6 +67,7 @@ final class BaseClientFactory implements ClientFactoryInterface
             OpenIdAuthorizationEndPoint::NAME => OpenIdAuthorizationEndPoint::class,
             OpenIdTokenEndPoint::NAME => function (ClientInterface $client) { return new OpenIdTokenEndPoint($client, $this->idTokenParser ?: new JwsIdTokenParser()); },
             UserinfoEndPoint::NAME => UserinfoEndPoint::class,
+            EndSessionEndPoint::NAME => EndSessionEndPoint::class,
         ] + $oauthEndpoints);
     }
 

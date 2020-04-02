@@ -57,10 +57,12 @@ if ($storage->expired()) {
 
 // logout : remove the session and revoke the token
 if ($_SERVER['PATH_INFO'] ?? '/' === '/logout') {
+    $lastToken = $storage->token();
     session_destroy();
     $client->endPoints()->revocation()->call(); // Note: the token is provided by the TokenStorage extension
 
-    header('Location: http://192.168.0.139/~vquatrevieux/test_parroauth/standard.php');
+    // Logout from the OP
+    header('Location: '.$client->endPoints()->endSession()->redirectUri('http://192.168.0.139/~vquatrevieux/test_parroauth/standard.php')->uri());
     return;
 }
 

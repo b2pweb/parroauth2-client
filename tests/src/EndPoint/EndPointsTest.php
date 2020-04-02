@@ -9,6 +9,7 @@ use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
 use Parroauth2\Client\Extension\Pkce;
+use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\Tests\UnitTestCase;
 
@@ -175,5 +176,18 @@ class EndPointsTest extends UnitTestCase
         $this->endPoints->add($endpoint);
 
         $this->assertSame($endpoint, $this->endPoints->userinfo());
+    }
+
+    /**
+     *
+     */
+    public function test_endSession()
+    {
+        $client = $this->provider()->client((new ClientConfig('test')));
+        $endpoint = new EndSessionEndPoint($client);
+
+        $this->endPoints->add($endpoint);
+
+        $this->assertSame($endpoint, $this->endPoints->endSession());
     }
 }
