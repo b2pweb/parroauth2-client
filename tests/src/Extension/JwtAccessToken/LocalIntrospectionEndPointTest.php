@@ -182,4 +182,25 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
         $this->assertEquals('foo', $response->clientId());
         $this->assertEquals('bearer', $response->tokenType());
     }
+
+    /**
+     *
+     */
+    public function test_invalid_jwt_without_configured_endpoint_should_return_inactive_response()
+    {
+        $this->client = $this->provider(['introspection_endpoint' => null])->client(
+            (new ClientConfig('test'))
+                ->setSecret('my-secret')
+                ->enableOpenId(true)
+        );
+
+        $this->endPoint = new LocalIntrospectionEndPoint($this->client, new JwtParser());
+
+        $response = $this->endPoint->accessToken('AT')->call();
+
+        $this->assertInstanceOf(IntrospectionResponse::class, $response);
+        $this->assertFalse($response->active());
+
+        $this->assertCount(0, $this->httpClient->getRequests());
+    }
 }

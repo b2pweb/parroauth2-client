@@ -2,7 +2,6 @@
 
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
@@ -44,13 +43,13 @@ class LocalIntrospectionEndPoint extends IntrospectionEndPoint
     public function call(): IntrospectionResponse
     {
         if ($this->get('token_type_hint') !== null && $this->get('token_type_hint') !== self::TYPE_ACCESS_TOKEN) {
-            return parent::call();
+            return $this->networkCall();
         }
 
         try {
             $claims = $this->parser->parse($this->get('token'), $this->client);
         } catch (\InvalidArgumentException $e) {
-            return parent::call();
+            return $this->networkCall();
         }
 
         $expired = $claims['exp'] ?? 0;
@@ -67,6 +66,22 @@ class LocalIntrospectionEndPoint extends IntrospectionEndPoint
             $response = new IntrospectionResponse(['active' => true] + $claims);
         }
 
+        $this->callResponseListeners($response);
+
+        return $response;
+    }
+
+    /**
+     * Try to call the endpoint, if configured
+     * If not, an inactive introspection response is returned
+     */
+    private function networkCall(): IntrospectionResponse
+    {
+        if ($this->client->provider()->supportsEndpoint(self::NAME)) {
+            return parent::call();
+        }
+
+        $response = new IntrospectionResponse(['active' => false]);
         $this->callResponseListeners($response);
 
         return $response;
