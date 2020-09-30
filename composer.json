@@ -27,7 +27,6 @@
   "require": {
     "php": ">=7.1",
     "ext-json": "*",
-    "b2p/kangaroo": "~1.0",
     "php-http/client-implementation": "~1.0",
     "php-http/client-common": "~1.0",
     "php-http/message": "~1.8",
