@@ -51,9 +51,9 @@ class JwtUnserializerTest extends TestCase
     public function test_csrf()
     {
         $signer = new Sha256();
-        $token = base64_encode($signer->sign('http://localhost', $this->privateKey)->__toString());
+        $token = base64_encode($signer->sign('http://localhost', new Key($this->privateKey))->__toString());
 
-        $this->assertTrue($signer->verify(base64_decode($token), 'http://localhost', $this->publicKey));
+        $this->assertTrue($signer->verify(base64_decode($token), 'http://localhost', new Key($this->publicKey)));
     }
 
     /**
@@ -100,7 +100,7 @@ class JwtUnserializerTest extends TestCase
 
         $builder = new Builder();
         foreach ($data as $key => $value) {
-            $builder->withClaim($key, $value);
+            @$builder->withClaim($key, $value);
         }
 
         $this->assertEquals($builder->getToken(new Sha256(), new Key($this->privateKey)), $this->unserializer->unserialize($token));

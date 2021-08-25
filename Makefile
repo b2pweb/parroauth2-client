@@ -8,6 +8,9 @@ all: install clean tests
 install:
 	composer update
 
+coverage: PUARGS="--coverage-clover=coverage.xml"
+coverage: tests
+
 tests: test-server
 	@$(PHPUNIT) $(PUARGS)
 	kill -SIGINT $(SRV_PID)

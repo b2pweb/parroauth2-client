@@ -26,7 +26,7 @@ class JwtUnserializer implements UnserializerInterface
     private $signer;
 
     /**
-     * @var string
+     * @var Signer\Key
      */
     private $publicKey;
 
@@ -39,7 +39,7 @@ class JwtUnserializer implements UnserializerInterface
      */
     public function __construct(string $publicKey = null, Signer $signer = null, Parser $parser = null)
     {
-        $this->publicKey = $publicKey;
+        $this->publicKey = new Signer\Key($publicKey);
         $this->signer = $signer;
         $this->parser = $parser ?: new Parser();
     }

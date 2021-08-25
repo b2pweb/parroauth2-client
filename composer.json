@@ -1,15 +1,17 @@
 {
-  "name": "b2p/parroauth2-client",
+  "name": "b2pweb/parroauth2-client",
   "description": "B2P OAuth 2 client implementation",
   "type": "library",
-  "license": "proprietary",
-  "config": {
-    "secure-http": false
-  },
-  "repositories": [
+  "license": "MIT",
+  "authors": [
     {
-      "type": "composer",
-      "url": "http://packagist.b2pweb.com"
+      "name": "Sébastien Tanneux"
+    },
+    {
+      "name": "Thomas Vivien"
+    },
+    {
+      "name": "Vincent Quatrevieux"
     }
   ],
   "autoload": {
@@ -48,7 +50,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "2.0-dev"
+      "dev-master": "2.0.x-dev"
     }
   },
   "scripts": {
