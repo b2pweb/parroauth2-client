@@ -17,6 +17,7 @@ use Jose\Component\Signature\Algorithm\PS512;
 use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\Algorithm\RS384;
 use Jose\Component\Signature\Algorithm\RS512;
+use Jose\Component\Signature\Algorithm\SignatureAlgorithm;
 
 /**
  * Handle JSON Web Algorithms
@@ -39,7 +40,7 @@ final class JWA
      * - hash  : The hash function used by the algorithm
      * - type  : The algorithm type
      *
-     * @var array
+     * @var array<string, array{class: class-string<SignatureAlgorithm>, hash?: string, type: JWA::TYPE_*}>
      */
     private $algMap = [
         // HMAC : https://tools.ietf.org/html/rfc7518#section-3.2
@@ -69,7 +70,7 @@ final class JWA
     /**
      * Map of enabled algorithms
      *
-     * @var bool[]
+     * @var array<string, bool>
      */
     private $enabled = [
         'HS256' => true,
@@ -210,8 +211,8 @@ final class JWA
      * Register a new algorithm
      *
      * @param string $alg The "alg" header parameter
-     * @param string $class The algorithm implementation class
-     * @param string $type The algorithm type
+     * @param class-string<SignatureAlgorithm> $class The algorithm implementation class
+     * @param JWA::TYPE_* $type The algorithm type
      * @param string|null $hash The hash function
      */
     public function register(string $alg, string $class, string $type, ?string $hash = null): void

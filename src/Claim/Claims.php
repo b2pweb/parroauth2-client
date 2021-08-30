@@ -7,11 +7,13 @@ use BadMethodCallException;
 
 /**
  * Read-only container for store claims
+ *
+ * @psalm-immutable
  */
 class Claims implements ArrayAccess
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $claims;
 
@@ -19,7 +21,7 @@ class Claims implements ArrayAccess
     /**
      * Claims constructor.
      *
-     * @param array $claims
+     * @param array<string, mixed> $claims
      */
     public function __construct(array $claims)
     {
@@ -28,6 +30,8 @@ class Claims implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $offset
      */
     final public function offsetExists($offset)
     {
@@ -36,6 +40,8 @@ class Claims implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $offset
      */
     final public function offsetGet($offset)
     {
@@ -74,7 +80,7 @@ class Claims implements ArrayAccess
     /**
      * Get all claims
      *
-     * @return array
+     * @return array<string, mixed>
      */
     final public function claims(): array
     {
@@ -118,7 +124,7 @@ class Claims implements ArrayAccess
     /**
      * Check all claims
      *
-     * @param array $claims A key / value array for check claims
+     * @param array<string, mixed> $claims A key / value array for check claims
      *
      * @return bool
      */

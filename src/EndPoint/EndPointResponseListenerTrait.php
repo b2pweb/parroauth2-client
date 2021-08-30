@@ -4,24 +4,27 @@ namespace Parroauth2\Client\EndPoint;
 
 /**
  * Add response listener handling on endpoint
+ *
+ * @template T as object
  */
 trait EndPointResponseListenerTrait
 {
     /**
-     * @var callable[]
+     * @var list<callable(T):void>
+     * @readonly
      */
     private $responseListeners = [];
 
 
     /**
-     * Subscribe for the endpoint response
-     * Listener prototype : function ($response): void
+     * {@inheritdoc}
      *
-     * @param callable $listener The listener
+     * @param callable(T):void $listener
      *
      * @return static
+     * @psalm-mutation-free
      */
-    public function onResponse(callable $listener): self
+    public function onResponse(callable $listener): CallableEndPointInterface
     {
         $endpoint = clone $this;
         $endpoint->responseListeners[] = $listener;
@@ -32,11 +35,12 @@ trait EndPointResponseListenerTrait
     /**
      * Call all response listeners
      *
-     * @param mixed $response
+     * @param T $response
      */
     protected function callResponseListeners($response): void
     {
         foreach ($this->responseListeners as $listener) {
+            /** @psalm-suppress ArgumentTypeCoercion */
             $listener($response);
         }
     }

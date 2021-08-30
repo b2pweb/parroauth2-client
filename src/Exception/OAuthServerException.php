@@ -20,7 +20,7 @@ class OAuthServerException extends Parroauth2Exception
     private $errorType;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $hint;
 
@@ -31,7 +31,7 @@ class OAuthServerException extends Parroauth2Exception
      * @param int $statusCode
      * @param string $errorType
      * @param string $message
-     * @param string $hint
+     * @param string|null $hint
      * @param \Exception $previous
      * @param int $code
      */
@@ -67,7 +67,7 @@ class OAuthServerException extends Parroauth2Exception
     /**
      * Get the error hint
      *
-     * @return string
+     * @return string|null
      */
     public function getHint()
     {
@@ -78,9 +78,10 @@ class OAuthServerException extends Parroauth2Exception
      * Create the exception from a standard OAuth2 error response
      *
      * @param string $type
-     * @param string $message
+     * @param string|null $message
      * @param string|null $hint
      * @param \Exception|null $previous
+     * @param int $code
      *
      * @return OAuthServerException
      */
@@ -118,7 +119,7 @@ class OAuthServerException extends Parroauth2Exception
                 return new UnsupportedResponseTypeException($message ?: 'Unsupported response type', $hint, $previous, $code);
 
             default:
-                return new static(400, $type, $message ?: 'An error has occurred', $hint, $previous, $code);
+                return new self(400, $type, $message ?: 'An error has occurred', $hint, $previous, $code);
         }
     }
 }

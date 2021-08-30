@@ -45,7 +45,7 @@ class Authorization
     /**
      * The refresh token
      *
-     * @var string
+     * @var string|null
      */
     private $refreshToken;
 
@@ -59,7 +59,7 @@ class Authorization
     /**
      * The OpenID Connect idToken
      *
-     * @var string
+     * @var string|null
      */
     private $idToken;
 
@@ -117,7 +117,7 @@ class Authorization
     /**
      * Get the refresh token
      *
-     * @return string
+     * @return string|null
      */
     public function refreshToken()
     {
@@ -127,7 +127,7 @@ class Authorization
     /**
      * Get the id token
      *
-     * @return string
+     * @return string|null
      */
     public function idToken()
     {

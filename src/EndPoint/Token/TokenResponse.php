@@ -8,11 +8,13 @@ use DateTime;
  * Response of the token endpoint
  *
  * @see https://tools.ietf.org/html/rfc6749#section-5.1
+ *
+ * @psalm-immutable
  */
 class TokenResponse
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $response;
 
@@ -25,13 +27,14 @@ class TokenResponse
     /**
      * TokenResponse constructor.
      *
-     * @param array $response
+     * @param array<string, mixed> $response
      */
     public function __construct(array $response)
     {
         $this->response = $response;
 
         if (isset($response['expires_in']) && $response['expires_in'] >= 0) {
+            /** @psalm-suppress  ImpureMethodCall */
             $this->expiresAt = (new DateTime())->add(new \DateInterval('PT'.(int) $response['expires_in'].'S'));
         }
     }

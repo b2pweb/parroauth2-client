@@ -10,6 +10,7 @@ use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\Parroauth2Exception;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * The authorization provider
@@ -37,9 +38,12 @@ interface ProviderInterface extends HttpClient
      * Get a server metadata parameter
      *
      * @param string $parameter The parameter name
-     * @param null $default Default value to return if the parameter is not found
+     * @param T|null $default Default value to return if the parameter is not found
      *
-     * @return mixed The parameter value
+     * @return T|null The parameter value
+     * @psalm-return ($default is null ? mixed|null : T)
+     *
+     * @template T
      */
     public function metadata(string $parameter, $default = null);
 
@@ -69,7 +73,7 @@ interface ProviderInterface extends HttpClient
      * @param string $method The HTTP method
      * @param string $endpoint The endpoint name
      * @param array $queryParameters The query parameters
-     * @param null $body The body
+     * @param resource|string|StreamInterface|array|object|null $body The body
      *
      * @return RequestInterface
      * @throws UnsupportedServerOperation
@@ -99,6 +103,8 @@ interface ProviderInterface extends HttpClient
      *
      * @throws Parroauth2Exception When a server error occurs
      * @throws \Http\Client\Exception
+     *
+     * @psalm-suppress InvalidThrow
      */
     public function keySet(): JWKSet;
 }

@@ -21,6 +21,7 @@ class EndPoints
 {
     /**
      * @var ProviderInterface
+     * @readonly
      */
     private $provider;
 
@@ -140,6 +141,7 @@ class EndPoints
      */
     public function authorization(): AuthorizationEndPoint
     {
+        /** @var AuthorizationEndPoint */
         return $this->get(AuthorizationEndPoint::NAME);
     }
 
@@ -151,6 +153,7 @@ class EndPoints
      */
     public function token(): TokenEndPoint
     {
+        /** @var TokenEndPoint */
         return $this->get(TokenEndPoint::NAME);
     }
 
@@ -162,6 +165,7 @@ class EndPoints
      */
     public function revocation(): RevocationEndPoint
     {
+        /** @var RevocationEndPoint */
         return $this->get(RevocationEndPoint::NAME);
     }
 
@@ -173,6 +177,7 @@ class EndPoints
      */
     public function introspection(): IntrospectionEndPoint
     {
+        /** @var IntrospectionEndPoint */
         return $this->get(IntrospectionEndPoint::NAME);
     }
 
@@ -184,6 +189,7 @@ class EndPoints
      */
     public function userinfo(): UserinfoEndPoint
     {
+        /** @var UserinfoEndPoint */
         return $this->get(UserinfoEndPoint::NAME);
     }
 
@@ -195,6 +201,7 @@ class EndPoints
      */
     public function endSession(): EndSessionEndPoint
     {
+        /** @var EndSessionEndPoint */
         return $this->get(EndSessionEndPoint::NAME);
     }
 }

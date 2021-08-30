@@ -2,23 +2,24 @@
 
 namespace Parroauth2\Client\EndPoint\Token;
 
-use Http\Client\Exception;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
-use Parroauth2\Client\EndPoint\EndPointInterface;
+use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
-use Parroauth2\Client\Exception\Parroauth2Exception;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * The token revocation endpoint
  *
  * @see https://tools.ietf.org/html/rfc7009
+ *
+ * @implements CallableEndPointInterface<ResponseInterface>
  */
-class RevocationEndPoint implements EndPointInterface
+class RevocationEndPoint implements CallableEndPointInterface
 {
     use EndPointParametersTrait;
+    /** @use EndPointResponseListenerTrait<ResponseInterface> */
     use EndPointResponseListenerTrait;
 
     const NAME = 'revocation';
@@ -28,6 +29,7 @@ class RevocationEndPoint implements EndPointInterface
 
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
@@ -44,6 +46,8 @@ class RevocationEndPoint implements EndPointInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function name(): string
     {
@@ -63,7 +67,9 @@ class RevocationEndPoint implements EndPointInterface
      *
      * @param string $token Token to revoke. May be an access token or a refresh token
      *
-     * @return RevocationEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function token(string $token): RevocationEndPoint
     {
@@ -76,7 +82,9 @@ class RevocationEndPoint implements EndPointInterface
      *
      * @param string $type the token type
      *
-     * @return RevocationEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function typeHint(string $type): RevocationEndPoint
     {
@@ -88,7 +96,9 @@ class RevocationEndPoint implements EndPointInterface
      *
      * @param string $token The access token
      *
-     * @return RevocationEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function accessToken(string $token): RevocationEndPoint
     {
@@ -100,7 +110,9 @@ class RevocationEndPoint implements EndPointInterface
      *
      * @param string $token The refresh token
      *
-     * @return RevocationEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function refreshToken(string $token): RevocationEndPoint
     {
@@ -108,20 +120,18 @@ class RevocationEndPoint implements EndPointInterface
     }
 
     /**
-     * Call the endpoint
-     *
-     * @throws Parroauth2Exception When an error occurs during execution
-     * @throws Exception
-     *
-     * @todo Handle other client credentials
+     * {@inheritdoc}
      */
-    public function call(): void
+    public function call(): ResponseInterface
     {
         $request = $this->client->endPoints()
             ->request('POST', $this)
             ->withHeader('Authorization', 'Basic '.base64_encode($this->client->clientId().':'.$this->client->secret()))
         ;
 
-        $this->callResponseListeners($this->client->provider()->sendRequest($request));
+        $response = $this->client->provider()->sendRequest($request);
+        $this->callResponseListeners($response);
+
+        return $response;
     }
 }

@@ -31,7 +31,7 @@ final class ProviderBuilder
     private $url;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $config = [];
 
@@ -94,7 +94,7 @@ final class ProviderBuilder
      * ]);
      * </code>
      *
-     * @param string[] $endPoints Endpoints map, with key as name, and uri as value
+     * @param array<string, string> $endPoints Endpoints map, with key as name, and uri as value
      *
      * @return $this
      */

@@ -8,12 +8,20 @@ all: install clean tests
 install:
 	composer update
 
-coverage: PUARGS="--coverage-clover=coverage.xml"
-coverage: tests
+tests: tests-unit psalm
 
-tests: test-server
+coverage: PUARGS="--coverage-clover=coverage.xml"
+coverage: tests-unit
+
+tests-unit: test-server
 	@$(PHPUNIT) $(PUARGS)
 	kill -SIGINT $(SRV_PID)
+
+psalm:
+	vendor/bin/psalm
+
+psalm-ci:
+	vendor/bin/psalm --shepherd
 
 test-server:
 	@echo -n "Starting embedded server"

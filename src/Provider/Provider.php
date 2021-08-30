@@ -59,9 +59,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Check if the provider supports OpenID Connect
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function openid(): bool
     {
@@ -69,10 +67,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Get the issuer value for the provider
-     * The issuer is the base URL of the provider
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function issuer(): string
     {
@@ -80,12 +75,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Get a server metadata parameter
-     *
-     * @param string $parameter The parameter name
-     * @param null $default Default value to return if the parameter is not found
-     *
-     * @return mixed The parameter value
+     * {@inheritdoc}
      */
     public function metadata(string $parameter, $default = null)
     {
@@ -93,11 +83,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Check if the provider supports the given endpoint
-     *
-     * @param string $name The endpoint name
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function supportsEndpoint(string $name): bool
     {
@@ -105,13 +91,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Generates the URI for an endpoint
-     *
-     * @param string $name The endpoint name
-     * @param array $queryParameters The query parameters
-     *
-     * @return string
-     * @throws UnsupportedServerOperation When the server is not configured for supports the endpoint
+     * {@inheritdoc}
      */
     public function uri($name, array $queryParameters = []): string
     {
@@ -129,15 +109,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Creates a new http request
-     *
-     * @param string $method The HTTP method
-     * @param string $endpoint The endpoint name
-     * @param array $queryParameters The query parameters
-     * @param null $body The body
-     *
-     * @return RequestInterface
-     * @throws UnsupportedServerOperation
+     * {@inheritdoc}
      */
     public function request(string $method, string $endpoint, array $queryParameters = [], $body = null): RequestInterface
     {
@@ -166,7 +138,7 @@ final class Provider implements ProviderInterface
             return $response;
         }
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         if (!$body) {
             throw new Parroauth2Exception('An error has occurred:' . PHP_EOL . $response->getBody());
@@ -192,11 +164,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Creates a client for the provider
-     *
-     * @param ClientConfig $config
-     *
-     * @return ClientInterface
+     * {@inheritdoc}
      */
     public function client(ClientConfig $config): ClientInterface
     {
@@ -204,12 +172,7 @@ final class Provider implements ProviderInterface
     }
 
     /**
-     * Get the keyset (jwks) of the provider
-     *
-     * @return JWKSet
-     *
-     * @throws Parroauth2Exception When a server error occurs
-     * @throws \Http\Client\Exception
+     * {@inheritdoc}
      */
     public function keySet(): JWKSet
     {
@@ -223,6 +186,6 @@ final class Provider implements ProviderInterface
 
         $response = $this->sendRequest($this->requestFactory->createRequest('GET', $this->config['jwks_uri']));
 
-        return $this->config['jwks'] = JWKSet::createFromJson($response->getBody());
+        return $this->config['jwks'] = JWKSet::createFromJson((string) $response->getBody());
     }
 }

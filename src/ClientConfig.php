@@ -13,13 +13,14 @@ class ClientConfig
 {
     /**
      * @var string
+     * @readonly
      */
     private $clientId;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $secret;
+    private $secret = null;
 
     /**
      * @var bool
@@ -52,6 +53,8 @@ class ClientConfig
      * Must match with the client id configuration on the provider side
      *
      * @return string
+     *
+     * @psalm-mutation-free
      */
     public function clientId(): string
     {
@@ -62,7 +65,9 @@ class ClientConfig
      * Get the client secret
      * This value may be null for a public client
      *
-     * @return string
+     * @return string|null
+     *
+     * @psalm-mutation-free
      */
     public function secret(): ?string
     {
@@ -88,6 +93,8 @@ class ClientConfig
      * Note: This configuration has no effect on provided which do not supports openid connect
      *
      * @return bool
+     *
+     * @psalm-mutation-free
      */
     public function openid(): bool
     {
@@ -112,6 +119,8 @@ class ClientConfig
      * Get the configured scopes
      *
      * @return string[]
+     *
+     * @psalm-mutation-free
      */
     public function scopes(): array
     {
@@ -140,6 +149,8 @@ class ClientConfig
      * @param mixed $default The default value, if not set on the config
      *
      * @return mixed
+     *
+     * @psalm-mutation-free
      */
     public function option(string $name, $default = null)
     {

@@ -51,6 +51,7 @@ interface ClientInterface
 
     /**
      * @return EndPoints
+     * @psalm-allow-private-mutation
      */
     public function endPoints(): EndPoints;
 
@@ -88,6 +89,7 @@ interface ClientInterface
      * @return Authorization
      *
      * @deprecated Use token endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function login($username, $password, array $scopes = null);
 
@@ -100,6 +102,7 @@ interface ClientInterface
      * @return Authorization
      *
      * @deprecated Use token endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function refresh($token, array $scopes = null);
 
@@ -113,6 +116,7 @@ interface ClientInterface
      * @return Authorization
      *
      * @deprecated Use AuthorizationCodeFlow or token endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function tokenFromAuthorizationCode($code, $redirectUri = null, $clientId = null);
 
@@ -123,11 +127,12 @@ interface ClientInterface
      * @param null|string[] $scopes
      * @param null|string $state
      * @param null|string $clientId
-     * @param array $parameters
+     * @param array<string, mixed> $parameters
      *
      * @return string
      *
      * @deprecated Use AuthorizationCodeFlow or authorization endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null, array $parameters = []);
 
@@ -140,6 +145,7 @@ interface ClientInterface
      * @return Introspection
      *
      * @deprecated Use introspection endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function introspect($token, $hint = null);
 
@@ -147,20 +153,24 @@ interface ClientInterface
      * Revoke the token
      *
      * @param Authorization|string $token
-     * @param string $hint
+     * @param string|null $hint
+     *
+     * @return void
      *
      * @deprecated Use revocation endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function revoke($token, $hint = null);
 
     /**
      * Gets user info from the access token
      *
-     * @param string Authorization $token
+     * @param string|Authorization $token
      *
      * @return Userinfo
      *
      * @deprecated Use userinfo endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function userinfo($token);
 }

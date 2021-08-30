@@ -8,6 +8,8 @@ use Parroauth2\Client\Claim\Claims;
  * Store the ID Token claims
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#IDToken
+ *
+ * @psalm-immutable
  */
 final class IdToken extends Claims
 {
@@ -48,7 +50,7 @@ final class IdToken extends Claims
 
     /**
      * Audience of the ID Token
-     * Must contains the client id
+     * Must contain the client id
      *
      * @return string|string[]
      */

@@ -15,6 +15,8 @@ interface EndPointInterface
      * The name is defined as parameter of the server metadata
      *
      * @return string
+     *
+     * @psalm-mutation-free
      */
     public function name(): string;
 
@@ -25,6 +27,8 @@ interface EndPointInterface
      * @param mixed $value
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function set(string $parameter, $value);
 
@@ -34,6 +38,8 @@ interface EndPointInterface
      * @param string $parameter
      *
      * @return mixed
+     *
+     * @psalm-mutation-free
      */
     public function get(string $parameter);
 
@@ -41,6 +47,8 @@ interface EndPointInterface
      * Get all endpoint parameters
      *
      * @return array
+     *
+     * @psalm-mutation-free
      */
     public function parameters(): array;
 

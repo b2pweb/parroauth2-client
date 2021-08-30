@@ -15,17 +15,17 @@ use Psr\Http\Message\RequestInterface;
 final class ProxyProvider implements ProviderInterface
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $url;
 
     /**
-     * @var ProviderLoader
+     * @var ProviderLoader|null
      */
     private $loader;
 
     /**
-     * @var ProviderInterface
+     * @var ProviderInterface|null
      */
     private $provider;
 
@@ -120,6 +120,9 @@ final class ProxyProvider implements ProviderInterface
      * Get the real provider instance
      *
      * @return ProviderInterface
+     *
+     * @psalm-suppress PossiblyNullReference
+     * @psalm-suppress PossiblyNullArgument
      */
     private function provider(): ProviderInterface
     {

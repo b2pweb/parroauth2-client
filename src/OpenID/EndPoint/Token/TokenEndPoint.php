@@ -16,11 +16,13 @@ class TokenEndPoint extends BaseTokenEndPoint
 {
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
     /**
      * @var IdTokenParserInterface
+     * @readonly
      */
     private $idTokenParser;
 
@@ -42,7 +44,7 @@ class TokenEndPoint extends BaseTokenEndPoint
     /**
      * Parse the response and set the ID Token
      *
-     * @param array $response
+     * @param array<string, mixed> $response
      *
      * @return TokenResponse
      */

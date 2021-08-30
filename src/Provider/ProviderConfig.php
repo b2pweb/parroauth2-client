@@ -7,7 +7,7 @@ use Psr\SimpleCache\CacheInterface;
 /**
  * Store the configuration of a provider
  *
- * Note: Do not creates directly, use ProviderConfigPool::create methods instead
+ * Note: Do not create directly, use ProviderConfigPool::create methods instead
  */
 final class ProviderConfig implements \ArrayAccess
 {
@@ -17,7 +17,7 @@ final class ProviderConfig implements \ArrayAccess
     private $url;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $config;
 
@@ -36,7 +36,7 @@ final class ProviderConfig implements \ArrayAccess
      * @internal Use ProviderConfigPool create instead
      *
      * @param string $url
-     * @param array $config
+     * @param array<string, mixed> $config
      * @param bool $openid
      */
     public function __construct(string $url, array $config, bool $openid)
@@ -72,6 +72,8 @@ final class ProviderConfig implements \ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $offset
      */
     public function offsetExists($offset)
     {
@@ -80,6 +82,8 @@ final class ProviderConfig implements \ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $offset
      */
     public function offsetGet($offset)
     {
@@ -88,6 +92,9 @@ final class ProviderConfig implements \ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $offset
+     * @param mixed $value
      */
     public function offsetSet($offset, $value)
     {
@@ -97,6 +104,8 @@ final class ProviderConfig implements \ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $offset
      */
     public function offsetUnset($offset)
     {

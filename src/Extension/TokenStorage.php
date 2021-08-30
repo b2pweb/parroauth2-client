@@ -81,7 +81,7 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
     /**
      * Get the stored token
      *
-     * @return TokenResponse
+     * @return TokenResponse|null
      */
     public function token(): ?TokenResponse
     {
@@ -92,9 +92,12 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
      * Check if the stored token is not available or expired
      *
      * @return bool
+     *
+     * @psalm-assert-if-false TokenResponse $this->token()
      */
     public function expired(): bool
     {
+        /** @psalm-suppress PossiblyNullReference */
         return !$this->client()->storage()->has(self::class) || $this->token()->expired();
     }
 

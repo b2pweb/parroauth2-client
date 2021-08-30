@@ -10,11 +10,13 @@ use Parroauth2\Client\OpenID\IdToken\IdToken;
  * Add the id_token field
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
+ *
+ * @psalm-immutable
  */
 class TokenResponse extends BaseTokenResponse
 {
     /**
-     * @var IdToken
+     * @var IdToken|null
      */
     private $idToken;
 
@@ -22,8 +24,8 @@ class TokenResponse extends BaseTokenResponse
     /**
      * TokenResponse constructor.
      *
-     * @param array $response
-     * @param IdToken $idToken
+     * @param array<string, mixed> $response
+     * @param IdToken|null $idToken
      */
     public function __construct(array $response, ?IdToken $idToken)
     {

@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\Extension;
 
+use BadMethodCallException;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
@@ -71,7 +72,7 @@ class TokenStorageTest extends FunctionalTestCase
      */
     public function test_userinfo_without_token()
     {
-        $this->expectException(InvalidRequestException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->client->endPoints()->userinfo()->call();
     }
 

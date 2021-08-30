@@ -25,9 +25,9 @@ final class JwsIdTokenParser implements IdTokenParserInterface
      *
      * @param JwtDecoder|null $decoder
      */
-    public function __construct(JwtDecoder $decoder = null)
+    public function __construct(?JwtDecoder $decoder = null)
     {
-        $this->decoder = $decoder ?: new JwtDecoder();
+        $this->decoder = $decoder ?? new JwtDecoder();
     }
 
     /**

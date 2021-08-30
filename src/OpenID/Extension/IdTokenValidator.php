@@ -40,7 +40,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
      *
      * @param AccessTokenHash|null $accessTokenHash
      */
-    public function __construct(AccessTokenHash $accessTokenHash = null)
+    public function __construct(?AccessTokenHash $accessTokenHash = null)
     {
         $this->accessTokenHash = $accessTokenHash ?: new AccessTokenHash();
     }

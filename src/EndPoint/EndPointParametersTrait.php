@@ -4,17 +4,22 @@ namespace Parroauth2\Client\EndPoint;
 
 /**
  * Implementation of the parameters for EndPointInterface
+ *
+ * @psalm-require-implements EndPointInterface
  */
 trait EndPointParametersTrait
 {
     /**
      * @var array
+     * @readonly
      */
     private $parameters = [];
 
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function get(string $parameter)
     {
@@ -23,6 +28,8 @@ trait EndPointParametersTrait
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function parameters(): array
     {
@@ -31,6 +38,12 @@ trait EndPointParametersTrait
 
     /**
      * {@inheritdoc}
+     *
+     * @param mixed $value
+     *
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function set(string $parameter, $value): self
     {

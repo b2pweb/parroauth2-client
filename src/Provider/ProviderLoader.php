@@ -25,7 +25,7 @@ final class ProviderLoader
      * List of well-known paths
      * The first element is the path, and the second is a boolean for define if the server supports open id connect
      *
-     * @var array
+     * @var list<array{0:string, 1:bool}>
      */
     private $wellKnownUris = [
         ['openid-configuration', true],
@@ -56,7 +56,7 @@ final class ProviderLoader
     /**
      * ProviderLoader constructor.
      *
-     * @param ClientFactoryInterface $clientFactory
+     * @param ClientFactoryInterface|null $clientFactory
      * @param HttpClient|null $httpClient The HTTP client to use. If null will discover registered clients
      * @param RequestFactory|null $messageFactory The HTTP message factory to use. If null will discover registered factories
      * @param ProviderConfigPool|null $configPool
@@ -65,6 +65,7 @@ final class ProviderLoader
     {
         $this->clientFactory = $clientFactory ?: new BaseClientFactory();
         $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+        /** @psalm-suppress DeprecatedClass */
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
         $this->configPool = $configPool ?: new ProviderConfigPool();
     }
@@ -79,6 +80,8 @@ final class ProviderLoader
      * @throws \Http\Client\Exception
      *
      * @see ProviderLoader::lazy() For perform a lazy loading of the metadata
+     *
+     * @psalm-suppress InvalidThrow
      */
     public function discover(string $providerUrl): ProviderInterface
     {
@@ -95,7 +98,7 @@ final class ProviderLoader
                 continue;
             }
 
-            $config = $this->configPool->createFromJson($providerUrl, $response->getBody(), $openid);
+            $config = $this->configPool->createFromJson($providerUrl, (string) $response->getBody(), $openid);
             $config->save();
 
             return $this->create($config);
@@ -122,7 +125,7 @@ final class ProviderLoader
      * Creates a provider using a config
      * The configuration format must follow the server metadata form
      *
-     * @param array|ProviderConfig $config The provider configuration
+     * @param array<string, mixed>|ProviderConfig $config The provider configuration
      * @param bool|null $openid Does the provider supports openid ?
      *
      * @return ProviderInterface

@@ -2,10 +2,12 @@
 
 namespace Parroauth2\Client\OpenID\EndPoint\Userinfo;
 
-use Parroauth2\Client\Client;
+use BadMethodCallException;
+use InvalidArgumentException;
 use Parroauth2\Client\ClientInterface;
-use Parroauth2\Client\EndPoint\EndPointInterface;
+use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
+use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 use Psr\Http\Message\RequestInterface;
 
@@ -13,10 +15,14 @@ use Psr\Http\Message\RequestInterface;
  * Endpoint for get information about the user of the access token
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+ *
+ * @implements CallableEndPointInterface<UserinfoResponse>
  */
-class UserinfoEndPoint implements EndPointInterface
+class UserinfoEndPoint implements CallableEndPointInterface
 {
     use EndPointParametersTrait;
+    /** @use EndPointResponseListenerTrait<UserinfoResponse> */
+    use EndPointResponseListenerTrait;
 
     const NAME = 'userinfo';
 
@@ -26,21 +32,24 @@ class UserinfoEndPoint implements EndPointInterface
 
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
     /**
      * The current access token
      *
-     * @var string
+     * @var string|null
+     * @readonly
      */
-    private $accessToken;
+    private $accessToken = null;
 
     /**
      * The authentication method to use
      * The value must be one of the AUTH_METHOD_* constants
      *
      * @var string
+     * @readonly
      */
     private $method = self::AUTH_METHOD_HEADER;
 
@@ -57,6 +66,8 @@ class UserinfoEndPoint implements EndPointInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function name(): string
     {
@@ -77,6 +88,8 @@ class UserinfoEndPoint implements EndPointInterface
      * @param string $token
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function token(string $token): self
     {
@@ -93,6 +106,8 @@ class UserinfoEndPoint implements EndPointInterface
      * @param string $method One of the UserinfoEndPoint::AUTH_METHOD_* constant
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function authenticationMethod(string $method): self
     {
@@ -106,7 +121,9 @@ class UserinfoEndPoint implements EndPointInterface
     /**
      * Provide the token into the authorization header (recommended)
      *
-     * @return $this
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function inHeader(): self
     {
@@ -116,7 +133,9 @@ class UserinfoEndPoint implements EndPointInterface
     /**
      * Provide the token as a body parameter
      *
-     * @return $this
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function inBody(): self
     {
@@ -126,7 +145,9 @@ class UserinfoEndPoint implements EndPointInterface
     /**
      * Provide the token as a query parameter (not recommended)
      *
-     * @return $this
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function inQuery(): self
     {
@@ -134,13 +155,7 @@ class UserinfoEndPoint implements EndPointInterface
     }
 
     /**
-     * Call the endpoint
-     *
-     * @return UserinfoResponse
-     *
-     * @throws \Http\Client\Exception
-     * @throws \Parroauth2\Client\Exception\Parroauth2Exception
-     * @throws \Parroauth2\Client\Exception\UnsupportedServerOperation
+     * {@inheritdoc}
      *
      * @todo handle the JWT response
      */
@@ -151,11 +166,15 @@ class UserinfoEndPoint implements EndPointInterface
 
         switch ($contentType) {
             case 'application/json':
-                return new UserinfoResponse(json_decode($response->getBody(), true));
+                $response = new UserinfoResponse(json_decode((string) $response->getBody(), true));
+                break;
 
             default:
-                throw new \BadMethodCallException('The Content-Type '.$contentType.' is not supported');
+                throw new BadMethodCallException('The Content-Type '.$contentType.' is not supported');
         }
+
+        $this->callResponseListeners($response);
+        return $response;
     }
 
     /**
@@ -167,6 +186,10 @@ class UserinfoEndPoint implements EndPointInterface
      */
     private function request(): RequestInterface
     {
+        if (!$this->accessToken) {
+            throw new BadMethodCallException('No access token has been provided');
+        }
+
         switch ($this->method) {
             // @see https://tools.ietf.org/html/rfc6750#section-2.1
             case self::AUTH_METHOD_HEADER:
@@ -187,7 +210,7 @@ class UserinfoEndPoint implements EndPointInterface
                 ;
 
             default:
-                throw new \InvalidArgumentException('Unsupported authorization method '.$this->method);
+                throw new InvalidArgumentException('Unsupported authorization method '.$this->method);
         }
     }
 }

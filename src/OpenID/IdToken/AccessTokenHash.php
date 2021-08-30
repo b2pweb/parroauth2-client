@@ -20,9 +20,9 @@ final class AccessTokenHash
     /**
      * AccessTokenHash constructor.
      *
-     * @param JWA $jwa
+     * @param JWA|null $jwa
      */
-    public function __construct(JWA $jwa = null)
+    public function __construct(?JWA $jwa = null)
     {
         $this->jwa = $jwa ?: new JWA();
     }
@@ -40,7 +40,7 @@ final class AccessTokenHash
         $algo = $this->jwa->hashAlgorithm($alg);
 
         $hash = hash($algo, $accessToken, true);
-        $hash = substr($hash, 0, strlen($hash) / 2);
+        $hash = substr($hash, 0, intdiv(strlen($hash), 2));
 
         return Base64Url::encode($hash);
     }

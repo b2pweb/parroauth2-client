@@ -2,6 +2,8 @@
 
 namespace Parroauth2\Client\Jwt;
 
+use Exception;
+use InvalidArgumentException;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\Signature\JWSLoader;
 use Jose\Component\Signature\JWSVerifier;
@@ -28,10 +30,10 @@ final class JwtDecoder
     /**
      * JwtParser constructor.
      *
-     * @param JWA $jwa
+     * @param JWA|null $jwa
      * @param JWSSerializerManager|null $serializerManager
      */
-    public function __construct(JWA $jwa = null, JWSSerializerManager $serializerManager = null)
+    public function __construct(?JWA $jwa = null, ?JWSSerializerManager $serializerManager = null)
     {
         $this->jwa = $jwa ?: new JWA();
         $this->serializerManager = $serializerManager ?: new JWSSerializerManager([new CompactSerializer()]);
@@ -73,7 +75,7 @@ final class JwtDecoder
      *
      * @return JWT
      *
-     * @throws \InvalidArgumentException When cannot decode the JWT string
+     * @throws InvalidArgumentException When cannot decode the JWT string
      */
     public function decode(string $jwt, JWKSet $keySet): JWT
     {
@@ -84,13 +86,15 @@ final class JwtDecoder
         );
 
         try {
-            $decoded = $loader->loadAndVerifyWithKeySet($jwt, $keySet, $signature);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Invalid ID Token or signature', 0, $e);
+            $decoded = $loader->loadAndVerifyWithKeySet($jwt, $keySet, $signatureOffset);
+        } catch (Exception $e) {
+            throw new InvalidArgumentException('Invalid ID Token or signature', 0, $e);
         }
 
-        $signature = $decoded->getSignatures()[$signature];
+        /** @psalm-suppress PossiblyNullArrayOffset */
+        $signature = $decoded->getSignatures()[$signatureOffset];
 
+        /** @psalm-suppress PossiblyNullArgument */
         return new JWT($jwt, $signature->getProtectedHeader() + $signature->getHeader(), json_decode($decoded->getPayload(), true));
     }
 }

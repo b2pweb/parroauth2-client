@@ -12,7 +12,7 @@ use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 abstract class AbstractEndPointTransformerExtension implements ExtensionInterface, EndPointTransformerInterface
 {
     /**
-     * @var ClientInterface
+     * @var ClientInterface|null
      */
     private $client;
 
@@ -31,6 +31,11 @@ abstract class AbstractEndPointTransformerExtension implements ExtensionInterfac
      * Get the configured client
      *
      * @return ClientInterface
+     *
+     * @psalm-mutation-free
+     *
+     * @psalm-suppress InvalidNullableReturnType
+     * @psalm-suppress NullableReturnStatement
      */
     final protected function client(): ClientInterface
     {

@@ -70,6 +70,8 @@ class AuthorizationCodeFlow implements AuthorizationFlowInterface
      * {@inheritdoc}
      *
      * @throws \Http\Client\Exception When an HTTP error occurs
+     *
+     * @psalm-suppress InvalidThrow
      */
     public function handleAuthorizationResponse(array $queryParameters): TokenResponse
     {

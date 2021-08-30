@@ -22,12 +22,12 @@ final class ProxyClient implements ClientInterface
     private $config;
 
     /**
-     * @var callable
+     * @var callable(ClientConfig):ClientInterface
      */
     private $clientFactory;
 
     /**
-     * @var ExtensionInterface[]
+     * @var list<ExtensionInterface>
      */
     private $extensions = [];
 
@@ -40,7 +40,7 @@ final class ProxyClient implements ClientInterface
      * ProxyClient constructor.
      *
      * @param ClientConfig $config The client configuration
-     * @param callable $clientFactory
+     * @param callable(ClientConfig):ClientInterface $clientFactory
      */
     public function __construct(ClientConfig $config, callable $clientFactory)
     {
@@ -126,6 +126,8 @@ final class ProxyClient implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
      */
     public function login($username, $password, array $scopes = null)
     {
@@ -134,6 +136,9 @@ final class ProxyClient implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress DeprecatedClass
      */
     public function refresh($token, array $scopes = null)
     {
@@ -142,6 +147,9 @@ final class ProxyClient implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress DeprecatedClass
      */
     public function tokenFromAuthorizationCode($code, $redirectUri = null, $clientId = null)
     {
@@ -150,6 +158,9 @@ final class ProxyClient implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress DeprecatedClass
      */
     public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null, array $parameters = [])
     {
@@ -158,6 +169,9 @@ final class ProxyClient implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress DeprecatedClass
      */
     public function introspect($token, $hint = null)
     {
@@ -166,14 +180,20 @@ final class ProxyClient implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress DeprecatedClass
      */
     public function revoke($token, $hint = null)
     {
-        return $this->client()->revoke($token, $hint);
+        $this->client()->revoke($token, $hint);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress DeprecatedClass
      */
     public function userinfo($token)
     {
@@ -197,8 +217,8 @@ final class ProxyClient implements ClientInterface
             $this->client->register($extension);
         }
 
-        $this->clientFactory = null;
-        $this->extensions = null;
+        unset($this->clientFactory);
+        unset($this->extensions);
 
         return $this->client;
     }

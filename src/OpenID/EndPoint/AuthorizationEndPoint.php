@@ -14,6 +14,8 @@ class AuthorizationEndPoint extends BaseAuthorizationEndPoint
 {
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function scope(array $scopes): BaseAuthorizationEndPoint
     {
@@ -21,6 +23,7 @@ class AuthorizationEndPoint extends BaseAuthorizationEndPoint
             array_unshift($scopes, 'openid');
         }
 
+        /** @var static */
         return BaseAuthorizationEndPoint::scope($scopes);
     }
 
@@ -42,7 +45,7 @@ class AuthorizationEndPoint extends BaseAuthorizationEndPoint
      *
      * @param string|null $nonce The nonce, or null to generate it
      *
-     * @return self
+     * @return static
      */
     public function nonce(?string $nonce = null): self
     {

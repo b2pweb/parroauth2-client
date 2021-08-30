@@ -23,6 +23,7 @@ class EndSessionEndPoint implements EndPointInterface
 
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
@@ -38,6 +39,8 @@ class EndSessionEndPoint implements EndPointInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function name(): string
     {
@@ -51,6 +54,8 @@ class EndSessionEndPoint implements EndPointInterface
      * @param IdToken|string $idToken The ID Token raw value, or object
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function idToken($idToken): self
     {
@@ -64,6 +69,8 @@ class EndSessionEndPoint implements EndPointInterface
      * @param string|null $state A random CSRF string, which should be returned by the OP on the redirect uri
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function redirectUri(string $uri, ?string $state = null): self
     {

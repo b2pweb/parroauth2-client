@@ -5,6 +5,7 @@ namespace Parroauth2\Client\EndPoint\Token;
 use Http\Client\Exception;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
+use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
@@ -15,10 +16,13 @@ use Parroauth2\Client\Exception\Parroauth2Exception;
  * Endpoint for generates an access token
  *
  * @see https://tools.ietf.org/html/rfc6749#section-5.1
+ *
+ * @implements CallableEndPointInterface<TokenResponse>
  */
-class TokenEndPoint implements EndPointInterface
+class TokenEndPoint implements CallableEndPointInterface
 {
     use EndPointParametersTrait;
+    /** @use EndPointResponseListenerTrait<TokenResponse> */
     use EndPointResponseListenerTrait;
 
     const NAME = 'token';
@@ -29,34 +33,33 @@ class TokenEndPoint implements EndPointInterface
 
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
     /**
-     * @var callable
+     * @var callable(array):TokenResponse
+     * @readonly
      */
     private $responseFactory;
-
-    /**
-     * @var callable[]
-     */
-    private $responseListeners = [];
 
 
     /**
      * TokenEndPoint constructor.
      *
      * @param ClientInterface $client
-     * @param callable $responseFactory
+     * @param callable(array):TokenResponse $responseFactory
      */
     public function __construct(ClientInterface $client, callable $responseFactory = null)
     {
         $this->client = $client;
-        $this->responseFactory = $responseFactory ?: function (array $response) { return new TokenResponse($response); };
+        $this->responseFactory = $responseFactory ?: function (array $response): TokenResponse { return new TokenResponse($response); };
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function name(): string
     {
@@ -101,11 +104,13 @@ class TokenEndPoint implements EndPointInterface
      *
      * @param string $username The resource owner username
      * @param string $password The resource owner password
-     * @param array|null $scopes List of scopes to grant
+     * @param list<string>|null $scopes List of scopes to grant
      *
      * @return static
      *
      * @see https://tools.ietf.org/html/rfc6749#section-4.3.2
+     *
+     * @psalm-mutation-free
      */
     public function password(string $username, string $password, ?array $scopes = null): TokenEndPoint
     {
@@ -126,11 +131,13 @@ class TokenEndPoint implements EndPointInterface
      * Configure the refresh token request
      *
      * @param string $token The refresh token
-     * @param array|null $scopes List of scopes to grant
+     * @param list<string>|null $scopes List of scopes to grant
      *
      * @return static
      *
      * @see https://tools.ietf.org/html/rfc6749#section-6
+     *
+     * @psalm-mutation-free
      */
     public function refresh(string $token, ?array $scopes = null): TokenEndPoint
     {
@@ -147,14 +154,7 @@ class TokenEndPoint implements EndPointInterface
     }
 
     /**
-     * Call the endpoint
-     *
-     * @return TokenResponse The tokens
-     *
-     * @throws Parroauth2Exception When an error occurs during execution
-     * @throws Exception
-     *
-     * @todo Handle other client credentials
+     * {@inheritdoc}
      */
     public function call(): TokenResponse
     {
@@ -163,7 +163,7 @@ class TokenEndPoint implements EndPointInterface
             ->withHeader('Authorization', 'Basic '.base64_encode($this->client->clientId().':'.$this->client->secret()))
         ;
 
-        $response = ($this->responseFactory)(json_decode($this->client->provider()->sendRequest($request)->getBody(), true));
+        $response = ($this->responseFactory)(json_decode((string) $this->client->provider()->sendRequest($request)->getBody(), true));
 
         $this->callResponseListeners($response);
 
@@ -174,9 +174,11 @@ class TokenEndPoint implements EndPointInterface
      * Change the token response factory
      * Factory prototype : function (array $body): TokenResponse
      *
-     * @param callable $factory
+     * @param callable(array):TokenResponse $factory
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function responseFactory(callable $factory): TokenEndPoint
     {

@@ -5,6 +5,7 @@ namespace Parroauth2\Client\EndPoint\Introspection;
 use Http\Client\Exception;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
+use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
@@ -16,10 +17,13 @@ use Parroauth2\Client\Exception\Parroauth2Exception;
  * The introspection permit to get meta-information about the current token
  *
  * @see https://tools.ietf.org/html/rfc7662
+ *
+ * @implements CallableEndPointInterface<IntrospectionResponse>
  */
-class IntrospectionEndPoint implements EndPointInterface
+class IntrospectionEndPoint implements CallableEndPointInterface
 {
     use EndPointParametersTrait;
+    /** @use EndPointResponseListenerTrait<IntrospectionResponse> */
     use EndPointResponseListenerTrait;
 
     const NAME = 'introspection';
@@ -29,6 +33,7 @@ class IntrospectionEndPoint implements EndPointInterface
 
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
@@ -44,6 +49,8 @@ class IntrospectionEndPoint implements EndPointInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function name(): string
     {
@@ -63,7 +70,9 @@ class IntrospectionEndPoint implements EndPointInterface
      *
      * @param string $token Token to revoke. May be an access token or a refresh token
      *
-     * @return IntrospectionEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function token(string $token): IntrospectionEndPoint
     {
@@ -76,7 +85,9 @@ class IntrospectionEndPoint implements EndPointInterface
      *
      * @param string $type the token type
      *
-     * @return IntrospectionEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function typeHint(string $type): IntrospectionEndPoint
     {
@@ -88,7 +99,9 @@ class IntrospectionEndPoint implements EndPointInterface
      *
      * @param string $token The access token
      *
-     * @return IntrospectionEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function accessToken(string $token): IntrospectionEndPoint
     {
@@ -100,7 +113,9 @@ class IntrospectionEndPoint implements EndPointInterface
      *
      * @param string $token The refresh token
      *
-     * @return IntrospectionEndPoint
+     * @return static
+     *
+     * @psalm-mutation-free
      */
     public function refreshToken(string $token): IntrospectionEndPoint
     {
@@ -108,12 +123,7 @@ class IntrospectionEndPoint implements EndPointInterface
     }
 
     /**
-     * Call the endpoint
-     *
-     * @throws Parroauth2Exception When an error occurs during execution
-     * @throws Exception
-     *
-     * @todo Handle other client credentials
+     * {@inheritdoc}
      */
     public function call(): IntrospectionResponse
     {
@@ -122,7 +132,7 @@ class IntrospectionEndPoint implements EndPointInterface
             ->withHeader('Authorization', 'Basic '.base64_encode($this->client->clientId().':'.$this->client->secret()))
         ;
 
-        $response = new IntrospectionResponse(json_decode($this->client->provider()->sendRequest($request)->getBody(), true));
+        $response = new IntrospectionResponse(json_decode((string) $this->client->provider()->sendRequest($request)->getBody(), true));
 
         $this->callResponseListeners($response);
 

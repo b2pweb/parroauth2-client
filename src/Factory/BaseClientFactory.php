@@ -48,7 +48,7 @@ final class BaseClientFactory implements ClientFactoryInterface
     /**
      * BaseClientFactory constructor.
      *
-     * @param StorageInterface $storage
+     * @param StorageInterface|null $storage
      * @param IdTokenParserInterface|null $idTokenParser
      */
     public function __construct(StorageInterface $storage = null, IdTokenParserInterface $idTokenParser = null)

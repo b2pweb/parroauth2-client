@@ -8,10 +8,17 @@ use Parroauth2\Client\Claim\Claims;
  * Response of the introspection endpoint
  *
  * @see https://tools.ietf.org/html/rfc7662#section-2.2
+ *
+ * @psalm-immutable
  */
 class IntrospectionResponse extends Claims
 {
     /**
+     * Does the current token is active ?
+     *
+     * If this value is false, the token should be considered as expired, and cannot be used,
+     * and also all other claims may be null
+     *
      * @return boolean
      */
     public function active(): bool
@@ -20,7 +27,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string[]
+     * Get the list of scope names
+     *
+     * @return list<string>|null
      */
     public function scopes(): ?array
     {
@@ -28,7 +37,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string
+     * Get the requested client id
+     *
+     * @return string|null
      */
     public function clientId(): ?string
     {
@@ -36,7 +47,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string
+     * Resource owner username
+     *
+     * @return string|null
      */
     public function username(): ?string
     {
@@ -44,7 +57,10 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string
+     * Type of the token
+     * Available values are "bearer" and "mac"
+     *
+     * @return string|null
      */
     public function tokenType(): ?string
     {
@@ -52,7 +68,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return int
+     * Unix timestamp indicating the token expiration date
+     *
+     * @return int|null
      */
     public function expireAt(): ?int
     {
@@ -60,7 +78,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return int
+     * Unix timestamp indicating the token creation date
+     *
+     * @return int|null
      */
     public function issuedAt(): ?int
     {
@@ -68,7 +88,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return int
+     * Unix timestamp indicating when the token can be used
+     *
+     * @return int|null
      */
     public function notBefore(): ?int
     {
@@ -76,7 +98,10 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string
+     * Subject of the token
+     * Usually identify the resource owner, like a user id
+     *
+     * @return string|null
      */
     public function subject(): ?string
     {
@@ -92,7 +117,10 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string
+     * The token issuer (i.e. oauth authority)
+     * This value is usually an URI
+     *
+     * @return string|null
      */
     public function issuer(): ?string
     {
@@ -100,7 +128,9 @@ class IntrospectionResponse extends Claims
     }
 
     /**
-     * @return string
+     * Unique identifier of the JWT
+     *
+     * @return string|null
      */
     public function jwtId(): ?string
     {

@@ -11,16 +11,16 @@ use Psr\SimpleCache\CacheInterface;
 final class ProviderConfigPool
 {
     /**
-     * @var CacheInterface
+     * @var CacheInterface|null
      */
     private $cache;
 
     /**
      * ProviderConfigPool constructor.
      *
-     * @param CacheInterface $cache The cache system. If null the cache is disabled
+     * @param CacheInterface|null $cache The cache system. If null the cache is disabled
      */
-    public function __construct(CacheInterface $cache = null)
+    public function __construct(?CacheInterface $cache = null)
     {
         $this->cache = $cache;
     }
@@ -53,7 +53,7 @@ final class ProviderConfigPool
      * Creates the provider config
      *
      * @param string $url The provider URL
-     * @param array $config The config data
+     * @param array<string, mixed> $config The config data
      * @param bool $openid Does the provider is an OpenID connect provider ?
      *
      * @return ProviderConfig
@@ -70,7 +70,7 @@ final class ProviderConfigPool
      * Creates the provider config from the config array
      * Use issuer as URL
      *
-     * @param array $config The provider config
+     * @param array<string, mixed> $config The provider config
      * @param bool|null $openid Does the provider is an OpenID connect provider ? If null, try to detect is it's an OpenID config
      *
      * @return ProviderConfig
@@ -95,7 +95,7 @@ final class ProviderConfigPool
      */
     public function createFromJson(string $url, string $config, bool $openid): ProviderConfig
     {
-        return $this->create($url, json_decode($config, true), $openid);
+        return $this->create($url, (array) json_decode($config, true), $openid);
     }
 
     /**

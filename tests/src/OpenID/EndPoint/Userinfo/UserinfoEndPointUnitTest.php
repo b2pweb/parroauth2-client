@@ -145,6 +145,42 @@ class UserinfoEndPointUnitTest extends UnitTestCase
     /**
      *
      */
+    public function test_onResponse()
+    {
+        $this->httpClient->addResponse(new Response(200, ['Content-Type' => 'application/json'], json_encode([
+            'sub' => 'sub',
+            'name' => 'name',
+            'given_name' => 'given_name',
+            'family_name' => 'family_name',
+            'middle_name' => 'middle_name',
+            'nickname' => 'nickname',
+            'preferred_username' => 'preferred_username',
+            'profile' => 'profile',
+            'picture' => 'picture',
+            'website' => 'website',
+            'email' => 'email',
+            'email_verified' => true,
+            'gender' => 'gender',
+            'birthdate' => 'birthdate',
+            'zoneinfo' => 'zoneinfo',
+            'locale' => 'locale',
+            'phone_number' => 'phone_number',
+            'phone_number_verified' => true,
+            'address' => ['address' => 'address'],
+            'updated_at' => 123,
+            'foo' => 'bar',
+        ])));
+
+        $userinfo = $this->endPoint->onResponse(function ($response) use(&$param) {
+            $param = $response;
+        })->token('AT')->call();
+
+        $this->assertSame($userinfo, $param);
+    }
+
+    /**
+     *
+     */
     public function test_apply()
     {
         $ret = $this->createMock(UserinfoEndPoint::class);

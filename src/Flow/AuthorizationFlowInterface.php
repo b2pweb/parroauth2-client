@@ -25,7 +25,7 @@ interface AuthorizationFlowInterface
     /**
      * Handle the response of the authorization endpoint
      *
-     * @param array $queryParameters
+     * @param array<string, string|string[]|null> $queryParameters
      *
      * @return TokenResponse
      *

@@ -27,6 +27,7 @@ class AuthorizationEndPoint implements EndPointInterface
 
     /**
      * @var ClientInterface
+     * @readonly
      */
     private $client;
 
@@ -42,6 +43,8 @@ class AuthorizationEndPoint implements EndPointInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-mutation-free
      */
     public function name(): string
     {
@@ -50,6 +53,8 @@ class AuthorizationEndPoint implements EndPointInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return static
      */
     public function apply(EndPointTransformerInterface $transformer): AuthorizationEndPoint
     {
@@ -94,6 +99,8 @@ class AuthorizationEndPoint implements EndPointInterface
      * @param string[] $scopes
      *
      * @return static
+     *
+     * @psalm-mutation-free
      */
     public function scope(array $scopes): AuthorizationEndPoint
     {

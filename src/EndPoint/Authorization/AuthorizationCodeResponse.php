@@ -6,18 +6,20 @@ namespace Parroauth2\Client\EndPoint\Authorization;
  * Wrap the authorization response for a response_type=code
  *
  * @see https://tools.ietf.org/html/rfc6749#section-4.1.2
+ *
+ * @psalm-immutable
  */
 class AuthorizationCodeResponse
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $parameters;
 
     /**
      * AuthorizationCodeResponse constructor.
      *
-     * @param array $parameters
+     * @param array<string, mixed> $parameters
      */
     public function __construct(array $parameters)
     {

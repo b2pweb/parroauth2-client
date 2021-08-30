@@ -4,6 +4,7 @@ namespace Parroauth2\Client\Factory;
 
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
+use Parroauth2\Client\EndPoint\EndPointInterface;
 
 /**
  * Configure endpoints for a client
@@ -13,7 +14,7 @@ use Parroauth2\Client\ClientInterface;
 final class EndPointConfigurator
 {
     /**
-     * @var array
+     * @var array<string, class-string<EndPointInterface>|callable(ClientInterface):EndPointInterface>
      */
     private $endpoints;
 
@@ -21,7 +22,7 @@ final class EndPointConfigurator
     /**
      * EndPointConfigurator constructor.
      *
-     * @param string[]|callable[] $endpoints Map of endpoint class name or factory, indexed by the endpoint name
+     * @param array<string, class-string<EndPointInterface>|callable(ClientInterface):EndPointInterface> $endpoints Map of endpoint class name or factory, indexed by the endpoint name
      */
     public function __construct(array $endpoints)
     {

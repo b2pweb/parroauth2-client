@@ -11,11 +11,16 @@ use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 
 /**
  * Add default methods implementations for EndPointTransformerInterface
+ *
+ * @psalm-require-implements EndPointTransformerInterface
  */
 trait EndPointTransformerTrait
 {
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onEndPoint()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onEndPoint(EndPointInterface $endPoint): EndPointInterface
     {
@@ -23,7 +28,10 @@ trait EndPointTransformerTrait
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onAuthorization()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onAuthorization(AuthorizationEndPoint $endPoint): AuthorizationEndPoint
     {
@@ -31,7 +39,10 @@ trait EndPointTransformerTrait
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onToken()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onToken(TokenEndPoint $endPoint): TokenEndPoint
     {
@@ -39,7 +50,10 @@ trait EndPointTransformerTrait
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onRevocation()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onRevocation(RevocationEndPoint $endPoint): RevocationEndPoint
     {
@@ -47,7 +61,10 @@ trait EndPointTransformerTrait
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onIntrospection()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onIntrospection(IntrospectionEndPoint $endPoint): IntrospectionEndPoint
     {
@@ -55,7 +72,10 @@ trait EndPointTransformerTrait
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onUserinfo()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onUserinfo(UserinfoEndPoint $endPoint): UserinfoEndPoint
     {
@@ -63,7 +83,10 @@ trait EndPointTransformerTrait
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @see EndPointTransformerInterface::onEndSession()
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function onEndSession(EndSessionEndPoint $endPoint): EndSessionEndPoint
     {

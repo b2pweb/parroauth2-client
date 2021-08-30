@@ -126,9 +126,11 @@ class Client implements ClientInterface
      * Get an option from client or provider
      *
      * @param string $name The option name
-     * @param mixed $default The default value to return when not found on client and provider parameters
+     * @param T|null $default The default value to return when not found on client and provider parameters
      *
-     * @return mixed
+     * @return T|null
+     *
+     * @template T
      */
     public function option(string $name, $default = null)
     {
@@ -155,6 +157,7 @@ class Client implements ClientInterface
      * @return Authorization
      *
      * @deprecated Use token endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function login($username, $password, array $scopes = null)
     {
@@ -162,14 +165,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * Refresh the token
-     *
-     * @param Authorization|string $token
-     * @param null|string[] $scopes
-     *
-     * @return Authorization
+     * {@inheritdoc}
      *
      * @deprecated Use token endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function refresh($token, array $scopes = null)
     {
@@ -177,6 +176,7 @@ class Client implements ClientInterface
             $token = $token->refreshToken();
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         return Authorization::fromTokenResponse($this->endPoints->token()->refresh($token, $scopes)->call());
     }
 
@@ -190,6 +190,7 @@ class Client implements ClientInterface
      * @return Authorization
      *
      * @deprecated Use AuthorizationCodeFlow or token endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function tokenFromAuthorizationCode($code, $redirectUri = null, $clientId = null)
     {
@@ -203,11 +204,12 @@ class Client implements ClientInterface
      * @param null|string[] $scopes
      * @param null|string $state
      * @param null|string $clientId
-     * @param array $parameters
+     * @param array<string, mixed> $parameters
      *
      * @return string
      *
      * @deprecated Use AuthorizationCodeFlow or authorization endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function getAuthorizationUri($redirectUri, array $scopes = null, $state = null, $clientId = null, array $parameters = [])
     {
@@ -237,6 +239,7 @@ class Client implements ClientInterface
      * @return Introspection
      *
      * @deprecated Use introspection endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function introspect($token, $hint = null)
     {
@@ -248,6 +251,7 @@ class Client implements ClientInterface
             }
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         $endpoint = $this->endPoints->introspection()->token($token);
 
         if ($hint) {
@@ -263,7 +267,10 @@ class Client implements ClientInterface
      * @param Authorization|string $token
      * @param string $hint
      *
+     * @return void
+     *
      * @deprecated Use revocation endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function revoke($token, $hint = null)
     {
@@ -275,6 +282,7 @@ class Client implements ClientInterface
             }
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         $endpoint = $this->endPoints->revocation()->token($token);
 
         if ($hint) {
@@ -287,11 +295,12 @@ class Client implements ClientInterface
     /**
      * Gets user info from the access token
      *
-     * @param string Authorization $token
+     * @param string|Authorization $token
      *
      * @return Userinfo
      *
      * @deprecated Use userinfo endpoint
+     * @psalm-suppress DeprecatedClass
      */
     public function userinfo($token)
     {
