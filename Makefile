@@ -41,7 +41,8 @@ infection.phar:
 
 infection: infection.phar test-server run-infection kill-test-server
 
-infection-ci: INFECTION_ARGS="--logger-github --git-diff-filter=AM"
+infection-ci: INFECTION_ARGS=--logger-github --git-diff-filter=AM
+infection-ci: INFECTION_VERSION=0.23.0
 infection-ci: infection
 
 run-infection: infection.phar
