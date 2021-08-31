@@ -23,6 +23,8 @@ class IntrospectionEndPointTest extends UnitTestCase
      */
     private $endPoint;
 
+    private $clonedEndPoint;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,6 +35,12 @@ class IntrospectionEndPointTest extends UnitTestCase
                 ->setScopes(['email', 'name'])
         );
         $this->endPoint = new IntrospectionEndPoint($this->client);
+        $this->clonedEndPoint = clone $this->endPoint;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->assertEquals($this->clonedEndPoint, $this->endPoint);
     }
 
     /**

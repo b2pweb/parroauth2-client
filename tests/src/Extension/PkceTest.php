@@ -26,6 +26,22 @@ class PkceTest extends UnitTestCase
     }
 
     /**
+     * 
+     */
+    public function test_configure_twice_should_not_modify_extension()
+    {
+        $pkce = new Pkce();
+
+        $pkce->configure($this->client);
+        $cloned = clone $pkce;
+
+        $otherClient = $this->provider()->client((new ClientConfig('other')));
+        $pkce->configure($otherClient);
+
+        $this->assertEquals($cloned, $pkce);
+    }
+
+    /**
      *
      */
     public function test_authorization()

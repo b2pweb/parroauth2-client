@@ -103,7 +103,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
     /**
      * Define the authentication method for the bearer token
      *
-     * @param string $method One of the UserinfoEndPoint::AUTH_METHOD_* constant
+     * @param UserinfoEndPoint::AUTH_METHOD_* $method One of the UserinfoEndPoint::AUTH_METHOD_* constant
      *
      * @return static
      *

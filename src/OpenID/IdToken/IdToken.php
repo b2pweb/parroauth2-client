@@ -107,7 +107,7 @@ final class IdToken extends Claims
      */
     public function sid(): ?string
     {
-        return $this->claim('nonce');
+        return $this->claim('sid');
     }
 
     /**

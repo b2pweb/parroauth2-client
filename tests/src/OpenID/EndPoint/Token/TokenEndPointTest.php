@@ -25,6 +25,8 @@ class TokenEndPointTest extends FunctionalTestCase
      */
     private $endPoint;
 
+    private $clonedEndPoint;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,6 +42,13 @@ class TokenEndPointTest extends FunctionalTestCase
             ->pushClient('test', 'my-secret', 'http://client.example.com')
             ->pushScopes(['email', 'name'])
         ;
+        $this->clonedEndPoint = clone $this->endPoint;
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->assertEquals($this->clonedEndPoint, $this->endPoint);
     }
 
     /**

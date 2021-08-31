@@ -69,9 +69,9 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Run type coverage
-      run: make psalm-ci
+      run: make psalm # todo: psalm-ci when open source
 
-#    - name: Run Infection
-#      run: |
-#        git fetch --depth=1 origin $GITHUB_BASE_REF
-#        ~/.composer/vendor/bin/infection --logger-github --git-diff-filter=AM
+    - name: Run Infection
+      run: |
+        git fetch --depth=1 origin $GITHUB_BASE_REF
+        make infection-ci

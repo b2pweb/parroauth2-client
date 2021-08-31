@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\OpenID\EndPoint\Userinfo;
 
 use GuzzleHttp\Psr7\Response;
+use InvalidArgumentException;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
@@ -24,6 +25,8 @@ class UserinfoEndPointUnitTest extends UnitTestCase
      */
     private $endPoint;
 
+    private $clonedEndPoint;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,6 +38,13 @@ class UserinfoEndPointUnitTest extends UnitTestCase
                 ->enableOpenId(true)
         );
         $this->endPoint = new UserinfoEndPoint($this->client);
+        $this->clonedEndPoint = clone $this->endPoint;
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->assertEquals($this->clonedEndPoint, $this->endPoint);
     }
 
     /**
@@ -73,6 +83,30 @@ class UserinfoEndPointUnitTest extends UnitTestCase
         $this->assertEquals('bob', $userinfo->subject());
         $this->assertEquals('GET', (string) $this->httpClient->getLastRequest()->getMethod());
         $this->assertEquals('access_token=AT', (string) $this->httpClient->getLastRequest()->getUri()->getQuery());
+    }
+
+    /**
+     *
+     */
+    public function test_authenticationMethod()
+    {
+        $this->httpClient->addResponse(new Response(200, ['Content-Type' => 'application/json'], json_encode(['sub' => 'bob'])));
+        $userinfo = $this->endPoint->authenticationMethod(UserinfoEndPoint::AUTH_METHOD_QUERY)->token('AT')->call();
+
+        $this->assertEquals('bob', $userinfo->subject());
+        $this->assertEquals('GET', (string) $this->httpClient->getLastRequest()->getMethod());
+        $this->assertEquals('access_token=AT', (string) $this->httpClient->getLastRequest()->getUri()->getQuery());
+    }
+
+    /**
+     *
+     */
+    public function test_authenticationMethod_invalid_should_throw_exception_on_call()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported authorization method invalid');
+
+        $this->endPoint->authenticationMethod('invalid')->token('AT')->call();
     }
 
     /**

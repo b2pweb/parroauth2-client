@@ -22,6 +22,8 @@ class TokenEndPointTest extends FunctionalTestCase
      */
     private $endPoint;
 
+    private $clonedEndPoint;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +39,13 @@ class TokenEndPointTest extends FunctionalTestCase
             ->pushClient('test', 'my-secret', 'http://client.example.com')
             ->pushScopes(['email', 'name'])
         ;
+        $this->clonedEndPoint = clone $this->endPoint;
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->assertEquals($this->clonedEndPoint, $this->endPoint);
     }
 
     /**
@@ -71,6 +80,21 @@ class TokenEndPointTest extends FunctionalTestCase
         $transformer->expects($this->once())->method('onToken')->with($this->endPoint)->willReturn($ret);
 
         $this->assertSame($ret, $this->endPoint->apply($transformer));
+    }
+
+    /**
+     *
+     */
+    public function test_responseFactory()
+    {
+        $endpoint = $this->endPoint->responseFactory(function (array $response) {
+            return new TokenResponse(['foo' => 'bar'] + $response);
+        });
+        $this->assertNotSame($endpoint, $this->endPoint);
+        $response = $endpoint->code($this->code())->call();
+
+        $this->assertInstanceOf(TokenResponse::class, $response);
+        $this->assertEquals('bar', $response->get('foo'));
     }
 
     /**

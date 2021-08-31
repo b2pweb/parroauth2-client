@@ -96,26 +96,10 @@ final class BaseClientFactory implements ClientFactoryInterface
     }
 
     /**
-     * @param StorageInterface $storage
-     */
-    public function setStorage(StorageInterface $storage): void
-    {
-        $this->storage = $storage;
-    }
-
-    /**
      * @return IdTokenParserInterface|null
      */
     public function idTokenParser(): ?IdTokenParserInterface
     {
         return $this->idTokenParser;
-    }
-
-    /**
-     * @param IdTokenParserInterface|null $idTokenParser
-     */
-    public function setIdTokenParser(?IdTokenParserInterface $idTokenParser): void
-    {
-        $this->idTokenParser = $idTokenParser;
     }
 }

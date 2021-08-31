@@ -1,3 +1,6 @@
 vendor
 .idea
 composer.lock
+infection.log
+infection.phar
+infection.phar.asc

@@ -6,7 +6,6 @@ use BadMethodCallException;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
-use Parroauth2\Client\Exception\InvalidRequestException;
 use Parroauth2\Client\Exception\OAuthServerException;
 use Parroauth2\Client\Extension\JwtAccessToken\JwtParser;
 use Parroauth2\Client\Extension\JwtAccessToken\LocalIntrospectionEndPoint;
@@ -47,6 +46,22 @@ class TokenStorageTest extends FunctionalTestCase
         $this->extension = new TokenStorage();
         $this->client->register($this->extension);
         $this->client->endPoints()->add(new LocalIntrospectionEndPoint($this->client, new JwtParser()));
+    }
+
+    /**
+     *
+     */
+    public function test_configure_twice_should_not_modify_extension()
+    {
+        $pkce = new TokenStorage();
+
+        $pkce->configure($this->client);
+        $cloned = clone $pkce;
+
+        $otherClient = $this->client((new ClientConfig('other')));
+        $pkce->configure($otherClient);
+
+        $this->assertEquals($cloned, $pkce);
     }
 
     /**

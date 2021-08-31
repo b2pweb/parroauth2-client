@@ -16,11 +16,19 @@ class AuthorizationEndPointTest extends UnitTestCase
      */
     private $endPoint;
 
+    private $clonedEndPoint;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->endPoint = new AuthorizationEndPoint($this->provider()->client((new ClientConfig('test'))));
+        $this->clonedEndPoint = clone $this->endPoint;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->assertEquals($this->clonedEndPoint, $this->endPoint);
     }
 
     /**

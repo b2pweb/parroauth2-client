@@ -46,7 +46,7 @@ class JwsIdTokenParserTest extends UnitTestCase
     public function test_parse_success()
     {
         $jws = (new CompactSerializer())->serialize($this->builder()
-            ->withPayload('{"foo":"bar"}')
+            ->withPayload('{"foo":"bar","sid":"my_session_id"}')
             ->build()
         );
 
@@ -54,8 +54,9 @@ class JwsIdTokenParserTest extends UnitTestCase
 
         $this->assertEquals($jws, (string) $parsed);
         $this->assertEquals($jws, $parsed->raw());
-        $this->assertEquals(['foo' => 'bar'], $parsed->claims());
+        $this->assertEquals(['foo' => 'bar', 'sid' => 'my_session_id'], $parsed->claims());
         $this->assertEquals(['alg' => 'RS256'], $parsed->headers());
+        $this->assertEquals('my_session_id', $parsed->sid());
     }
 
     /**
