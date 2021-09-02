@@ -35,7 +35,7 @@ class TokenResponse
 
         if (isset($response['expires_in']) && $response['expires_in'] >= 0) {
             /** @psalm-suppress  ImpureMethodCall */
-            $this->expiresAt = (new DateTime())->add(new \DateInterval('PT'.(int) $response['expires_in'].'S'));
+            $this->expiresAt = (new DateTime())->add(new \DateInterval('PT' . (int) $response['expires_in'] . 'S'));
         }
     }
 

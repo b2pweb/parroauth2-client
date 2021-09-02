@@ -26,10 +26,10 @@ class IntrospectionEndPoint implements CallableEndPointInterface
     /** @use EndPointResponseListenerTrait<IntrospectionResponse> */
     use EndPointResponseListenerTrait;
 
-    const NAME = 'introspection';
+    public const NAME = 'introspection';
 
-    const TYPE_ACCESS_TOKEN = 'access_token';
-    const TYPE_REFRESH_TOKEN = 'refresh_token';
+    public const TYPE_ACCESS_TOKEN = 'access_token';
+    public const TYPE_REFRESH_TOKEN = 'refresh_token';
 
     /**
      * @var ClientInterface
@@ -129,10 +129,14 @@ class IntrospectionEndPoint implements CallableEndPointInterface
     {
         $request = $this->client->endPoints()
             ->request('POST', $this)
-            ->withHeader('Authorization', 'Basic '.base64_encode($this->client->clientId().':'.$this->client->secret()))
+            ->withHeader(
+                'Authorization',
+                'Basic ' . base64_encode($this->client->clientId() . ':' . $this->client->secret())
+            )
         ;
 
-        $response = new IntrospectionResponse(json_decode((string) $this->client->provider()->sendRequest($request)->getBody(), true));
+        $body = (string) $this->client->provider()->sendRequest($request)->getBody();
+        $response = new IntrospectionResponse(json_decode($body, true));
 
         $this->callResponseListeners($response);
 

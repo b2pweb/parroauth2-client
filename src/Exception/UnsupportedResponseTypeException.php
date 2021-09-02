@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class UnsupportedResponseTypeException extends OAuthServerException
 {
-    const ERROR_TYPE = 'unsupported_response_type';
+    public const ERROR_TYPE = 'unsupported_response_type';
 
     /**
      * UnsupportedResponseTypeException constructor.

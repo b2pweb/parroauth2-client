@@ -20,8 +20,8 @@ final class Pkce extends AbstractEndPointTransformerExtension
 {
     use EndPointTransformerTrait;
 
-    const METHOD_PLAIN = 'plain';
-    const METHOD_S256 = 'S256';
+    public const METHOD_PLAIN = 'plain';
+    public const METHOD_S256 = 'S256';
 
     /**
      * {@inheritdoc}
@@ -43,7 +43,7 @@ final class Pkce extends AbstractEndPointTransformerExtension
                 break;
 
             default:
-                throw new \LogicException('Unsupported code challenge method '.$codeChallengeMethod);
+                throw new \LogicException('Unsupported code challenge method ' . $codeChallengeMethod);
         }
 
         return $endPoint
@@ -76,7 +76,12 @@ final class Pkce extends AbstractEndPointTransformerExtension
         }
 
         // Provider supports S256
-        if (in_array(self::METHOD_S256, $this->client()->provider()->metadata('code_challenge_methods_supported', [self::METHOD_S256]))) {
+        if (
+            in_array(
+                self::METHOD_S256,
+                $this->client()->provider()->metadata('code_challenge_methods_supported', [self::METHOD_S256])
+            )
+        ) {
             return self::METHOD_S256;
         }
 

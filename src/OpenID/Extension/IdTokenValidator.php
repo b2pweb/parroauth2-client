@@ -20,8 +20,8 @@ use Parroauth2\Client\OpenID\IdToken\AccessTokenHash;
  * Perform validation on the returned ID Token
  *
  * Client options :
- * - id_token_required (bool) Does the ID Token is required ? By default to false
- * - id_token_max_iat_interval (int) The max time interval (in seconds) for the ID Token issued at time. By default to 30
+ * - id_token_required (bool) Does the ID Token is required ? Default to false
+ * - id_token_max_iat_interval (int) The max time interval (in seconds) for the ID Token issued at time. Default to 30
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
  */
@@ -105,11 +105,19 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
         }
 
         if (is_array($idToken->audience()) && count($idToken->audience()) > 0 && !$idToken->authorizedParty()) {
-            throw new InvalidClaimException('The authorized party is required when multiple audience are provided', 'azp', '');
+            throw new InvalidClaimException(
+                'The authorized party is required when multiple audience are provided',
+                'azp',
+                ''
+            );
         }
 
         if ($idToken->authorizedParty() && $idToken->authorizedParty() !== $client->clientId()) {
-            throw new InvalidClaimException('The authorized party must be identically to the current client id', 'azp', $idToken->authorizedParty());
+            throw new InvalidClaimException(
+                'The authorized party must be identically to the current client id',
+                'azp',
+                $idToken->authorizedParty()
+            );
         }
 
         if (time() - $idToken->issuedAt() > $client->clientConfig()->option('id_token_max_iat_interval', 30)) {
@@ -121,7 +129,11 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
         }
 
         if (!$this->accessTokenHash->check($idToken, $response->accessToken())) {
-            throw new InvalidClaimException('Access token hash do not corresponds', 'at_hash', $idToken->accessTokenHash());
+            throw new InvalidClaimException(
+                'Access token hash do not corresponds',
+                'at_hash',
+                $idToken->accessTokenHash()
+            );
         }
     }
 }

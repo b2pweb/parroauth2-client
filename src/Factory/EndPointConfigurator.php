@@ -22,7 +22,8 @@ final class EndPointConfigurator
     /**
      * EndPointConfigurator constructor.
      *
-     * @param array<string, class-string<EndPointInterface>|callable(ClientInterface):EndPointInterface> $endpoints Map of endpoint class name or factory, indexed by the endpoint name
+     * @param array<string, class-string<EndPointInterface>|callable(ClientInterface):EndPointInterface> $endpoints
+     *     Map of endpoint class name or factory, indexed by the endpoint name
      */
     public function __construct(array $endpoints)
     {

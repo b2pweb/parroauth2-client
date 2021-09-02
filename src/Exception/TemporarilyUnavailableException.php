@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class TemporarilyUnavailableException extends OAuthServerException
 {
-    const ERROR_TYPE = 'temporarily_unavailable';
+    public const ERROR_TYPE = 'temporarily_unavailable';
 
     /**
      * TemporarilyUnavailableException constructor.

@@ -59,7 +59,10 @@ class AuthorizationCodeFlow implements AuthorizationFlowInterface
      */
     public function authorizationUri(?string $redirectUri = null): string
     {
-        $endpoint = $this->client->endPoints()->authorization()->code($redirectUri, $this->client->clientConfig()->scopes());
+        $endpoint = $this->client->endPoints()
+            ->authorization()
+            ->code($redirectUri, $this->client->clientConfig()->scopes())
+        ;
 
         $this->client->storage()->store('authorization', $endpoint->parameters());
 

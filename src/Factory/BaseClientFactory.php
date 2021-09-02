@@ -65,7 +65,9 @@ final class BaseClientFactory implements ClientFactoryInterface
 
         $this->openidConfigurator = new EndPointConfigurator([
             OpenIdAuthorizationEndPoint::NAME => OpenIdAuthorizationEndPoint::class,
-            OpenIdTokenEndPoint::NAME => function (ClientInterface $client) { return new OpenIdTokenEndPoint($client, $this->idTokenParser ?: new JwsIdTokenParser()); },
+            OpenIdTokenEndPoint::NAME => function (ClientInterface $client) {
+                return new OpenIdTokenEndPoint($client, $this->idTokenParser ?: new JwsIdTokenParser());
+            },
             UserinfoEndPoint::NAME => UserinfoEndPoint::class,
             EndSessionEndPoint::NAME => EndSessionEndPoint::class,
         ] + $oauthEndpoints);

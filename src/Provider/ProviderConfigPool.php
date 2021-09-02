@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Parroauth2\Client\Provider;
 
 use Psr\SimpleCache\CacheInterface;
@@ -71,7 +70,8 @@ final class ProviderConfigPool
      * Use issuer as URL
      *
      * @param array<string, mixed> $config The provider config
-     * @param bool|null $openid Does the provider is an OpenID connect provider ? If null, try to detect is it's an OpenID config
+     * @param bool|null $openid Does the provider is an OpenID connect provider ?
+     *     If null, try to detect is it's an OpenID config
      *
      * @return ProviderConfig
      */

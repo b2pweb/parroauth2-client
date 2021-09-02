@@ -10,7 +10,7 @@ all: install clean tests
 install:
 	composer update
 
-tests: test-server run-phpunit psalm run-infection kill-test-server
+tests: test-server run-phpunit psalm run-infection kill-test-server phpcs
 
 coverage: PUARGS="--coverage-clover=coverage.xml"
 coverage: tests-unit
@@ -45,10 +45,13 @@ infection-ci: INFECTION_ARGS=--logger-github --git-diff-filter=AM
 infection-ci: INFECTION_VERSION=0.23.0
 infection-ci: infection
 
+phpcs:
+	vendor/bin/phpcs src/ --standard=psr12 --runtime-set ignore_warnings_on_exit true
+
 run-infection: infection.phar
 	./infection.phar $(INFECTION_ARGS)
 
 clean:
 	rm -f /tmp/test-db.sqlite
 
-.PHONY: tests test-server clean install infection infection-ci psalm psalm-ci
+.PHONY: tests test-server clean install infection infection-ci psalm psalm-ci phpcs

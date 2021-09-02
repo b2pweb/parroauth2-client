@@ -153,7 +153,7 @@ class Client implements ClientInterface
      * @param string $username
      * @param string $password
      * @param null|string[] $scopes
-     * 
+     *
      * @return Authorization
      *
      * @deprecated Use token endpoint
@@ -235,7 +235,7 @@ class Client implements ClientInterface
      *
      * @param Authorization|string $token
      * @param string $hint
-     * 
+     *
      * @return Introspection
      *
      * @deprecated Use introspection endpoint

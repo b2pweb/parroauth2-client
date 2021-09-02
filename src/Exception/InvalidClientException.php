@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class InvalidClientException extends OAuthServerException
 {
-    const ERROR_TYPE = 'invalid_client';
+    public const ERROR_TYPE = 'invalid_client';
 
     /**
      * InvalidClientException constructor.

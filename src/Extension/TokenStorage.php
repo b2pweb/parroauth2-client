@@ -49,11 +49,15 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
      */
     public function onIntrospection(IntrospectionEndPoint $endPoint): IntrospectionEndPoint
     {
-        return $this->expired() ? $endPoint : $endPoint->accessToken($this->token()->accessToken())->onResponse(function (IntrospectionResponse $response) {
-            if (!$response->active()) {
-                $this->clear();
-            }
-        });
+        return $this->expired()
+            ? $endPoint
+            : $endPoint->accessToken($this->token()->accessToken())
+                ->onResponse(function (IntrospectionResponse $response) {
+                    if (!$response->active()) {
+                        $this->clear();
+                    }
+                })
+        ;
     }
 
     /**
@@ -61,7 +65,10 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
      */
     public function onRevocation(RevocationEndPoint $endPoint): RevocationEndPoint
     {
-        return $this->expired() ? $endPoint : $endPoint->accessToken($this->token()->accessToken())->onResponse([$this, 'clear']);
+        return $this->expired()
+            ? $endPoint
+            : $endPoint->accessToken($this->token()->accessToken())->onResponse([$this, 'clear'])
+        ;
     }
 
     /**

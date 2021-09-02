@@ -20,10 +20,10 @@ class AuthorizationEndPoint implements EndPointInterface
 {
     use EndPointParametersTrait;
 
-    const NAME = 'authorization';
+    public const NAME = 'authorization';
 
-    const RESPONSE_TYPE_CODE = 'code';
-    const RESPONSE_TYPE_TOKEN = 'token';
+    public const RESPONSE_TYPE_CODE = 'code';
+    public const RESPONSE_TYPE_TOKEN = 'token';
 
     /**
      * @var ClientInterface

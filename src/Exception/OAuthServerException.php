@@ -107,7 +107,12 @@ class OAuthServerException extends Parroauth2Exception
                 return new ServerErrorException($message ?: 'Server error', $hint, $previous, $code);
 
             case TemporarilyUnavailableException::ERROR_TYPE:
-                return new TemporarilyUnavailableException($message ?: 'Temporarily unavailable', $hint, $previous, $code);
+                return new TemporarilyUnavailableException(
+                    $message ?: 'Temporarily unavailable',
+                    $hint,
+                    $previous,
+                    $code
+                );
 
             case UnauthorizedClientException::ERROR_TYPE:
                 return new UnauthorizedClientException($message ?: 'Unauthorized client', $hint, $previous, $code);
@@ -116,7 +121,12 @@ class OAuthServerException extends Parroauth2Exception
                 return new UnsupportedGrantTypeException($message ?: 'Unsupported grant type', $hint, $previous, $code);
 
             case UnsupportedResponseTypeException::ERROR_TYPE:
-                return new UnsupportedResponseTypeException($message ?: 'Unsupported response type', $hint, $previous, $code);
+                return new UnsupportedResponseTypeException(
+                    $message ?: 'Unsupported response type',
+                    $hint,
+                    $previous,
+                    $code
+                );
 
             default:
                 return new self(400, $type, $message ?: 'An error has occurred', $hint, $previous, $code);

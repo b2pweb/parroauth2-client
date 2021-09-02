@@ -24,11 +24,11 @@ class UserinfoEndPoint implements CallableEndPointInterface
     /** @use EndPointResponseListenerTrait<UserinfoResponse> */
     use EndPointResponseListenerTrait;
 
-    const NAME = 'userinfo';
+    public const NAME = 'userinfo';
 
-    const AUTH_METHOD_HEADER = 'header';
-    const AUTH_METHOD_BODY = 'body';
-    const AUTH_METHOD_QUERY = 'query';
+    public const AUTH_METHOD_HEADER = 'header';
+    public const AUTH_METHOD_BODY = 'body';
+    public const AUTH_METHOD_QUERY = 'query';
 
     /**
      * @var ClientInterface
@@ -170,7 +170,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
                 break;
 
             default:
-                throw new BadMethodCallException('The Content-Type '.$contentType.' is not supported');
+                throw new BadMethodCallException('The Content-Type ' . $contentType . ' is not supported');
         }
 
         $this->callResponseListeners($response);
@@ -195,7 +195,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
             case self::AUTH_METHOD_HEADER:
                 return $this->client->endPoints()
                     ->request('GET', $this)
-                    ->withHeader('Authorization', 'Bearer '.$this->accessToken)
+                    ->withHeader('Authorization', 'Bearer ' . $this->accessToken)
                 ;
 
             // @see https://tools.ietf.org/html/rfc6750#section-2.2
@@ -210,7 +210,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
                 ;
 
             default:
-                throw new InvalidArgumentException('Unsupported authorization method '.$this->method);
+                throw new InvalidArgumentException('Unsupported authorization method ' . $this->method);
         }
     }
 }

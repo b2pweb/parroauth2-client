@@ -359,10 +359,10 @@ class Introspection
 
     /**
      * @param IntrospectionResponse $response
-     * 
+     *
      * @internal
      */
-    static public function fromResponse(IntrospectionResponse $response)
+    public static function fromResponse(IntrospectionResponse $response)
     {
         $introspection = (new self())
             ->setActive($response->active())

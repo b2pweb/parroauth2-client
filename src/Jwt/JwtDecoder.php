@@ -95,6 +95,10 @@ final class JwtDecoder
         $signature = $decoded->getSignatures()[$signatureOffset];
 
         /** @psalm-suppress PossiblyNullArgument */
-        return new JWT($jwt, $signature->getProtectedHeader() + $signature->getHeader(), json_decode($decoded->getPayload(), true));
+        return new JWT(
+            $jwt,
+            $signature->getProtectedHeader() + $signature->getHeader(),
+            json_decode($decoded->getPayload(), true)
+        );
     }
 }

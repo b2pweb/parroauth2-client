@@ -76,10 +76,10 @@ final class ProviderBuilder
     {
         // Relative URI : use the base URL
         if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
-            $url = rtrim($this->url, '/').'/'.ltrim($url, '/');
+            $url = rtrim($this->url, '/') . '/' . ltrim($url, '/');
         }
 
-        $this->config[$name.'_endpoint'] = $url;
+        $this->config[$name . '_endpoint'] = $url;
 
         return $this;
     }

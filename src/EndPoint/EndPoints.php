@@ -59,7 +59,7 @@ class EndPoints
     public function get(string $name): EndPointInterface
     {
         if (!isset($this->endpoints[$name])) {
-            throw new InvalidArgumentException('The endpoint "'.$name.'" is not implemented');
+            throw new InvalidArgumentException('The endpoint "' . $name . '" is not implemented');
         }
 
         $endpoint = $this->endpoints[$name];

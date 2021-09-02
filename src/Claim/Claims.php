@@ -53,7 +53,7 @@ class Claims implements ArrayAccess
      */
     final public function offsetSet($offset, $value)
     {
-        throw new BadMethodCallException(static::class.' is read-only');
+        throw new BadMethodCallException(static::class . ' is read-only');
     }
 
     /**
@@ -61,7 +61,7 @@ class Claims implements ArrayAccess
      */
     final public function offsetUnset($offset)
     {
-        throw new BadMethodCallException(static::class.' is read-only');
+        throw new BadMethodCallException(static::class . ' is read-only');
     }
 
     /**

@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class InvalidGrantException extends OAuthServerException
 {
-    const ERROR_TYPE = 'invalid_grant';
+    public const ERROR_TYPE = 'invalid_grant';
 
     /**
      * InvalidGrantException constructor.

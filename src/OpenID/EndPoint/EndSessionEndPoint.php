@@ -19,7 +19,7 @@ class EndSessionEndPoint implements EndPointInterface
 {
     use EndPointParametersTrait;
 
-    const NAME = 'end_session';
+    public const NAME = 'end_session';
 
     /**
      * @var ClientInterface

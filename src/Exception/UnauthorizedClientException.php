@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class UnauthorizedClientException extends OAuthServerException
 {
-    const ERROR_TYPE = 'unauthorized_client';
+    public const ERROR_TYPE = 'unauthorized_client';
 
     /**
      * UnauthorizedClientException constructor.

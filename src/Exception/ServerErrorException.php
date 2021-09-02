@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class ServerErrorException extends OAuthServerException
 {
-    const ERROR_TYPE = 'server_error';
+    public const ERROR_TYPE = 'server_error';
 
     /**
      * ServerErrorException constructor.

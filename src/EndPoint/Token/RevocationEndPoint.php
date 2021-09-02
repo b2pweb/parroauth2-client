@@ -22,10 +22,10 @@ class RevocationEndPoint implements CallableEndPointInterface
     /** @use EndPointResponseListenerTrait<ResponseInterface> */
     use EndPointResponseListenerTrait;
 
-    const NAME = 'revocation';
+    public const NAME = 'revocation';
 
-    const TYPE_ACCESS_TOKEN = 'access_token';
-    const TYPE_REFRESH_TOKEN = 'refresh_token';
+    public const TYPE_ACCESS_TOKEN = 'access_token';
+    public const TYPE_REFRESH_TOKEN = 'refresh_token';
 
     /**
      * @var ClientInterface
@@ -126,7 +126,10 @@ class RevocationEndPoint implements CallableEndPointInterface
     {
         $request = $this->client->endPoints()
             ->request('POST', $this)
-            ->withHeader('Authorization', 'Basic '.base64_encode($this->client->clientId().':'.$this->client->secret()))
+            ->withHeader(
+                'Authorization',
+                'Basic ' . base64_encode($this->client->clientId() . ':' . $this->client->secret())
+            )
         ;
 
         $response = $this->client->provider()->sendRequest($request);

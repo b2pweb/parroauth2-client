@@ -16,7 +16,8 @@ interface AuthorizationFlowInterface
     /**
      * Generates the authorization URI
      *
-     * @param string|null $redirectUri The target URI, where AuthorizationFlowInterface::handleAuthorizationResponse() is called
+     * @param string|null $redirectUri The target URI, where
+     *     AuthorizationFlowInterface::handleAuthorizationResponse() is called
      *
      * @return string
      */

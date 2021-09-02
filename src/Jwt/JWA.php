@@ -26,11 +26,11 @@ use Jose\Component\Signature\Algorithm\SignatureAlgorithm;
  */
 final class JWA
 {
-    const TYPE_HMAC = 'hmac';
-    const TYPE_RSA = 'rsa';
-    const TYPE_ELLIPTIC_CURVE = 'ec';
-    const TYPE_RSASSA_PSS = 'rsassa-pss';
-    const TYPE_NONE = 'none';
+    public const TYPE_HMAC = 'hmac';
+    public const TYPE_RSA = 'rsa';
+    public const TYPE_ELLIPTIC_CURVE = 'ec';
+    public const TYPE_RSASSA_PSS = 'rsassa-pss';
+    public const TYPE_NONE = 'none';
 
     /**
      * Maps the alg header value to algorithm information
@@ -124,7 +124,7 @@ final class JWA
     public function hashAlgorithm(string $alg): string
     {
         if (empty($this->enabled[$alg]) || empty($this->algMap[$alg]['hash'])) {
-            throw new InvalidArgumentException('Unsupported alg "'.$alg.'"');
+            throw new InvalidArgumentException('Unsupported alg "' . $alg . '"');
         }
 
         return $this->algMap[$alg]['hash'];
@@ -141,7 +141,7 @@ final class JWA
     public function enable(string $alg, bool $value = true): self
     {
         if (!isset($this->algMap[$alg])) {
-            throw new InvalidArgumentException('Unsupported alg "'.$alg.'"');
+            throw new InvalidArgumentException('Unsupported alg "' . $alg . '"');
         }
 
         $this->enabled[$alg] = $value;
@@ -200,7 +200,7 @@ final class JWA
 
         foreach ($this->enabled as $id => $enabled) {
             if ($enabled) {
-                $algorithms[] = new $this->algMap[$id]['class'];
+                $algorithms[] = new $this->algMap[$id]['class']();
             }
         }
 

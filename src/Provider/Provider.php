@@ -87,7 +87,7 @@ final class Provider implements ProviderInterface
      */
     public function supportsEndpoint(string $name): bool
     {
-        return isset($this->config[$name.'_endpoint']);
+        return isset($this->config[$name . '_endpoint']);
     }
 
     /**
@@ -96,16 +96,18 @@ final class Provider implements ProviderInterface
     public function uri($name, array $queryParameters = []): string
     {
         if (!$this->supportsEndpoint($name)) {
-            throw new UnsupportedServerOperation('The endpoint "'.$name.'" is not supported by the authorization provider');
+            throw new UnsupportedServerOperation(
+                'The endpoint "' . $name . '" is not supported by the authorization provider'
+            );
         }
 
-        $baseUri = $this->config[$name.'_endpoint'];
+        $baseUri = $this->config[$name . '_endpoint'];
 
         if (empty($queryParameters)) {
             return $baseUri;
         }
 
-        return $baseUri.(strpos($baseUri, '?') === false ? '?' : '&').http_build_query($queryParameters);
+        return $baseUri . (strpos($baseUri, '?') === false ? '?' : '&') . http_build_query($queryParameters);
     }
 
     /**

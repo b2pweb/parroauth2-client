@@ -25,11 +25,11 @@ class TokenEndPoint implements CallableEndPointInterface
     /** @use EndPointResponseListenerTrait<TokenResponse> */
     use EndPointResponseListenerTrait;
 
-    const NAME = 'token';
+    public const NAME = 'token';
 
-    const GRANT_TYPE_CODE = 'authorization_code';
-    const GRANT_TYPE_PASSWORD = 'password';
-    const GRANT_TYPE_REFRESH = 'refresh_token';
+    public const GRANT_TYPE_CODE = 'authorization_code';
+    public const GRANT_TYPE_PASSWORD = 'password';
+    public const GRANT_TYPE_REFRESH = 'refresh_token';
 
     /**
      * @var ClientInterface
@@ -53,7 +53,9 @@ class TokenEndPoint implements CallableEndPointInterface
     public function __construct(ClientInterface $client, callable $responseFactory = null)
     {
         $this->client = $client;
-        $this->responseFactory = $responseFactory ?: function (array $response): TokenResponse { return new TokenResponse($response); };
+        $this->responseFactory = $responseFactory ?: function (array $response): TokenResponse {
+            return new TokenResponse($response);
+        };
     }
 
     /**
@@ -160,10 +162,14 @@ class TokenEndPoint implements CallableEndPointInterface
     {
         $request = $this->client->endPoints()
             ->request('POST', $this)
-            ->withHeader('Authorization', 'Basic '.base64_encode($this->client->clientId().':'.$this->client->secret()))
+            ->withHeader(
+                'Authorization',
+                'Basic ' . base64_encode($this->client->clientId() . ':' . $this->client->secret())
+            )
         ;
 
-        $response = ($this->responseFactory)(json_decode((string) $this->client->provider()->sendRequest($request)->getBody(), true));
+        $body = (string) $this->client->provider()->sendRequest($request)->getBody();
+        $response = ($this->responseFactory)(json_decode($body, true));
 
         $this->callResponseListeners($response);
 

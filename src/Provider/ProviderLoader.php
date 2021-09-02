@@ -58,7 +58,8 @@ final class ProviderLoader
      *
      * @param ClientFactoryInterface|null $clientFactory
      * @param HttpClient|null $httpClient The HTTP client to use. If null will discover registered clients
-     * @param RequestFactory|null $messageFactory The HTTP message factory to use. If null will discover registered factories
+     * @param RequestFactory|null $messageFactory The HTTP message factory to use.
+     *     If null will discover registered factories
      * @param ProviderConfigPool|null $configPool
      */
     public function __construct(ClientFactoryInterface $clientFactory = null, HttpClient $httpClient = null, RequestFactory $messageFactory = null, ProviderConfigPool $configPool = null)
@@ -92,7 +93,7 @@ final class ProviderLoader
         $client = new HttpMethodsClient($this->httpClient, $this->messageFactory);
 
         foreach ($this->wellKnownUris as list($uri, $openid)) {
-            $response = $client->get($providerUrl.'/.well-known/'.$uri);
+            $response = $client->get($providerUrl . '/.well-known/' . $uri);
 
             if ($response->getStatusCode() !== 200) {
                 continue;

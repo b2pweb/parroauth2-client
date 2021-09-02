@@ -74,12 +74,12 @@ class Userinfo
 
     /**
      * @param UserinfoResponse $response
-     * 
+     *
      * @return self
      *
      * @internal
      */
-    static public function fromResponse(UserinfoResponse $response)
+    public static function fromResponse(UserinfoResponse $response)
     {
         $userinfo = new self();
 

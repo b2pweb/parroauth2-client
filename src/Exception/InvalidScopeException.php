@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class InvalidScopeException extends OAuthServerException
 {
-    const ERROR_TYPE = 'invalid_scope';
+    public const ERROR_TYPE = 'invalid_scope';
 
     /**
      * InvalidScopeException constructor.

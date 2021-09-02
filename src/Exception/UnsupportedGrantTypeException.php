@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class UnsupportedGrantTypeException extends OAuthServerException
 {
-    const ERROR_TYPE = 'unsupported_grant_type';
+    public const ERROR_TYPE = 'unsupported_grant_type';
 
     /**
      * UnsupportedGrantTypeException constructor.

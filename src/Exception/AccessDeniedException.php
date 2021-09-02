@@ -7,7 +7,7 @@ namespace Parroauth2\Client\Exception;
  */
 class AccessDeniedException extends OAuthServerException
 {
-    const ERROR_TYPE = 'access_denied';
+    public const ERROR_TYPE = 'access_denied';
 
     /**
      * AccessDeniedException constructor.
