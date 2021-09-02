@@ -11,10 +11,6 @@
         <directory name="src" />
         <ignoreFiles>
             <directory name="vendor" />
-            <file name="src/Introspection.php" />
-            <file name="src/Authorization.php" />
-            <file name="src/Userinfo.php" />
-            <file name="src/Unserializer/JwtUnserializer.php" />
         </ignoreFiles>
     </projectFiles>
 </psalm>
