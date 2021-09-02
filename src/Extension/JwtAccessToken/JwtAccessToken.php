@@ -19,7 +19,7 @@ final class JwtAccessToken implements ExtensionInterface
     /**
      * JwtAccessToken constructor.
      *
-     * @param JwtParserInterface $parser
+     * @param JwtParserInterface|null $parser
      */
     public function __construct(JwtParserInterface $parser = null)
     {

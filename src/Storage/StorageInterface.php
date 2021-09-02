@@ -21,7 +21,7 @@ interface StorageInterface
      * Retrieve a value from the storage
      *
      * @param string $key
-     * @param null $default Value to return if the item cannot be found
+     * @param mixed $default Value to return if the item cannot be found
      *
      * @return mixed
      */

@@ -4,7 +4,6 @@ namespace Parroauth2\Client\Flow;
 
 use BadMethodCallException;
 use InvalidArgumentException;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Authorization\AuthorizationCodeResponse;
 use Parroauth2\Client\EndPoint\Token\TokenResponse;
@@ -93,11 +92,9 @@ class AuthorizationCodeFlow implements AuthorizationFlowInterface
             throw OAuthServerException::create($response->error(), $response->errorDescription());
         }
 
-        $token = $this->client->endPoints()->token()
+        return $this->client->endPoints()->token()
             ->code($response->code(), $request['redirect_uri'] ?? null)
             ->call()
         ;
-
-        return $token;
     }
 }

@@ -65,7 +65,7 @@ interface ProviderInterface extends HttpClient
      * @return string
      * @throws UnsupportedServerOperation When the server is not configured for supports the endpoint
      */
-    public function uri($name, array $queryParameters = []): string;
+    public function uri(string $name, array $queryParameters = []): string;
 
     /**
      * Creates a new http request

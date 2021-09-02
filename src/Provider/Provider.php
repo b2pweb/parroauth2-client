@@ -93,7 +93,7 @@ final class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function uri($name, array $queryParameters = []): string
+    public function uri(string $name, array $queryParameters = []): string
     {
         if (!$this->supportsEndpoint($name)) {
             throw new UnsupportedServerOperation(

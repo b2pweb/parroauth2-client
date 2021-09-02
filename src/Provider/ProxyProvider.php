@@ -77,7 +77,7 @@ final class ProxyProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function uri($name, array $queryParameters = []): string
+    public function uri(string $name, array $queryParameters = []): string
     {
         return $this->provider()->uri($name, $queryParameters);
     }
