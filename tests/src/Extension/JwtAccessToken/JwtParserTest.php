@@ -46,7 +46,7 @@ class JwtParserTest extends UnitTestCase
      */
     public function test_decode_success()
     {
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new RS256()])))
+        $jws = $this->jwsBuilder([new RS256()])
             ->create()
             ->addSignature(JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key'), ['alg' => 'RS256'])
             ->withPayload('{"foo":"bar"}')
@@ -65,11 +65,11 @@ class JwtParserTest extends UnitTestCase
      */
     public function test_decode_with_key_in_option()
     {
-        $this->client->clientConfig()->setOption('access_token_jwk', JWKFactory::createFromSecret('secret'));
+        $this->client->clientConfig()->setOption('access_token_jwk', JWKFactory::createFromSecret('secretsecretsecretsecretsecretsecretsecretsecretsecret'));
 
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
-            ->addSignature(JWKFactory::createFromSecret('secret'), ['alg' => 'HS256'])
+            ->addSignature(JWKFactory::createFromSecret('secretsecretsecretsecretsecretsecretsecretsecretsecret'), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
             ->build()
         ;
@@ -90,5 +90,15 @@ class JwtParserTest extends UnitTestCase
         $this->expectExceptionMessage('Invalid ID Token or signature');
 
         $this->parser->parse('invalid', $this->client);
+    }
+
+    private function jwsBuilder(array $algo): JWSBuilder
+    {
+        $ctor = (new \ReflectionClass(JWSBuilder::class))->getConstructor();
+
+        return $ctor->getNumberOfParameters() === 1
+            ? new JWSBuilder(new AlgorithmManager($algo))
+            : new JWSBuilder(null, new AlgorithmManager($algo))
+        ;
     }
 }

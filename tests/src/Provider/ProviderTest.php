@@ -3,7 +3,8 @@
 namespace Parroauth2\Client\Provider;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
-use GuzzleHttp\Psr7\Response;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Nyholm\Psr7\Response;
 use Http\Discovery\MessageFactoryDiscovery;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
@@ -34,7 +35,8 @@ class ProviderTest extends UnitTestCase
         $this->provider = new Provider(
             new BaseClientFactory($this->session),
             $this->httpClient,
-            MessageFactoryDiscovery::find(),
+            Psr17FactoryDiscovery::findRequestFactory(),
+            Psr17FactoryDiscovery::findStreamFactory(),
             $this->config = new ProviderConfig(
                 'http://provider.example.com',
                 [

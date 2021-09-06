@@ -8,6 +8,7 @@ use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\ProxyClient;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Lazy loading implementation of the provider
@@ -93,7 +94,7 @@ final class ProxyProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         return $this->provider()->sendRequest($request);
     }

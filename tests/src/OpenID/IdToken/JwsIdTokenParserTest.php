@@ -36,7 +36,7 @@ class JwsIdTokenParserTest extends UnitTestCase
 
         $this->client = $this->provider()->client(
             (new ClientConfig('test'))
-                ->setSecret('my secret')
+                ->setSecret('azertyuiopqsdfghjklmwxcvbn0123456789')
         );
     }
 
@@ -64,9 +64,9 @@ class JwsIdTokenParserTest extends UnitTestCase
      */
     public function test_parse_success_with_symmetric_signature()
     {
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
-            ->addSignature(JWKFactory::createFromSecret('my secret'), ['alg' => 'HS256'])
+            ->addSignature(JWKFactory::createFromSecret('azertyuiopqsdfghjklmwxcvbn0123456789'), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
             ->build()
         ;
@@ -109,9 +109,9 @@ class JwsIdTokenParserTest extends UnitTestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ID Token or signature');
 
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
-            ->addSignature(JWKFactory::createFromSecret('other'), ['alg' => 'HS256'])
+            ->addSignature(JWKFactory::createFromSecret('otherotherotherotherotherotherother'), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
             ->build()
         ;
@@ -123,9 +123,19 @@ class JwsIdTokenParserTest extends UnitTestCase
 
     private function builder(): JWSBuilder
     {
-        return (new JWSBuilder(null, new AlgorithmManager([new RS256()])))
+        return $this->jwsBuilder([new RS256()])
             ->create()
             ->addSignature(JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key'), ['alg' => 'RS256'])
+        ;
+    }
+
+    private function jwsBuilder(array $algo): JWSBuilder
+    {
+        $ctor = (new \ReflectionClass(JWSBuilder::class))->getConstructor();
+
+        return $ctor->getNumberOfParameters() === 1
+            ? new JWSBuilder(new AlgorithmManager($algo))
+            : new JWSBuilder(null, new AlgorithmManager($algo))
         ;
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
-use GuzzleHttp\Psr7\Response;
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\Signature\Algorithm\HS256;
+use Nyholm\Psr7\Response;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\Serializer\CompactSerializer;
@@ -139,7 +141,7 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
     {
         $jwa = new JWA();
         $key = JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key');
-        $builder = new JWSBuilder(null, $jwa->manager());
+        $builder = $this->jwsBuilder($jwa->manager());
 
         $jws = $builder
             ->withPayload(json_encode([
@@ -166,7 +168,7 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
     {
         $jwa = new JWA();
         $key = JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key');
-        $builder = new JWSBuilder(null, $jwa->manager());
+        $builder = $this->jwsBuilder($jwa->manager());
 
         $jws = $builder
             ->withPayload(json_encode([
@@ -202,5 +204,15 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
         $this->assertFalse($response->active());
 
         $this->assertCount(0, $this->httpClient->getRequests());
+    }
+
+    private function jwsBuilder(AlgorithmManager $manager): JWSBuilder
+    {
+        $ctor = (new \ReflectionClass(JWSBuilder::class))->getConstructor();
+
+        return $ctor->getNumberOfParameters() === 1
+            ? new JWSBuilder($manager)
+            : new JWSBuilder(null, $manager)
+            ;
     }
 }

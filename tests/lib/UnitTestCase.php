@@ -6,7 +6,6 @@ use Http\Mock\Client;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\Factory\BaseClientFactory;
-use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Storage\ArrayStorage;

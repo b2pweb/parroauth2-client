@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\OpenID\EndPoint\Userinfo;
 
-use GuzzleHttp\Psr7\Response;
+use Nyholm\Psr7\Response;
 use InvalidArgumentException;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;

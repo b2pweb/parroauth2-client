@@ -2,14 +2,14 @@
 
 namespace Parroauth2\Client\Provider;
 
-use Http\Client\HttpClient;
 use Jose\Component\Core\JWKSet;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\Parroauth2Exception;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
+use Psr\Http\Client\ClientInterface as PsrClientInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -17,7 +17,7 @@ use Psr\Http\Message\StreamInterface;
  *
  * Handle the HTTP operations, and create clients
  */
-interface ProviderInterface extends HttpClient
+interface ProviderInterface extends PsrClientInterface
 {
     /**
      * Check if the provider supports OpenID Connect
@@ -85,7 +85,7 @@ interface ProviderInterface extends HttpClient
      *
      * @throws Parroauth2Exception When a server error occurs
      */
-    public function sendRequest(RequestInterface $request);
+    public function sendRequest(RequestInterface $request): ResponseInterface;
 
     /**
      * Creates a client for the provider

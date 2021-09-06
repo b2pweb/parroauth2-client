@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Extension;
 
-use GuzzleHttp\Psr7\Response;
+use Nyholm\Psr7\Response;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\Tests\UnitTestCase;

@@ -32,14 +32,14 @@ class IdTokenValidatorTest extends FunctionalTestCase
 
         $this->client = $this->client(
             (new ClientConfig('test'))
-                ->setSecret('my-secret')
+                ->setSecret('my-secretmy-secretmy-secretmy-secretmy-secret')
                 ->setScopes(['email', 'name'])
                 ->enableOpenId(true)
         );
         $this->extension = new IdTokenValidator();
         $this->client->register($this->extension);
         $this->dataSet
-            ->pushClient('test', 'my-secret', 'http://client.example.com')
+            ->pushClient('test', 'my-secretmy-secretmy-secretmy-secretmy-secret', 'http://client.example.com')
             ->pushScopes(['email', 'name'])
         ;
     }
@@ -125,7 +125,7 @@ class IdTokenValidatorTest extends FunctionalTestCase
     public function test_validate_expired_token()
     {
         $this->expectException(InvalidClaimException::class);
-        $this->expectExceptionMessage('The JWT has expired.');
+        $this->expectExceptionMessageRegExp('(The JWT has expired.|The token expired.)');
 
         $idToken = new IdToken('', [
             'iss' => 'http://localhost:5000',

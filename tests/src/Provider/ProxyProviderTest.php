@@ -2,7 +2,7 @@
 
 namespace Parroauth2\Client\Provider;
 
-use GuzzleHttp\Psr7\Response;
+use Nyholm\Psr7\Response;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\ClientConfig;

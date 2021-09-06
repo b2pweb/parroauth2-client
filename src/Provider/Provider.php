@@ -2,17 +2,19 @@
 
 namespace Parroauth2\Client\Provider;
 
-use Http\Client\HttpClient;
-use Http\Message\RequestFactory;
 use Jose\Component\Core\JWKSet;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\OAuthServerException;
 use Parroauth2\Client\Exception\Parroauth2Exception;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
 use Parroauth2\Client\Factory\ClientFactoryInterface;
+use Psr\Http\Client\ClientInterface as PsrClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * The authorization provider
@@ -27,14 +29,19 @@ final class Provider implements ProviderInterface
     private $clientFactory;
 
     /**
-     * @var HttpClient
+     * @var PsrClientInterface
      */
     private $httpClient;
 
     /**
-     * @var RequestFactory
+     * @var RequestFactoryInterface
      */
     private $requestFactory;
+
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
 
     /**
      * @var ProviderConfig
@@ -46,15 +53,17 @@ final class Provider implements ProviderInterface
      * Provider constructor.
      *
      * @param ClientFactoryInterface $clientFactory
-     * @param HttpClient $httpClient
-     * @param RequestFactory $requestFactory
+     * @param PsrClientInterface $httpClient
+     * @param RequestFactoryInterface $requestFactory
+     * @param StreamFactoryInterface $streamFactory
      * @param ProviderConfig $config
      */
-    public function __construct(ClientFactoryInterface $clientFactory, HttpClient $httpClient, RequestFactory $requestFactory, ProviderConfig $config)
+    public function __construct(ClientFactoryInterface $clientFactory, PsrClientInterface $httpClient, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory, ProviderConfig $config)
     {
         $this->clientFactory = $clientFactory;
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
+        $this->streamFactory = $streamFactory;
         $this->config = $config;
     }
 
@@ -115,16 +124,26 @@ final class Provider implements ProviderInterface
      */
     public function request(string $method, string $endpoint, array $queryParameters = [], $body = null): RequestInterface
     {
-        if (is_array($body) || is_object($body)) {
+        if (is_array($body) || (is_object($body) && !$body instanceof StreamInterface)) {
             $body = http_build_query($body);
         }
 
-        return $this->requestFactory->createRequest(
-            $method,
-            $this->uri($endpoint, $queryParameters),
-            [],
-            $body
-        );
+        $request = $this->requestFactory->createRequest($method, $this->uri($endpoint, $queryParameters));
+
+        if (!$body) {
+            return $request;
+        }
+
+        if (is_string($body)) {
+            return $request->withBody($this->streamFactory->createStream($body));
+        }
+
+        if (is_resource($body)) {
+            return $request->withBody($this->streamFactory->createStreamFromResource($body));
+        }
+
+        /** @var StreamInterface $body */
+        return $request->withBody($body);
     }
 
     /**
@@ -132,7 +151,7 @@ final class Provider implements ProviderInterface
      *
      * @throws Parroauth2Exception When a server error occurs
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $response = $this->httpClient->sendRequest($request);
 

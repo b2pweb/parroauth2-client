@@ -3,7 +3,7 @@
 namespace Parroauth2\Client\Provider;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
-use GuzzleHttp\Psr7\Response;
+use Nyholm\Psr7\Response;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Tests\UnitTestCase;
 
@@ -100,7 +100,7 @@ class ProviderLoaderTest extends UnitTestCase
      */
     public function test_discover_should_cache()
     {
-        $this->loader = new ProviderLoader(new BaseClientFactory($this->session), $this->httpClient, null, $pool = new ProviderConfigPool($cache = new ArrayCachePool()));
+        $this->loader = new ProviderLoader(new BaseClientFactory($this->session), $this->httpClient, null, null, $pool = new ProviderConfigPool($cache = new ArrayCachePool()));
         $this->httpClient->addResponse(new Response(200, [], json_encode([
             'issuer' => 'http://provider.example.com',
             'authorization_endpoint' => 'http://provider.example.com/authorize'

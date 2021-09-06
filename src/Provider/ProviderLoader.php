@@ -3,12 +3,13 @@
 namespace Parroauth2\Client\Provider;
 
 use Http\Client\Common\HttpMethodsClient;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\RequestFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Factory\ClientFactoryInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * Load authorization providers
@@ -38,14 +39,19 @@ final class ProviderLoader
     private $clientFactory;
 
     /**
-     * @var HttpClient
+     * @var ClientInterface
      */
     private $httpClient;
 
     /**
-     * @var RequestFactory
+     * @var RequestFactoryInterface
      */
     private $messageFactory;
+
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
 
     /**
      * @var ProviderConfigPool
@@ -57,18 +63,20 @@ final class ProviderLoader
      * ProviderLoader constructor.
      *
      * @param ClientFactoryInterface|null $clientFactory
-     * @param HttpClient|null $httpClient The HTTP client to use. If null will discover registered clients
-     * @param RequestFactory|null $messageFactory The HTTP message factory to use.
+     * @param ClientInterface|null $httpClient The HTTP client to use. If null will discover registered clients
+     * @param RequestFactoryInterface|null $messageFactory The HTTP message factory to use.
+     *     If null will discover registered factories
+     * @param StreamFactoryInterface|null $streamFactory The HTTP stream factory to use.
      *     If null will discover registered factories
      * @param ProviderConfigPool|null $configPool
      */
-    public function __construct(ClientFactoryInterface $clientFactory = null, HttpClient $httpClient = null, RequestFactory $messageFactory = null, ProviderConfigPool $configPool = null)
+    public function __construct(ClientFactoryInterface $clientFactory = null, ClientInterface $httpClient = null, RequestFactoryInterface $messageFactory = null, StreamFactoryInterface $streamFactory = null, ProviderConfigPool $configPool = null)
     {
-        $this->clientFactory = $clientFactory ?: new BaseClientFactory();
-        $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
-        /** @psalm-suppress DeprecatedClass */
-        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
-        $this->configPool = $configPool ?: new ProviderConfigPool();
+        $this->clientFactory = $clientFactory ?? new BaseClientFactory();
+        $this->httpClient = $httpClient ?? Psr18ClientDiscovery::find();
+        $this->messageFactory = $messageFactory ?? Psr17FactoryDiscovery::findRequestFactory();
+        $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
+        $this->configPool = $configPool ?? new ProviderConfigPool();
     }
 
     /**
@@ -90,7 +98,7 @@ final class ProviderLoader
             return $this->create($config);
         }
 
-        $client = new HttpMethodsClient($this->httpClient, $this->messageFactory);
+        $client = new HttpMethodsClient($this->httpClient, $this->messageFactory, $this->streamFactory);
 
         foreach ($this->wellKnownUris as list($uri, $openid)) {
             $response = $client->get($providerUrl . '/.well-known/' . $uri);
@@ -142,7 +150,13 @@ final class ProviderLoader
             $config = $this->configPool->createFromArray($config, $openid);
         }
 
-        return new Provider($this->clientFactory, $this->httpClient, $this->messageFactory, $config);
+        return new Provider(
+            $this->clientFactory,
+            $this->httpClient,
+            $this->messageFactory,
+            $this->streamFactory,
+            $config
+        );
     }
 
     /**

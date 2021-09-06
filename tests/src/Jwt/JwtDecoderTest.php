@@ -39,7 +39,7 @@ class JwtDecoderTest extends UnitTestCase
      */
     public function test_decode_success()
     {
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new RS256()])))
+        $jws = $this->jwsBuilder([new RS256()])
             ->create()
             ->addSignature(JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-private.key'), ['alg' => 'RS256'])
             ->withPayload('{"foo":"bar"}')
@@ -62,9 +62,9 @@ class JwtDecoderTest extends UnitTestCase
      */
     public function test_decode_success_with_symmetric_signature()
     {
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
-            ->addSignature(JWKFactory::createFromSecret('my-key'), ['alg' => 'HS256'])
+            ->addSignature(JWKFactory::createFromSecret('my-keymy-keymy-keymy-keymy-keymy-keymy-keymy-key'), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
             ->build()
         ;
@@ -72,7 +72,7 @@ class JwtDecoderTest extends UnitTestCase
         $jws = $this->serializer->serialize($jws);
 
         $decoded = $this->decoder->decode($jws, new JWKSet([
-            JWKFactory::createFromSecret('my-key')
+            JWKFactory::createFromSecret('my-keymy-keymy-keymy-keymy-keymy-keymy-keymy-key')
         ]));
 
         $this->assertEquals($jws, $decoded->encoded());
@@ -88,7 +88,7 @@ class JwtDecoderTest extends UnitTestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ID Token or signature');
 
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
             ->addSignature(JWKFactory::createFromSecret(file_get_contents(__DIR__.'/../../keys/oauth-private.key')), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
@@ -110,7 +110,7 @@ class JwtDecoderTest extends UnitTestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ID Token or signature');
 
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new RS256()])))
+        $jws = $this->jwsBuilder([new RS256()])
             ->create()
             ->addSignature(JWKFactory::createFromKeyFile(__DIR__.'/../../keys/oauth-private.key'), ['alg' => 'RS256'])
             ->withPayload('{"foo":"bar"}')
@@ -132,9 +132,9 @@ class JwtDecoderTest extends UnitTestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ID Token or signature');
 
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
-            ->addSignature(JWKFactory::createFromSecret('secret'), ['alg' => 'HS256'])
+            ->addSignature(JWKFactory::createFromSecret('secretsecretsecretsecretsecretsecretsecret'), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
             ->build()
         ;
@@ -164,15 +164,15 @@ class JwtDecoderTest extends UnitTestCase
      */
     public function test_supportedAlgorithms()
     {
-        $jws = (new JWSBuilder(null, new AlgorithmManager([new HS256()])))
+        $jws = $this->jwsBuilder([new HS256()])
             ->create()
-            ->addSignature(JWKFactory::createFromSecret('secret'), ['alg' => 'HS256'])
+            ->addSignature(JWKFactory::createFromSecret('secretsecretsecretsecretsecretsecret'), ['alg' => 'HS256'])
             ->withPayload('{"foo":"bar"}')
             ->build()
         ;
         $jws = $this->serializer->serialize($jws);
 
-        $jwks = new JWKSet([JWKFactory::createFromSecret('secret', ['alg' => 'HS256'])]);
+        $jwks = new JWKSet([JWKFactory::createFromSecret('secretsecretsecretsecretsecretsecret', ['alg' => 'HS256'])]);
 
         $this->assertNotSame($this->decoder, $this->decoder->supportedAlgorithms(['HS256']));
         $this->assertEquals(['HS256'], $this->decoder->supportedAlgorithms(['HS256'])->jwa()->manager()->list());
@@ -183,5 +183,15 @@ class JwtDecoderTest extends UnitTestCase
             $this->decoder->supportedAlgorithms(['RS256'])->decode($jws, $jwks);
             $this->fail('Expects InvalidArgumentException');
         } catch (\InvalidArgumentException $e) {}
+    }
+
+    private function jwsBuilder(array $algo): JWSBuilder
+    {
+        $ctor = (new \ReflectionClass(JWSBuilder::class))->getConstructor();
+
+        return $ctor->getNumberOfParameters() === 1
+            ? new JWSBuilder(new AlgorithmManager($algo))
+            : new JWSBuilder(null, new AlgorithmManager($algo))
+        ;
     }
 }
