@@ -33,7 +33,7 @@ class Authenticator
     {
         // Load the provider and provide a cache for the config to ensure that
         // keys and config are stored locally, and the server will not perform any request to check the token
-        $loader = new ProviderLoader(null, null, null, new ProviderConfigPool($cache));
+        $loader = new ProviderLoader(null, null, null, null, new ProviderConfigPool($cache));
 
         // Create the client
         $this->client = $loader->discover(self::PROVIDER_URL)->client(
