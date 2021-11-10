@@ -2,15 +2,11 @@
 
 namespace Parroauth2\Client\EndPoint\Introspection;
 
-use Http\Client\Exception;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\CallableEndPointInterface;
-use Parroauth2\Client\EndPoint\EndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
-use Parroauth2\Client\Exception\Parroauth2Exception;
 
 /**
  * Handle the token introspection

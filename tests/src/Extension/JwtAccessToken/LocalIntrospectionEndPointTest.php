@@ -3,7 +3,6 @@
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
 use Jose\Component\Core\AlgorithmManager;
-use Jose\Component\Signature\Algorithm\HS256;
 use Nyholm\Psr7\Response;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Signature\JWSBuilder;
@@ -174,6 +173,7 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
             ->withPayload(json_encode([
                 'exp' => time() + 100,
                 'aud' => ['foo', 'bar'],
+                'iss' => 'http://op.example.com',
             ]))
             ->addSignature($key, ['alg' => 'RS256'])
             ->build()
@@ -181,8 +181,32 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
 
         $response = $this->endPoint->accessToken((new CompactSerializer())->serialize($jws))->call();
 
+        $this->assertTrue($response->active());
         $this->assertEquals('foo', $response->clientId());
         $this->assertEquals('bearer', $response->tokenType());
+    }
+
+    /**
+     *
+     */
+    public function test_wrong_issuer()
+    {
+        $jwa = new JWA();
+        $key = JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key');
+        $builder = $this->jwsBuilder($jwa->manager());
+
+        $jws = $builder
+            ->withPayload(json_encode([
+                'exp' => time() + 100,
+                'aud' => ['foo', 'bar'],
+            ]))
+            ->addSignature($key, ['alg' => 'RS256'])
+            ->build()
+        ;
+
+        $response = $this->endPoint->accessToken((new CompactSerializer())->serialize($jws))->call();
+
+        $this->assertFalse($response->active());
     }
 
     /**
