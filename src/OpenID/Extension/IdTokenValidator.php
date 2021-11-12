@@ -77,6 +77,8 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
      * @throws \InvalidArgumentException
      *
      * @internal
+     *
+     * @todo throw only parroauth2 exception
      */
     public function validate(TokenResponse $response): void
     {

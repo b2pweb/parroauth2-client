@@ -7,6 +7,7 @@
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
 use Parroauth2\Client\Extension\JwtAccessToken\JwtAccessToken;
+use Parroauth2\Client\Extension\RequiredScopeValidator;
 use Parroauth2\Client\Provider\ProviderConfigPool;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Psr\SimpleCache\CacheInterface;
@@ -42,6 +43,10 @@ class Authenticator
 
         // Enable local introspection using JWT access token
         $this->client->register(new JwtAccessToken());
+
+        // Resource owner should check for some required scopes.
+        // Enable this extension to assert the given scope are provided in the access token.
+        $this->client->register(new RequiredScopeValidator(['profile']));
     }
 
     /**
