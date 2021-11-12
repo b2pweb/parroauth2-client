@@ -39,6 +39,7 @@ which is the recommended authorization flow.
   - `Pkce` to enable PKCE [RFC 7636](https://datatracker.ietf.org/doc/html/rfc7636) to mitigate authorization code interception attack
   - `IdTokenValidator` (only for OpenID) to enable verification of the ID Token
   - `TokenStorage` store the access token into session, and provide it into oauth endpoints
+  - `RequiredScopeValidator` assert given scopes are provided in the access token.
 - Perform the authentication process if the token is not present or expired, by using `AuthorizationCodeFlow`
 - Once authenticated, perform userinfo and introspection
 - Also implements the **logout** action, using revocation endpoint and redirect to the OP for stop the session
