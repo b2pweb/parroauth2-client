@@ -53,8 +53,8 @@ final class RequiredScopeValidator extends AbstractEndPointTransformerExtension
         foreach ($this->scopes as $scope) {
             if (!in_array($scope, $scopes)) {
                 throw new AccessDeniedException(
-                    "The scope '$scope' is not present in introspection response. "
-                    ."Available scopes are ".implode(', ', $scopes)
+                    "The scope '$scope' is not present in introspection response. " . 
+                    "Available scopes are " . implode(', ', $scopes)
                 );
             }
         }
