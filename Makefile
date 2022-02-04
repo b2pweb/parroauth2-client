@@ -51,6 +51,10 @@ phpcs:
 run-infection: infection.phar
 	./infection.phar $(INFECTION_ARGS)
 
+php80_shell:
+	docker-compose -f docker-compose.php80.yaml build
+	docker-compose -f docker-compose.php80.yaml  run php bash
+
 clean:
 	rm -f /tmp/test-db.sqlite
 
