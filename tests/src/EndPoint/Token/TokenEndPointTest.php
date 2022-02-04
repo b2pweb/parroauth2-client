@@ -106,7 +106,7 @@ class TokenEndPointTest extends FunctionalTestCase
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
-        $this->assertEquals(new \DateTime('+1 hour'), $response->expiresAt(), '', 10);
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
         $this->assertNotEmpty($response->accessToken());
         $this->assertNotEmpty($response->refreshToken());
     }
@@ -120,7 +120,7 @@ class TokenEndPointTest extends FunctionalTestCase
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
-        $this->assertEquals(new \DateTime('+1 hour'), $response->expiresAt(), '', 10);
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
         $this->assertNotEmpty($response->accessToken());
         $this->assertNotEmpty($response->refreshToken());
     }
@@ -136,7 +136,7 @@ class TokenEndPointTest extends FunctionalTestCase
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
-        $this->assertEquals(new \DateTime('+1 hour'), $response->expiresAt(), '', 10);
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
         $this->assertNotEmpty($response->accessToken());
         $this->assertNotEmpty($response->refreshToken());
     }
@@ -152,7 +152,7 @@ class TokenEndPointTest extends FunctionalTestCase
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
-        $this->assertEquals(new \DateTime('+1 hour'), $response->expiresAt(), '', 10);
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
         $this->assertNotEmpty($response->accessToken());
         $this->assertNotEmpty($response->refreshToken());
         $this->assertEquals(['email', 'name'], $response->scopes());
@@ -169,7 +169,7 @@ class TokenEndPointTest extends FunctionalTestCase
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
-        $this->assertEquals(new \DateTime('+1 hour'), $response->expiresAt(), '', 10);
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
         $this->assertNotEmpty($response->accessToken());
         $this->assertNotEmpty($response->refreshToken());
     }
@@ -185,7 +185,7 @@ class TokenEndPointTest extends FunctionalTestCase
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
-        $this->assertEquals(new \DateTime('+1 hour'), $response->expiresAt(), '', 10);
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
         $this->assertEquals(['email', 'name'], $response->scopes());
         $this->assertNotEmpty($response->accessToken());
         $this->assertNotEmpty($response->refreshToken());
