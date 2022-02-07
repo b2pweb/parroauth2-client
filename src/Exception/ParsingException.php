@@ -7,5 +7,4 @@ namespace Parroauth2\Client\Exception;
  */
 class ParsingException extends Parroauth2Exception
 {
-
 }

@@ -125,7 +125,11 @@ class IdTokenValidatorTest extends FunctionalTestCase
     public function test_validate_expired_token()
     {
         $this->expectException(InvalidClaimException::class);
-        $this->expectExceptionMessageRegExp('(The JWT has expired.|The token expired.)');
+        if (method_exists($this, 'expectExceptionMessageMatches')) {
+            $this->expectExceptionMessageMatches('(The JWT has expired.|The token expired.)');
+        } else {
+            $this->expectExceptionMessageRegExp('(The JWT has expired.|The token expired.)');
+        }
 
         $idToken = new IdToken('', [
             'iss' => 'http://localhost:5000',

@@ -74,8 +74,8 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
         $this->assertEquals('http://localhost:5000', $introspection->issuer());
         $this->assertEquals('test', $introspection->audience());
         $this->assertEquals('bob', $introspection->subject());
-        $this->assertEquals(time() + 3600, $introspection->expireAt(), '', 10);
-        $this->assertEquals(time(), $introspection->issuedAt(), '', 10);
+        $this->assertEqualsWithDelta(time() + 3600, $introspection->expireAt(), 10);
+        $this->assertEqualsWithDelta(time(), $introspection->issuedAt(), 10);
         $this->assertEquals('bearer', $introspection->tokenType());
         $this->assertEquals(['email', 'profile'], $introspection->scopes());
         $this->assertEquals('test', $introspection->clientId());
