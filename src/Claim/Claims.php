@@ -33,7 +33,7 @@ class Claims implements ArrayAccess
      *
      * @param string $offset
      */
-    final public function offsetExists($offset)
+    final public function offsetExists($offset): bool
     {
         return isset($this->claims[$offset]);
     }
@@ -43,6 +43,7 @@ class Claims implements ArrayAccess
      *
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     final public function offsetGet($offset)
     {
         return $this->claims[$offset];
@@ -51,7 +52,7 @@ class Claims implements ArrayAccess
     /**
      * {@inheritdoc}
      */
-    final public function offsetSet($offset, $value)
+    final public function offsetSet($offset, $value): void
     {
         throw new BadMethodCallException(static::class . ' is read-only');
     }
@@ -59,7 +60,7 @@ class Claims implements ArrayAccess
     /**
      * {@inheritdoc}
      */
-    final public function offsetUnset($offset)
+    final public function offsetUnset($offset): void
     {
         throw new BadMethodCallException(static::class . ' is read-only');
     }

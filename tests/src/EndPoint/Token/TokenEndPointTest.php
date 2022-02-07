@@ -37,7 +37,9 @@ class TokenEndPointTest extends FunctionalTestCase
         $this->endPoint = new TokenEndPoint($this->client);
         $this->dataSet
             ->pushClient('test', 'my-secret', 'http://client.example.com')
+            ->pushUser('bob', '$bob', ['name' => 'Bob', 'family_name' => 'Smith', 'email' => 'bob@example.com'])
             ->pushScopes(['email', 'name'])
+            ->setConnectedUser('bob')
         ;
         $this->clonedEndPoint = clone $this->endPoint;
     }
@@ -130,9 +132,7 @@ class TokenEndPointTest extends FunctionalTestCase
      */
     public function test_password_functional()
     {
-        $this->dataSet->pushUser('bob', 'my-password');
-
-        $response = $this->endPoint->password('bob', 'my-password')->call();
+        $response = $this->endPoint->password('bob', '$bob')->call();
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
@@ -146,9 +146,7 @@ class TokenEndPointTest extends FunctionalTestCase
      */
     public function test_password_with_scopes_functional()
     {
-        $this->dataSet->pushUser('bob', 'my-password');
-
-        $response = $this->endPoint->password('bob', 'my-password', ['email', 'name'])->call();
+        $response = $this->endPoint->password('bob', '$bob', ['email', 'name'])->call();
 
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());

@@ -15,6 +15,8 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 const BASE_URL = 'http://localhost:5000';
 
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 $dataSet = new TestingDataSet();
 $dataSet->declare();
 

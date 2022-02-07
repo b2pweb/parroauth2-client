@@ -75,7 +75,7 @@ final class ProviderConfig implements \ArrayAccess
      *
      * @param string $offset
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->config[$offset]);
     }
@@ -85,6 +85,7 @@ final class ProviderConfig implements \ArrayAccess
      *
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->config[$offset];
@@ -96,7 +97,7 @@ final class ProviderConfig implements \ArrayAccess
      * @param string $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->config[$offset] = $value;
         $this->save();
@@ -107,7 +108,7 @@ final class ProviderConfig implements \ArrayAccess
      *
      * @param string $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->config[$offset]);
     }
