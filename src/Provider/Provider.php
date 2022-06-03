@@ -134,6 +134,10 @@ final class Provider implements ProviderInterface
             return $request;
         }
 
+        foreach ($this->metadata('default_headers', []) as $headerName => $value) {
+            $request = $request->withHeader($headerName, $value);
+        }
+
         if (is_string($body)) {
             return $request->withBody($this->streamFactory->createStream($body));
         }

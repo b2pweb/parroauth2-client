@@ -69,6 +69,30 @@ class ProviderConfigPoolTest extends TestCase
     /**
      *
      */
+    public function test_create_with_defaults()
+    {
+        $pool = new ProviderConfigPool(new ArrayCachePool(), ['my_param' => 'default_value']);
+
+        $config = $pool->create('http://op.example.com', ['foo' => 'bar'], true);
+
+        $this->assertInstanceOf(ProviderConfig::class, $config);
+        $this->assertEquals('http://op.example.com', $config->url());
+        $this->assertEquals('bar', $config['foo']);
+        $this->assertEquals('default_value', $config['my_param']);
+        $this->assertTrue($config->openid());
+
+        $config = $pool->create('http://op.example.com', ['foo' => 'bar', 'my_param' => 'other'], true);
+
+        $this->assertInstanceOf(ProviderConfig::class, $config);
+        $this->assertEquals('http://op.example.com', $config->url());
+        $this->assertEquals('bar', $config['foo']);
+        $this->assertEquals('other', $config['my_param']);
+        $this->assertTrue($config->openid());
+    }
+
+    /**
+     *
+     */
     public function test_createFromArray()
     {
         $pool = new ProviderConfigPool(new ArrayCachePool());

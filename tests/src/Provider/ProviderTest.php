@@ -106,6 +106,41 @@ class ProviderTest extends UnitTestCase
     /**
      *
      */
+    public function test_request_with_default_headers()
+    {
+        $this->provider = new Provider(
+            new BaseClientFactory($this->session),
+            $this->httpClient,
+            Psr17FactoryDiscovery::findRequestFactory(),
+            Psr17FactoryDiscovery::findStreamFactory(),
+            $this->config = new ProviderConfig(
+                'http://provider.example.com',
+                [
+                    'issuer' => 'http://provider.example.com',
+                    'authorization_endpoint' => 'http://provider.example.com/authorize',
+                    'with_query_endpoint' => 'http://provider.example.com?foo=bar',
+                    'foo' => 'bar',
+                    'default_headers' => [
+                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'X-Foo' => 'BAR',
+                    ],
+                ],
+                true
+            )
+        );
+
+        $request = $this->provider->request('POST', 'authorization', ['foo' => 'bar'], ['aaa' => 'bbb']);
+
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('http://provider.example.com/authorize?foo=bar', (string) $request->getUri());
+        $this->assertEquals('aaa=bbb', (string) $request->getBody());
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals('BAR', $request->getHeaderLine('X-Foo'));
+    }
+
+    /**
+     *
+     */
     public function test_send_request_success()
     {
         $request = $this->provider->request('GET', 'authorization');

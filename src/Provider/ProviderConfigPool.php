@@ -15,13 +15,22 @@ final class ProviderConfigPool
     private $cache;
 
     /**
+     * Default provider config to apply
+     *
+     * @var array<string, mixed>
+     */
+    private $defaults;
+
+    /**
      * ProviderConfigPool constructor.
      *
      * @param CacheInterface|null $cache The cache system. If null the cache is disabled
+     * @param array<string, mixed> $defaults Default provider config to apply
      */
-    public function __construct(?CacheInterface $cache = null)
+    public function __construct(?CacheInterface $cache = null, array $defaults = [])
     {
         $this->cache = $cache;
+        $this->defaults = $defaults;
     }
 
     /**
@@ -59,7 +68,7 @@ final class ProviderConfigPool
      */
     public function create(string $url, array $config, bool $openid): ProviderConfig
     {
-        $config = new ProviderConfig($url, $config, $openid);
+        $config = new ProviderConfig($url, $config + $this->defaults, $openid);
         $config->setCache($this->cache);
 
         return $config;
