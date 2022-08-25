@@ -154,4 +154,40 @@ class JWATest extends TestCase
 
         $this->jwa->enable('not found');
     }
+
+    /**
+     *
+     */
+    public function test_enable_class_not_exists()
+    {
+        $this->jwa->register('NOTFOUND', 'NotFound', JWA::TYPE_HMAC, 'sha1');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported alg "NOTFOUND"');
+
+        $this->jwa->enable('NOTFOUND');
+    }
+
+    /**
+     *
+     */
+    public function test_manager_with_class_not_found_should_be_filtered()
+    {
+        $jwa = $this->jwa->filter(['RS256', 'HS512']);
+        $jwa->register('NOTFOUND', 'NotFound', JWA::TYPE_HMAC, 'sha1');
+
+        $this->assertEquals(['HS512', 'RS256'], $jwa->manager()->list());
+    }
+
+    /**
+     *
+     */
+    public function test_filter_should_ignore_not_found_algo_class()
+    {
+        $this->jwa->register('NOTFOUND', 'NotFound', JWA::TYPE_HMAC, 'sha1');
+        $this->jwa->manager();
+        $jwa = $this->jwa->filter(['RS256', 'HS512', 'NOTFOUND']);
+
+        $this->assertEquals(['HS512', 'RS256'], $jwa->manager()->list());
+    }
 }

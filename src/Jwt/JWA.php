@@ -140,7 +140,7 @@ final class JWA
      */
     public function enable(string $alg, bool $value = true): self
     {
-        if (!isset($this->algMap[$alg])) {
+        if (!isset($this->algMap[$alg]) || !class_exists($this->algMap[$alg]['class'])) {
             throw new InvalidArgumentException('Unsupported alg "' . $alg . '"');
         }
 
@@ -169,12 +169,12 @@ final class JWA
             $jwa->enabled[$alg] = $enabled && isset($algorithms[$alg]);
         }
 
-        // An manager is already instantiated : filters enabled algorithms and recreates a new manager
+        // A manager is already instantiated : filters enabled algorithms and recreates a new manager
         if ($jwa->manager) {
             $algorithms = [];
 
             foreach ($jwa->enabled as $alg => $enabled) {
-                if ($enabled) {
+                if ($enabled && $jwa->manager->has($alg)) {
                     $algorithms[] = $jwa->manager->get($alg);
                 }
             }
@@ -200,7 +200,11 @@ final class JWA
 
         foreach ($this->enabled as $id => $enabled) {
             if ($enabled) {
-                $algorithms[] = new $this->algMap[$id]['class']();
+                $className = $this->algMap[$id]['class'];
+
+                if (class_exists($className)) {
+                    $algorithms[] = new $className();
+                }
             }
         }
 
