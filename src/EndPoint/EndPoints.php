@@ -104,13 +104,20 @@ class EndPoints
     public function request(string $method, EndPointInterface $endpoint): RequestInterface
     {
         $isGet = $method === 'GET';
+        $parameters = $endpoint->parameters();
 
-        return $this->provider->request(
+        $request = $this->provider->request(
             $method,
             $endpoint->name(),
-            $isGet ? $endpoint->parameters() : [],
-            $isGet ? null : $endpoint->parameters()
+            $isGet ? $parameters : [],
+            $isGet ? null : $parameters
         );
+
+        if (!$isGet && $parameters) {
+            $request = $request->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+        }
+
+        return $request;
     }
 
     /**
