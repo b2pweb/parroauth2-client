@@ -95,6 +95,7 @@ class EndPointsTest extends UnitTestCase
 
         $this->assertEquals('http://op.example.com/token?foo=bar', $request->getUri());
         $this->assertEquals('GET', $request->getMethod());
+        $this->assertFalse($request->hasHeader('Content-Type'));
     }
 
     /**
@@ -111,6 +112,23 @@ class EndPointsTest extends UnitTestCase
         $this->assertEquals('http://op.example.com/token', $request->getUri());
         $this->assertEquals('foo=bar', $request->getBody());
         $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+    }
+
+    /**
+     *
+     */
+    public function test_request_POST_empty_body_should_not_set_content_type_header()
+    {
+        $endPoint = $this->createMock(EndPointInterface::class);
+        $endPoint->expects($this->any())->method('name')->willReturn('token');
+        $endPoint->expects($this->any())->method('parameters')->willReturn([]);
+
+        $request = $this->endPoints->request('POST', $endPoint);
+
+        $this->assertEquals('http://op.example.com/token', $request->getUri());
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertFalse($request->hasHeader('Content-Type'));
     }
 
     /**
