@@ -159,6 +159,35 @@ class TokenEndPointTest extends FunctionalTestCase
     /**
      *
      */
+    public function test_client_credentials_functional()
+    {
+        $response = $this->endPoint->clientCredentials()->call();
+
+        $this->assertInstanceOf(TokenResponse::class, $response);
+        $this->assertEquals('bearer', $response->type());
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
+        $this->assertNotEmpty($response->accessToken());
+        $this->assertNull($response->refreshToken());
+    }
+
+    /**
+     *
+     */
+    public function test_client_credentials_with_scopes_functional()
+    {
+        $response = $this->endPoint->clientCredentials(['email', 'name'])->call();
+
+        $this->assertInstanceOf(TokenResponse::class, $response);
+        $this->assertEquals('bearer', $response->type());
+        $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
+        $this->assertNotEmpty($response->accessToken());
+        $this->assertNull($response->refreshToken());
+        $this->assertEquals(['email', 'name'], $response->scopes());
+    }
+
+    /**
+     *
+     */
     public function test_refresh_functional()
     {
         $token = $this->endPoint->code($this->code('http://client.example.com'))->call()->refreshToken();

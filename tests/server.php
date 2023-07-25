@@ -2,6 +2,7 @@
 
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
+use OAuth2\GrantType\ClientCredentials;
 use OAuth2\GrantType\RefreshToken;
 use OAuth2\GrantType\UserCredentials;
 use OAuth2\OpenID\GrantType\AuthorizationCode;
@@ -32,9 +33,10 @@ $server = new Server(
         'issuer' => BASE_URL,
     ] + $parameters,
     [
-        'authorization_code' => new AuthorizationCode($storage),
-        'user_credentials'   => new UserCredentials($storage),
-        'refresh_token'      => new RefreshToken($storage, ['always_issue_new_refresh_token' => true]),
+        new AuthorizationCode($storage),
+        new UserCredentials($storage),
+        new RefreshToken($storage, ['always_issue_new_refresh_token' => true]),
+        new ClientCredentials($storage),
     ]
 );
 $server->addStorage(
