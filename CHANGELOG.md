@@ -1,6 +1,10 @@
 # Changelog
 
-# v1.2.0
+## v1.3.0
+
+- Add support of the end point client credentials.
+
+## v1.2.0
 
 - Compatibility with PHP 8.2, web-token v3.0 and psr/simple-cache v3.0
 - Send `Content-Type: application/x-www-form-urlencoded` header by default on POST requests
