@@ -5,6 +5,8 @@ namespace Parroauth2\Client\Tests;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
@@ -47,8 +49,8 @@ class FunctionalTestCase extends TestCase
         $this->session = new ArrayStorage();
         $this->provider = (new ProviderLoader(new BaseClientFactory($this->session)))->discover('http://localhost:5000');
         $this->httpClient = new HttpMethodsClient(
-            HttpClientDiscovery::find(),
-            MessageFactoryDiscovery::find()
+            Psr18ClientDiscovery::find(),
+            Psr17FactoryDiscovery::findRequestFactory()
         );
     }
 
