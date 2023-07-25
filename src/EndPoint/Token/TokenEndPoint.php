@@ -30,6 +30,7 @@ class TokenEndPoint implements CallableEndPointInterface
     public const GRANT_TYPE_CODE = 'authorization_code';
     public const GRANT_TYPE_PASSWORD = 'password';
     public const GRANT_TYPE_REFRESH = 'refresh_token';
+    public const GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
 
     /**
      * @var ClientInterface
@@ -96,6 +97,30 @@ class TokenEndPoint implements CallableEndPointInterface
 
         if ($redirectUri) {
             $endpoint->parameters['redirect_uri'] = $redirectUri;
+        }
+
+        return $endpoint;
+    }
+
+    /**
+     * Configure a grant type client credentials token request
+     *
+     * @param list<string>|null $scopes List of scopes to grant
+     *
+     * @return static
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.3.2
+     *
+     * @psalm-mutation-free
+     */
+    public function clientCredentials(?array $scopes = null): TokenEndPoint
+    {
+        $endpoint = clone $this;
+
+        $endpoint->parameters['grant_type'] = self::GRANT_TYPE_CLIENT_CREDENTIALS;
+
+        if ($scopes) {
+            $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 
         return $endpoint;

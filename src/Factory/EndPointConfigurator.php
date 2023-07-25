@@ -2,7 +2,6 @@
 
 namespace Parroauth2\Client\Factory;
 
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\EndPointInterface;
 
