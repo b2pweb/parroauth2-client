@@ -2,12 +2,11 @@
 
 namespace Parroauth2\Client\OpenID\IdToken;
 
+use B2pweb\Jwt\JWA;
+use B2pweb\Jwt\JwtDecoder;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
-use Parroauth2\Client\Jwt\JWA;
-use Parroauth2\Client\Jwt\JwtDecoder;
 
 /**
  * Parse the ID Token in a JWS format

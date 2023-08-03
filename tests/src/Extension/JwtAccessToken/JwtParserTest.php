@@ -87,7 +87,7 @@ class JwtParserTest extends UnitTestCase
     public function test_decode_failed()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid ID Token or signature');
+        $this->expectExceptionMessage('Invalid JWT or signature');
 
         $this->parser->parse('invalid', $this->client);
     }

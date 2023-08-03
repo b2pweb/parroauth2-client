@@ -87,7 +87,7 @@ class JwsIdTokenParserTest extends UnitTestCase
     public function test_parse_invalid_key()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid ID Token or signature');
+        $this->expectExceptionMessage('Invalid JWT or signature');
 
         $this->client = $this->provider(['jwks' => new JWKSet([
             JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-public-wrong.key', null, ['use' => 'sig', 'alg' => 'RS256'])
@@ -107,7 +107,7 @@ class JwsIdTokenParserTest extends UnitTestCase
     public function test_parse_invalid_key_with_symmetric_signature()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid ID Token or signature');
+        $this->expectExceptionMessage('Invalid JWT or signature');
 
         $jws = $this->jwsBuilder([new HS256()])
             ->create()

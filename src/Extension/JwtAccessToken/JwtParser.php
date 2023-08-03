@@ -2,10 +2,9 @@
 
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
+use B2pweb\Jwt\JwtDecoder;
 use Jose\Component\Core\JWKSet;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
-use Parroauth2\Client\Jwt\JwtDecoder;
 
 /**
  * Simple parser using JwtDecoder
