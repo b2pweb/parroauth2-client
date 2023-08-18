@@ -58,6 +58,19 @@ class AuthorizationEndPointTest extends UnitTestCase
     /**
      *
      */
+    public function test_uri_with_extra_parameters()
+    {
+        $endPoint = $this->endPoint
+            ->set('foo', 'bar')
+            ->set('azerty', 'uiop')
+        ;
+        $this->assertEquals('http://op.example.com/authorize?foo=baz&azerty=uiop&scope=openid&other=aaa', $endPoint->uri(['foo' => 'baz', 'other' => 'aaa']));
+        $this->assertSame(['foo' => 'bar', 'azerty' => 'uiop'], $endPoint->parameters());
+    }
+
+    /**
+     *
+     */
     public function test_apply()
     {
         $ret = $this->createMock(AuthorizationEndPoint::class);
@@ -134,5 +147,104 @@ class AuthorizationEndPointTest extends UnitTestCase
 
         $this->assertNotEquals($endPoint, $this->endPoint);
         $this->assertEquals('http://op.example.com/authorize?state=my-state&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_login_hint()
+    {
+        $endPoint = $this->endPoint->loginHint('my_username');
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?login_hint=my_username&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_display()
+    {
+        $endPoint = $this->endPoint->display(AuthorizationEndPoint::DISPLAY_POPUP);
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?display=popup&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_prompt()
+    {
+        $endPoint = $this->endPoint->prompt(AuthorizationEndPoint::PROMPT_LOGIN);
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?prompt=login&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_prompt_array()
+    {
+        $endPoint = $this->endPoint->prompt([AuthorizationEndPoint::PROMPT_LOGIN, AuthorizationEndPoint::PROMPT_CONSENT]);
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?prompt=login+consent&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_maxAge()
+    {
+        $endPoint = $this->endPoint->maxAge(14569);
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?max_age=14569&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_uiLocales()
+    {
+        $endPoint = $this->endPoint->uiLocales('fr');
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?ui_locales=fr&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_uiLocales_array()
+    {
+        $endPoint = $this->endPoint->uiLocales(['fr', 'en', 'de']);
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?ui_locales=fr+en+de&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_idTokenHint()
+    {
+        $endPoint = $this->endPoint->idTokenHint('my_id_token');
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?id_token_hint=my_id_token&scope=openid', $endPoint->uri());
+    }
+
+    /**
+     *
+     */
+    public function test_acrValues()
+    {
+        $endPoint = $this->endPoint->acrValues(['foo', 'bar']);
+
+        $this->assertNotEquals($endPoint, $this->endPoint);
+        $this->assertEquals('http://op.example.com/authorize?acr_values=foo+bar&scope=openid', $endPoint->uri());
     }
 }

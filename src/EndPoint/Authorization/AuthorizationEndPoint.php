@@ -10,6 +10,8 @@ use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 use Parroauth2\Client\Exception\UnsupportedServerOperation;
 
+use function array_replace;
+
 /**
  * The authorization endpoint
  * This endpoint must be called by the user agent using a redirection
@@ -131,11 +133,20 @@ class AuthorizationEndPoint implements EndPointInterface
     /**
      * Generates the authorization URI
      *
+     * @param array<string, scalar> $parameters Additional parameters to pass to the authorization endpoint
+     *
      * @return string
      * @throws UnsupportedServerOperation
      */
-    public function uri(): string
+    public function uri(array $parameters = []): string
     {
-        return $this->client->endPoints()->uri($this);
+        $endpoint = $this;
+
+        if ($parameters) {
+            $endpoint = clone $endpoint;
+            $endpoint->parameters = array_replace($endpoint->parameters, $parameters);
+        }
+
+        return $this->client->endPoints()->uri($endpoint);
     }
 }
