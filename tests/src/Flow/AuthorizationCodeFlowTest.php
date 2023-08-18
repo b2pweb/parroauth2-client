@@ -60,6 +60,24 @@ class AuthorizationCodeFlowTest extends FunctionalTestCase
     /**
      *
      */
+    public function test_authorizationUri_with_extra_parameters()
+    {
+        $uri = $this->flow->authorizationUri('http://client.example.com/connect', ['foo' => 'bar', 'login_hint' => 'my_user']);
+
+        $this->assertStringStartsWith('http://localhost:5000/authorize', $uri);
+        $this->assertStringContainsString('client_id=test', $uri);
+        $this->assertStringContainsString('response_type=code', $uri);
+        $this->assertStringContainsString('scope=email+name', $uri);
+        $this->assertStringContainsString('redirect_uri=http%3A%2F%2Fclient.example.com%2Fconnect', $uri);
+        $this->assertStringContainsString('login_hint=my_user', $uri);
+        $this->assertStringContainsString('foo=bar', $uri);
+        $this->assertTrue($this->session->has('authorization'));
+        $this->assertStringContainsString('state='.$this->session->retrieve('authorization')['state'], $uri);
+    }
+
+    /**
+     *
+     */
     public function test_authorizationUri_response()
     {
         $response = $this->httpClient->get($this->flow->authorizationUri('http://client.example.com'));

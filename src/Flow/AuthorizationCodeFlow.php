@@ -56,7 +56,7 @@ class AuthorizationCodeFlow implements AuthorizationFlowInterface
     /**
      * {@inheritdoc}
      */
-    public function authorizationUri(?string $redirectUri = null): string
+    public function authorizationUri(?string $redirectUri = null, array $parameters = []): string
     {
         $endpoint = $this->client->endPoints()
             ->authorization()
@@ -65,7 +65,7 @@ class AuthorizationCodeFlow implements AuthorizationFlowInterface
 
         $this->client->storage()->store('authorization', $endpoint->parameters());
 
-        return $endpoint->uri();
+        return $endpoint->uri($parameters);
     }
 
     /**

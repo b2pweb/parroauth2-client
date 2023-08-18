@@ -57,6 +57,19 @@ class AuthorizationEndPointTest extends UnitTestCase
     /**
      *
      */
+    public function test_uri_with_extra_parameters()
+    {
+        $endPoint = $this->endPoint
+            ->set('foo', 'bar')
+            ->set('azerty', 'uiop')
+        ;
+        $this->assertEquals('http://op.example.com/authorize?foo=baz&azerty=uiop&other=aaa', $endPoint->uri(['foo' => 'baz', 'other' => 'aaa']));
+        $this->assertSame(['foo' => 'bar', 'azerty' => 'uiop'], $endPoint->parameters());
+    }
+
+    /**
+     *
+     */
     public function test_apply()
     {
         $ret = $this->createMock(AuthorizationEndPoint::class);
