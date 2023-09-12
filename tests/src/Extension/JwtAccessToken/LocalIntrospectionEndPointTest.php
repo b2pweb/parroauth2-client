@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
+use B2pweb\Jwt\JWA;
 use Jose\Component\Core\AlgorithmManager;
 use Nyholm\Psr7\Response;
 use Jose\Component\KeyManagement\JWKFactory;
@@ -13,7 +14,6 @@ use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
 use Parroauth2\Client\Factory\BaseClientFactory;
-use Parroauth2\Client\Jwt\JWA;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Tests\TestingDataSet;
 use Parroauth2\Client\Tests\UnitTestCase;

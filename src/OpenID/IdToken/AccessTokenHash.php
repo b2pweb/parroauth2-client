@@ -2,8 +2,8 @@
 
 namespace Parroauth2\Client\OpenID\IdToken;
 
+use B2pweb\Jwt\JWA;
 use Base64Url\Base64Url;
-use Parroauth2\Client\Jwt\JWA;
 
 /**
  * Utility class for compute and check the at_hash claim of the ID Token

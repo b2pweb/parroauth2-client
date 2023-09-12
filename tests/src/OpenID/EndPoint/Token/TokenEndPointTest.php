@@ -8,7 +8,6 @@ use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 use Parroauth2\Client\OpenID\IdToken\IdToken;
 use Parroauth2\Client\OpenID\IdToken\JwsIdTokenParser;
 use Parroauth2\Client\Tests\FunctionalTestCase;
-use Parroauth2\Client\Jwt\JWA;
 
 /**
  * Class TokenEndPointTest
