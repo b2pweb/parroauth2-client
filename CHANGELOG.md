@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.0
+
+- Handle extra parameters on authorization endpoint (SSO-70)
+  - Add $parameters argument on `Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint::uri()`
+  - Add $parameters argument on `Parroauth2\Client\Flow\AuthorizationFlowInterface::authorizationUri()`
+- Use `b2pweb/jwt` library for JWT management (SSO-67)
+
 ## v1.3.0
 
 - Add support of the end point client credentials.
