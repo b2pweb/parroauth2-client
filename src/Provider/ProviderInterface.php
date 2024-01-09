@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Provider;
 
 use Jose\Component\Core\JWKSet;
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\Parroauth2Exception;
@@ -16,6 +17,8 @@ use Psr\Http\Message\StreamInterface;
  * The authorization provider
  *
  * Handle the HTTP operations, and create clients
+ *
+ * @method ClientAuthenticationMethodInterface[] availableAuthenticationMethods()
  */
 interface ProviderInterface extends PsrClientInterface
 {
@@ -107,4 +110,14 @@ interface ProviderInterface extends PsrClientInterface
      * @psalm-suppress InvalidThrow
      */
     public function keySet(): JWKSet;
+
+    /**
+     * Get the available authentication methods for the provider
+     * Those method should be filtered according to metadata "*_endpoint_auth_methods_supported" parameters
+     *
+     * So this method may return authentication methods which are not supported by any endpoint
+     *
+     * @return ClientAuthenticationMethodInterface[] Authentication methods. Do not rely on the order or the keys.
+     */
+    //public function availableAuthenticationMethods(): array;
 }

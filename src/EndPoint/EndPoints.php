@@ -3,6 +3,8 @@
 namespace Parroauth2\Client\EndPoint;
 
 use InvalidArgumentException;
+use Parroauth2\Client\Authentication\BasicClientAuthenticationMethod;
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
@@ -13,6 +15,9 @@ use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 use Parroauth2\Client\Provider\Provider;
 use Parroauth2\Client\Provider\ProviderInterface;
 use Psr\Http\Message\RequestInterface;
+
+use function in_array;
+use function method_exists;
 
 /**
  * Store endpoints
@@ -210,5 +215,55 @@ class EndPoints
     {
         /** @var EndSessionEndPoint */
         return $this->get(EndSessionEndPoint::NAME);
+    }
+
+    /**
+     * Get the client authentication method to use for an endpoint
+     *
+     * The method is resolved by the following steps:
+     * - Get all supported methods using {@see ProviderInterface::availableAuthenticationMethods()}
+     * - Filter methods using the provider metadata "{endpoint}_endpoint_auth_methods_supported". If the metadata is not available, no filter is applied.
+     * - If a preferred method is specified, and it's supported by the endpoint, use it.
+     * - Else, use the first method of "{endpoint}_endpoint_auth_methods_supported", if available.
+     * - Else, use the "client_secret_basic" method.
+     *
+     * Once the method is selected, the provider metadata "{endpoint}_endpoint_auth_signing_alg_values_supported" is used to filter the supported algorithms.
+     * If it's present, {@see ClientAuthenticationMethodInterface::withSigningAlgorithms()} is used to filter the algorithms.
+     *
+     * @param string $endPoint The endpoint name
+     * @param string|null $preferredMethod The preferred method name. If null, the first supported method is used. Use {@see ClientAuthenticationMethodInterface::OPTION_PREFERRED_METHOD} to specify a preferred method.
+     *
+     * @return ClientAuthenticationMethodInterface The selected method
+     */
+    public function authenticationMethod(string $endPoint, ?string $preferredMethod = null): ClientAuthenticationMethodInterface
+    {
+        $provider = $this->provider;
+
+        $methods = method_exists($provider, 'availableAuthenticationMethods') ? $provider->availableAuthenticationMethods() : [];
+        $supportedMethodNames = $provider->metadata($endPoint . '_endpoint_auth_methods_supported');
+        $supportedAlgorithms = $provider->metadata($endPoint . '_endpoint_auth_signing_alg_values_supported');
+
+        $supportedMethods = [];
+
+        // Filter methods supported by the server, and indexed by name
+        foreach ($methods as $method) {
+            if ($supportedMethodNames === null || in_array($method->name(), $supportedMethodNames, true)) {
+                $supportedMethods[$method->name()] = $method;
+            }
+        }
+
+        if ($preferredMethod && isset($supportedMethods[$preferredMethod])) {
+            // If a preferred method is requested and is supported, use it
+            $selectedMethod = $supportedMethods[$preferredMethod];
+        } elseif (isset($supportedMethodNames[0]) && isset($supportedMethods[$supportedMethodNames[0]])) {
+            // Else, use the first supported method
+            $selectedMethod = $supportedMethods[$supportedMethodNames[0]];
+        } else {
+            // If no method are supported, use the basic method
+            $selectedMethod = $supportedMethods[BasicClientAuthenticationMethod::NAME] ?? new BasicClientAuthenticationMethod();
+        }
+
+        // Specify supported algorithms, if any
+        return $supportedAlgorithms ? $selectedMethod->withSigningAlgorithms($supportedAlgorithms) : $selectedMethod;
     }
 }

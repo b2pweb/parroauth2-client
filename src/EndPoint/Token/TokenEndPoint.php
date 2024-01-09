@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\EndPoint\Token;
 
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
@@ -181,15 +182,14 @@ class TokenEndPoint implements CallableEndPointInterface
      */
     public function call(): TokenResponse
     {
-        $request = $this->client->endPoints()
-            ->request('POST', $this)
-            ->withHeader(
-                'Authorization',
-                'Basic ' . base64_encode($this->client->clientId() . ':' . $this->client->secret())
-            )
-        ;
+        $client = $this->client;
+        $endPoints = $client->endPoints();
+        $request = $endPoints->request('POST', $this);
+        $authenticationMethod = $endPoints->authenticationMethod($this->name(), $client->option(ClientAuthenticationMethodInterface::OPTION_PREFERRED_METHOD));
 
-        $body = (string) $this->client->provider()->sendRequest($request)->getBody();
+        $request = $authenticationMethod->apply($client, $request);
+
+        $body = (string) $client->provider()->sendRequest($request)->getBody();
         $response = ($this->responseFactory)(json_decode($body, true));
 
         $this->callResponseListeners($response);

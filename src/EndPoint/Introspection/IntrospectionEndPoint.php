@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\EndPoint\Introspection;
 
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
@@ -123,13 +124,12 @@ class IntrospectionEndPoint implements CallableEndPointInterface
      */
     public function call(): IntrospectionResponse
     {
-        $request = $this->client->endPoints()
-            ->request('POST', $this)
-            ->withHeader(
-                'Authorization',
-                'Basic ' . base64_encode($this->client->clientId() . ':' . $this->client->secret())
-            )
-        ;
+        $client = $this->client;
+        $endPoints = $client->endPoints();
+        $request = $endPoints->request('POST', $this);
+        $authenticationMethod = $endPoints->authenticationMethod($this->name(), $client->option(ClientAuthenticationMethodInterface::OPTION_PREFERRED_METHOD));
+
+        $request = $authenticationMethod->apply($client, $request);
 
         $body = (string) $this->client->provider()->sendRequest($request)->getBody();
         $response = new IntrospectionResponse(json_decode($body, true));

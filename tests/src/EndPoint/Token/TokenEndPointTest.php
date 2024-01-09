@@ -36,7 +36,7 @@ class TokenEndPointTest extends FunctionalTestCase
         );
         $this->endPoint = new TokenEndPoint($this->client);
         $this->dataSet
-            ->pushClient('test', 'my-secret', 'http://client.example.com')
+            ->pushClient('test', $this->client->secret(), 'http://client.example.com')
             ->pushUser('bob', '$bob', ['name' => 'Bob', 'family_name' => 'Smith', 'email' => 'bob@example.com'])
             ->pushScopes(['email', 'name'])
             ->setConnectedUser('bob')

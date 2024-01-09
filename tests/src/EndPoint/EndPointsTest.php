@@ -2,6 +2,9 @@
 
 namespace Parroauth2\Client\EndPoint;
 
+use Parroauth2\Client\Authentication\BasicClientAuthenticationMethod;
+use Parroauth2\Client\Authentication\JwtBearerClientAuthenticationMethod;
+use Parroauth2\Client\Authentication\RequestBodyClientAuthenticationMethod;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint;
@@ -207,5 +210,96 @@ class EndPointsTest extends UnitTestCase
         $this->endPoints->add($endpoint);
 
         $this->assertSame($endpoint, $this->endPoints->endSession());
+    }
+
+    public function test_authenticationMethod_without_metadata()
+    {
+        $endPoints = $this->provider()->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(BasicClientAuthenticationMethod::class, $endPoints->authenticationMethod('token'));
+    }
+
+    public function test_authenticationMethod_without_metadata_with_preferred_method()
+    {
+        $endPoints = $this->provider()->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(RequestBodyClientAuthenticationMethod::class, $endPoints->authenticationMethod('token', RequestBodyClientAuthenticationMethod::NAME));
+    }
+
+    public function test_authenticationMethod_with_supported_method_metadata_should_take_the_first()
+    {
+        $endPoints = $this->provider([
+            'token_endpoint_auth_methods_supported' => [JwtBearerClientAuthenticationMethod::NAME, BasicClientAuthenticationMethod::NAME, RequestBodyClientAuthenticationMethod::NAME],
+        ])->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(JwtBearerClientAuthenticationMethod::class, $endPoints->authenticationMethod('token'));
+    }
+
+    public function test_authenticationMethod_with_supported_method_and_preferred_metadata_should_take_the_preferred_one_if_exists()
+    {
+        $endPoints = $this->provider([
+            'token_endpoint_auth_methods_supported' => [JwtBearerClientAuthenticationMethod::NAME, BasicClientAuthenticationMethod::NAME, RequestBodyClientAuthenticationMethod::NAME],
+        ])->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(BasicClientAuthenticationMethod::class, $endPoints->authenticationMethod('token', BasicClientAuthenticationMethod::NAME));
+    }
+
+    public function test_authenticationMethod_with_supported_method_and_preferred_metadata_should_take_the_first_supported_if_preferred_one_do_not_exists()
+    {
+        $endPoints = $this->provider([
+            'token_endpoint_auth_methods_supported' => [JwtBearerClientAuthenticationMethod::NAME, RequestBodyClientAuthenticationMethod::NAME],
+        ])->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(JwtBearerClientAuthenticationMethod::class, $endPoints->authenticationMethod('token', BasicClientAuthenticationMethod::NAME));
+    }
+
+    public function test_authenticationMethod_with_supported_but_first_not_implemented_should_take_basic()
+    {
+        $provider = $this->provider([
+            'token_endpoint_auth_methods_supported' => ['not_implemented', RequestBodyClientAuthenticationMethod::NAME, BasicClientAuthenticationMethod::NAME],
+        ]);
+        $endPoints = $provider->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(BasicClientAuthenticationMethod::class, $endPoints->authenticationMethod('token'));
+
+        $selectedMethod = null;
+        foreach ($provider->availableAuthenticationMethods() as $method) {
+            if ($method instanceof BasicClientAuthenticationMethod) {
+                $selectedMethod = $method;
+                break;
+            }
+        }
+
+        $this->assertSame($selectedMethod, $endPoints->authenticationMethod('token'));
+    }
+
+    public function test_authenticationMethod_with_supported_but_none_implemented_should_take_basic()
+    {
+        $endPoints = $this->provider([
+            'token_endpoint_auth_methods_supported' => ['not_implemented'],
+        ])->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(BasicClientAuthenticationMethod::class, $endPoints->authenticationMethod('token'));
+    }
+
+    public function test_authenticationMethod_with_signing_alg()
+    {
+        $provider = $this->provider([
+            'token_endpoint_auth_methods_supported' => [BasicClientAuthenticationMethod::NAME, JwtBearerClientAuthenticationMethod::NAME, RequestBodyClientAuthenticationMethod::NAME],
+            'token_endpoint_auth_signing_alg_values_supported' => ['HS512'],
+        ]);
+        $endPoints = $provider->client((new ClientConfig('test')))->endPoints();
+
+        $this->assertInstanceOf(JwtBearerClientAuthenticationMethod::class, $endPoints->authenticationMethod('token', JwtBearerClientAuthenticationMethod::NAME));
+
+        $selectedMethod = null;
+        foreach ($provider->availableAuthenticationMethods() as $method) {
+            if ($method instanceof JwtBearerClientAuthenticationMethod) {
+                $selectedMethod = $method;
+                break;
+            }
+        }
+
+        $this->assertEquals($selectedMethod->withSigningAlgorithms(['HS512']), $endPoints->authenticationMethod('token', JwtBearerClientAuthenticationMethod::NAME));
     }
 }

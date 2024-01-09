@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.5.0
+
+- Add support of jwt-bearer client authentication (SSO-84)
+  - Implements "client_secret_basic", "client_secret_post" and "client_secret_jwt" authentication methods
+  - Add method `Parroauth2\Client\Provider\ProviderInterface::availableAuthenticationMethods()`
+  - Add method `Parroauth2\Client\EndPoint\EndPoints::authenticationMethod()`
+  - Use new client authentication API on `TokenEndPoint`, `RevokeEndPoint` and `IntrospectionEndPoint`
+
 ## v1.4.0
 
 - Handle extra parameters on authorization endpoint (SSO-70)
