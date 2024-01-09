@@ -3,12 +3,15 @@
 namespace Parroauth2\Client\Provider;
 
 use Jose\Component\Core\JWKSet;
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\ProxyClient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+
+use function method_exists;
 
 /**
  * Lazy loading implementation of the provider
@@ -115,6 +118,19 @@ final class ProxyProvider implements ProviderInterface
     public function keySet(): JWKSet
     {
         return $this->provider()->keySet();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function availableAuthenticationMethods(): array
+    {
+        $provider = $this->provider();
+
+        return method_exists($provider, 'availableAuthenticationMethods')
+            ? $provider->availableAuthenticationMethods()
+            : []
+        ;
     }
 
     /**

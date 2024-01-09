@@ -2,9 +2,14 @@
 
 namespace Parroauth2\Client\Provider;
 
+use B2pweb\Jwt\JwtEncoder;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+use Parroauth2\Client\Authentication\BasicClientAuthenticationMethod;
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
+use Parroauth2\Client\Authentication\JwtBearerClientAuthenticationMethod;
+use Parroauth2\Client\Authentication\RequestBodyClientAuthenticationMethod;
 use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Factory\ClientFactoryInterface;
 use Psr\Http\Client\ClientInterface;
@@ -58,6 +63,11 @@ final class ProviderLoader
      */
     private $configPool;
 
+    /**
+     * @var ClientAuthenticationMethodInterface[]
+     */
+    private $availableAuthenticationMethods;
+
 
     /**
      * ProviderLoader constructor.
@@ -69,14 +79,20 @@ final class ProviderLoader
      * @param StreamFactoryInterface|null $streamFactory The HTTP stream factory to use.
      *     If null will discover registered factories
      * @param ProviderConfigPool|null $configPool
+     * @param ClientAuthenticationMethodInterface[]|null $authenticationMethods The available authentication methods. If null, all methods will be available.
      */
-    public function __construct(ClientFactoryInterface $clientFactory = null, ClientInterface $httpClient = null, RequestFactoryInterface $messageFactory = null, StreamFactoryInterface $streamFactory = null, ProviderConfigPool $configPool = null)
+    public function __construct(ClientFactoryInterface $clientFactory = null, ClientInterface $httpClient = null, RequestFactoryInterface $messageFactory = null, StreamFactoryInterface $streamFactory = null, ProviderConfigPool $configPool = null, ?array $authenticationMethods = null)
     {
         $this->clientFactory = $clientFactory ?? new BaseClientFactory();
         $this->httpClient = $httpClient ?? Psr18ClientDiscovery::find();
         $this->messageFactory = $messageFactory ?? Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
         $this->configPool = $configPool ?? new ProviderConfigPool();
+        $this->availableAuthenticationMethods = $authenticationMethods ?? [
+            new BasicClientAuthenticationMethod(),
+            new RequestBodyClientAuthenticationMethod($this->streamFactory),
+            new JwtBearerClientAuthenticationMethod($this->streamFactory, new JwtEncoder())
+        ];
     }
 
     /**
@@ -155,7 +171,8 @@ final class ProviderLoader
             $this->httpClient,
             $this->messageFactory,
             $this->streamFactory,
-            $config
+            $config,
+            $this->availableAuthenticationMethods
         );
     }
 
