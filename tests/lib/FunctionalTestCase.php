@@ -47,11 +47,11 @@ class FunctionalTestCase extends TestCase
         $this->dataSet->declare();
 
         $this->session = new ArrayStorage();
-        $this->provider = (new ProviderLoader(new BaseClientFactory($this->session)))->discover('http://localhost:5000');
         $this->httpClient = new HttpMethodsClient(
-            Psr18ClientDiscovery::find(),
+            new \Http\Client\Curl\Client(),
             Psr17FactoryDiscovery::findRequestFactory()
         );
+        $this->provider = (new ProviderLoader(new BaseClientFactory($this->session), $this->httpClient))->discover('http://localhost:5000');
     }
 
     protected function tearDown(): void
