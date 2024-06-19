@@ -3,6 +3,8 @@
 namespace Parroauth2\Client\Provider;
 
 use Jose\Component\Core\JWKSet;
+use Parroauth2\Client\Authentication\BasicClientAuthenticationMethod;
+use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\Exception\OAuthServerException;
@@ -48,6 +50,11 @@ final class Provider implements ProviderInterface
      */
     private $config;
 
+    /**
+     * @var ClientAuthenticationMethodInterface[]
+     */
+    private $availableAuthenticationMethods;
+
 
     /**
      * Provider constructor.
@@ -57,14 +64,16 @@ final class Provider implements ProviderInterface
      * @param RequestFactoryInterface $requestFactory
      * @param StreamFactoryInterface $streamFactory
      * @param ProviderConfig $config
+     * @param ClientAuthenticationMethodInterface[]|null $authenticationMethods
      */
-    public function __construct(ClientFactoryInterface $clientFactory, PsrClientInterface $httpClient, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory, ProviderConfig $config)
+    public function __construct(ClientFactoryInterface $clientFactory, PsrClientInterface $httpClient, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory, ProviderConfig $config, ?array $authenticationMethods = null)
     {
         $this->clientFactory = $clientFactory;
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
         $this->streamFactory = $streamFactory;
         $this->config = $config;
+        $this->availableAuthenticationMethods = $authenticationMethods ?? [new BasicClientAuthenticationMethod()];
     }
 
     /**
@@ -212,5 +221,13 @@ final class Provider implements ProviderInterface
         $response = $this->sendRequest($this->requestFactory->createRequest('GET', $this->config['jwks_uri']));
 
         return $this->config['jwks'] = JWKSet::createFromJson((string) $response->getBody());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function availableAuthenticationMethods(): array
+    {
+        return $this->availableAuthenticationMethods;
     }
 }
