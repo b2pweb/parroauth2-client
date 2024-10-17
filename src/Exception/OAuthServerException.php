@@ -32,10 +32,10 @@ class OAuthServerException extends Parroauth2Exception
      * @param string $errorType
      * @param string $message
      * @param string|null $hint
-     * @param \Exception $previous
+     * @param \Exception|null $previous
      * @param int $code
      */
-    public function __construct($statusCode, $errorType, $message, $hint = null, \Exception $previous = null, $code = 0)
+    public function __construct($statusCode, $errorType, $message, $hint = null, ?\Exception $previous = null, $code = 0)
     {
         parent::__construct($message, $code, $previous);
 
@@ -85,7 +85,7 @@ class OAuthServerException extends Parroauth2Exception
      *
      * @return OAuthServerException
      */
-    public static function create($type, $message, $hint = null, \Exception $previous = null, $code = 0)
+    public static function create($type, $message, $hint = null, ?\Exception $previous = null, $code = 0)
     {
         switch ($type) {
             case AccessDeniedException::ERROR_TYPE:

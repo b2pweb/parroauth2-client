@@ -17,7 +17,7 @@ class InvalidClientException extends OAuthServerException
      * @param \Exception|null $previous
      * @param int $code
      */
-    public function __construct($message, $hint = null, \Exception $previous = null, $code = 0)
+    public function __construct($message, $hint = null, ?\Exception $previous = null, $code = 0)
     {
         parent::__construct(401, self::ERROR_TYPE, $message, $hint, $previous, $code);
     }

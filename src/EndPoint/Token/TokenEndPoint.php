@@ -46,9 +46,9 @@ class TokenEndPoint implements CallableEndPointInterface
      * TokenEndPoint constructor.
      *
      * @param ClientInterface $client
-     * @param callable(array):TokenResponse $responseFactory
+     * @param null|callable(array):TokenResponse $responseFactory
      */
-    public function __construct(ClientInterface $client, callable $responseFactory = null)
+    public function __construct(ClientInterface $client, ?callable $responseFactory = null)
     {
         $this->client = $client;
         $this->responseFactory = $responseFactory ?: function (array $response): TokenResponse {

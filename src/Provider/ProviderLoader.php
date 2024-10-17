@@ -81,7 +81,7 @@ final class ProviderLoader
      * @param ProviderConfigPool|null $configPool
      * @param ClientAuthenticationMethodInterface[]|null $authenticationMethods The available authentication methods. If null, all methods will be available.
      */
-    public function __construct(ClientFactoryInterface $clientFactory = null, ClientInterface $httpClient = null, RequestFactoryInterface $messageFactory = null, StreamFactoryInterface $streamFactory = null, ProviderConfigPool $configPool = null, ?array $authenticationMethods = null)
+    public function __construct(?ClientFactoryInterface $clientFactory = null, ?ClientInterface $httpClient = null, ?RequestFactoryInterface $messageFactory = null, ?StreamFactoryInterface $streamFactory = null, ?ProviderConfigPool $configPool = null, ?array $authenticationMethods = null)
     {
         $this->clientFactory = $clientFactory ?? new BaseClientFactory();
         $this->httpClient = $httpClient ?? Psr18ClientDiscovery::find();

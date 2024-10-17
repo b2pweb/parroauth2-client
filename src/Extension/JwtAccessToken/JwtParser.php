@@ -25,7 +25,7 @@ final class JwtParser implements JwtParserInterface
      *
      * @param JwtDecoder|null $decoder
      */
-    public function __construct(JwtDecoder $decoder = null)
+    public function __construct(?JwtDecoder $decoder = null)
     {
         $this->decoder = $decoder ?: new JwtDecoder();
     }
