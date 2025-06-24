@@ -45,7 +45,7 @@ jobs:
     strategy:
       matrix:
         parser-version: ['3.0', '4.0']
-    name: PHP 8.1 with JWT Parser v{{ matrix.parser-version }}
+    name: PHP 8.4 with JWT Parser v${{ matrix.parser-version }}
 
     steps:
     - uses: actions/checkout@v2
@@ -58,14 +58,14 @@ jobs:
     - name: Install PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 8.1
+        php-version: 8.4
         extensions: json
         ini-values: date.timezone=Europe/Paris
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Install JWT Parser v{{ matrix.parser-version }}
+    - name: Install JWT Parser v${{ matrix.parser-version }}
       run: composer require --dev web-token/jwt-library:~${{ matrix.parser-version }} -W
 
     - name: Run test suite
