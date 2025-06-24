@@ -116,7 +116,7 @@ final class ProviderLoader
 
         $client = new HttpMethodsClient($this->httpClient, $this->messageFactory, $this->streamFactory);
 
-        foreach ($this->wellKnownUris as list($uri, $openid)) {
+        foreach ($this->wellKnownUris as [$uri, $openid]) {
             $response = $client->get($providerUrl . '/.well-known/' . $uri);
 
             if ($response->getStatusCode() !== 200) {

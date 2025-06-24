@@ -11,6 +11,8 @@ use Parroauth2\Client\EndPoint\Token\TokenResponse;
 use Parroauth2\Client\OpenID\EndPoint\EndSessionEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Token\TokenResponse as OpenIdTokenResponse;
 use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
+use Parroauth2\Client\Util\NativeClock;
+use Psr\Clock\ClockInterface;
 
 /**
  * Extension for store and use access tokens
@@ -25,6 +27,13 @@ use Parroauth2\Client\OpenID\EndPoint\Userinfo\UserinfoEndPoint;
 final class TokenStorage extends AbstractEndPointTransformerExtension
 {
     use EndPointTransformerTrait;
+
+    private ?ClockInterface $clock;
+
+    public function __construct(?ClockInterface $clock = null)
+    {
+        $this->clock = $clock ?? NativeClock::instance();
+    }
 
     /**
      * {@inheritdoc}
@@ -67,7 +76,7 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
     {
         return $this->expired()
             ? $endPoint
-            : $endPoint->accessToken($this->token()->accessToken())->onResponse([$this, 'clear'])
+            : $endPoint->accessToken($this->token()->accessToken())->onResponse($this->clear(...))
         ;
     }
 
@@ -105,7 +114,7 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
     public function expired(): bool
     {
         /** @psalm-suppress PossiblyNullReference */
-        return !$this->client()->storage()->has(self::class) || $this->token()->expired();
+        return !$this->client()->storage()->has(self::class) || $this->token()->expired($this->clock);
     }
 
     /**

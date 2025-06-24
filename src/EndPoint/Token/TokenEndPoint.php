@@ -8,6 +8,9 @@ use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
+use Parroauth2\Client\Util\NativeClock;
+
+use function trigger_error;
 
 /**
  * Endpoint for generates an access token
@@ -29,11 +32,7 @@ class TokenEndPoint implements CallableEndPointInterface
     public const GRANT_TYPE_REFRESH = 'refresh_token';
     public const GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * @var callable(array):TokenResponse
@@ -50,10 +49,13 @@ class TokenEndPoint implements CallableEndPointInterface
      */
     public function __construct(ClientInterface $client, ?callable $responseFactory = null)
     {
+        if ($responseFactory === null) {
+            @trigger_error('Not passing the responseFactory parameter is deprecated and will be removed in v3.', E_USER_DEPRECATED);
+            $responseFactory = fn (array $response): TokenResponse => TokenResponse::create($response, NativeClock::instance());
+        }
+
         $this->client = $client;
-        $this->responseFactory = $responseFactory ?: function (array $response): TokenResponse {
-            return new TokenResponse($response);
-        };
+        $this->responseFactory = $responseFactory;
     }
 
     /**

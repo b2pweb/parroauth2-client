@@ -13,26 +13,10 @@ use Parroauth2\Client\Storage\StorageInterface;
  */
 class Client implements ClientInterface
 {
-    /**
-     * @var ProviderInterface
-     */
-    private $provider;
-
-    /**
-     * @var ClientConfig
-     */
-    private $clientConfig;
-
-    /**
-     * @var EndPoints
-     */
-    private $endPoints;
-
-    /**
-     * @var StorageInterface
-     */
-    private $session;
-
+    private readonly ProviderInterface $provider;
+    private readonly ClientConfig $clientConfig;
+    private readonly EndPoints $endPoints;
+    private readonly StorageInterface $session;
 
     /**
      * Client constructor.

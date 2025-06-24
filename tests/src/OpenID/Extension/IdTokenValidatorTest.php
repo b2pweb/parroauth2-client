@@ -2,14 +2,17 @@
 
 namespace Parroauth2\Client\OpenID\Extension;
 
+use DateTimeImmutable;
 use Jose\Component\Checker\InvalidClaimException;
 use Jose\Component\Checker\MissingMandatoryClaimException;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
+use Parroauth2\Client\Extension\TokenStorage;
 use Parroauth2\Client\OpenID\EndPoint\Token\TokenResponse;
 use Parroauth2\Client\OpenID\IdToken\AccessTokenHash;
 use Parroauth2\Client\OpenID\IdToken\IdToken;
 use Parroauth2\Client\Tests\FunctionalTestCase;
+use Psr\Clock\ClockInterface;
 
 /**
  * Class IdTokenValidatorTest
@@ -141,6 +144,41 @@ class IdTokenValidatorTest extends FunctionalTestCase
         $response = new TokenResponse([], $idToken);
 
         $this->extension->validate($response);
+    }
+
+    /**
+     *
+     */
+    public function test_validate_expired_token_with_clock()
+    {
+        $extension = new IdTokenValidator(clock: $clock = new class implements ClockInterface {
+            public DateTimeImmutable $date;
+            public function now(): DateTimeImmutable
+            {
+                return $this->date;
+            }
+        });
+        $clock->date = new DateTimeImmutable('2025-06-23 12:00:00');
+
+        $idToken = new IdToken('', [
+            'iss' => 'http://localhost:5000',
+            'sub' => '1234',
+            'aud' => 'test',
+            'exp' => (new DateTimeImmutable('2025-06-23 12:15:00'))->getTimestamp(),
+            'iat' => (new DateTimeImmutable('2025-06-23 12:00:00'))->getTimestamp(),
+        ], ['alg' => 'RS256']);
+        $response = new TokenResponse(['access_token' => ''], $idToken);
+
+        $extension->configure($this->client);
+        $extension->validate($response);
+        $clock->date = new DateTimeImmutable('2025-06-23 12:16:00');
+
+        try {
+            $extension->validate($response);
+            $this->fail('Expected InvalidClaimException not thrown');
+        } catch (InvalidClaimException $e) {
+            $this->assertRegExp('(The JWT has expired.|The token expired.)', $e->getMessage());
+        }
     }
 
     /**
