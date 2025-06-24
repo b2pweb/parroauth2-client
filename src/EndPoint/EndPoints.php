@@ -17,7 +17,6 @@ use Parroauth2\Client\Provider\ProviderInterface;
 use Psr\Http\Message\RequestInterface;
 
 use function in_array;
-use function method_exists;
 
 /**
  * Store endpoints
@@ -239,7 +238,7 @@ class EndPoints
     {
         $provider = $this->provider;
 
-        $methods = method_exists($provider, 'availableAuthenticationMethods') ? $provider->availableAuthenticationMethods() : [];
+        $methods = $provider->availableAuthenticationMethods();
         $supportedMethodNames = $provider->metadata($endPoint . '_endpoint_auth_methods_supported');
         /** @var list<string>|null $supportedAlgorithms */
         $supportedAlgorithms = $provider->metadata($endPoint . '_endpoint_auth_signing_alg_values_supported');

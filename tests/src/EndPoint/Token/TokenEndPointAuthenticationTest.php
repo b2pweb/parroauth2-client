@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\EndPoint\Token;
 
 use B2pweb\Jwt\JWT;
+use B2pweb\Jwt\JwtDecoder;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Nyholm\Psr7\Response;
@@ -12,7 +13,6 @@ use Parroauth2\Client\Authentication\JwtBearerClientAuthenticationMethod;
 use Parroauth2\Client\Authentication\RequestBodyClientAuthenticationMethod;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
-use Parroauth2\Client\Jwt\JwtDecoder;
 use Parroauth2\Client\Tests\UnitTestCase;
 
 class TokenEndPointAuthenticationTest extends UnitTestCase

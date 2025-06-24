@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Authentication;
 
 use B2pweb\Jwt\JWT;
+use B2pweb\Jwt\JwtDecoder;
 use B2pweb\Jwt\JwtEncoder;
 use DateTimeImmutable;
 use Jose\Component\Core\JWKSet;
@@ -10,7 +11,6 @@ use Jose\Component\KeyManagement\JWKFactory;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
 use Parroauth2\Client\ClientConfig;
-use Parroauth2\Client\Jwt\JwtDecoder;
 use Parroauth2\Client\Tests\UnitTestCase;
 use Psr\Clock\ClockInterface;
 

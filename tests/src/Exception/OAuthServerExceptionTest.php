@@ -29,7 +29,7 @@ class OAuthServerExceptionTest extends TestCase
     /**
      *
      */
-    public function exceptionProvider()
+    public static function exceptionProvider()
     {
         return [
             ['access_denied',             'Access denied',               null,                        403, AccessDeniedException::class],

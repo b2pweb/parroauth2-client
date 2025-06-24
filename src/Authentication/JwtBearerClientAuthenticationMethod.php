@@ -3,12 +3,12 @@
 namespace Parroauth2\Client\Authentication;
 
 use B2pweb\Jwt\EncodingOptions;
+use B2pweb\Jwt\JWA;
 use B2pweb\Jwt\JwtEncoder;
 use Base64Url\Base64Url;
 use InvalidArgumentException;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\ClientInterface;
-use Parroauth2\Client\Jwt\JWA;
 use Parroauth2\Client\Util\NativeClock;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\RequestInterface;
@@ -16,7 +16,6 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 use function http_build_query;
 use function random_bytes;
-use function time;
 
 /**
  * Client authentication method using JWT bearer

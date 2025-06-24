@@ -17,8 +17,6 @@ use Psr\Http\Message\StreamInterface;
  * The authorization provider
  *
  * Handle the HTTP operations, and create clients
- *
- * @method ClientAuthenticationMethodInterface[] availableAuthenticationMethods()
  */
 interface ProviderInterface extends PsrClientInterface
 {
@@ -119,5 +117,5 @@ interface ProviderInterface extends PsrClientInterface
      *
      * @return ClientAuthenticationMethodInterface[] Authentication methods. Do not rely on the order or the keys.
      */
-    //public function availableAuthenticationMethods(): array;
+    public function availableAuthenticationMethods(): array;
 }
