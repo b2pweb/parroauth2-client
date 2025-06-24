@@ -109,7 +109,7 @@ final class JwtBearerClientAuthenticationMethod implements ClientAuthenticationM
     {
         $secret = $client->secret();
 
-        if (!$secret) {
+        if ($secret === null || $secret === '') {
             throw new InvalidArgumentException('The client secret is required to use the JWT bearer authentication method');
         }
 

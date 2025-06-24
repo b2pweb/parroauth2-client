@@ -56,7 +56,7 @@ final class AccessTokenHash
      */
     public function check(IdToken $idToken, string $accessToken): bool
     {
-        if (!$idToken->accessTokenHash()) {
+        if ($idToken->accessTokenHash() === null) {
             return true;
         }
 

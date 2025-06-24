@@ -241,6 +241,7 @@ class EndPoints
 
         $methods = method_exists($provider, 'availableAuthenticationMethods') ? $provider->availableAuthenticationMethods() : [];
         $supportedMethodNames = $provider->metadata($endPoint . '_endpoint_auth_methods_supported');
+        /** @var list<string>|null $supportedAlgorithms */
         $supportedAlgorithms = $provider->metadata($endPoint . '_endpoint_auth_signing_alg_values_supported');
 
         $supportedMethods = [];
@@ -252,7 +253,7 @@ class EndPoints
             }
         }
 
-        if ($preferredMethod && isset($supportedMethods[$preferredMethod])) {
+        if ($preferredMethod !== null && isset($supportedMethods[$preferredMethod])) {
             // If a preferred method is requested and is supported, use it
             $selectedMethod = $supportedMethods[$preferredMethod];
         } elseif (isset($supportedMethodNames[0]) && isset($supportedMethods[$supportedMethodNames[0]])) {
@@ -264,6 +265,6 @@ class EndPoints
         }
 
         // Specify supported algorithms, if any
-        return $supportedAlgorithms ? $selectedMethod->withSigningAlgorithms($supportedAlgorithms) : $selectedMethod;
+        return is_array($supportedAlgorithms) ? $selectedMethod->withSigningAlgorithms($supportedAlgorithms) : $selectedMethod;
     }
 }

@@ -2,14 +2,17 @@
 
 namespace Parroauth2\Client\Provider;
 
+use ArrayAccess;
 use Psr\SimpleCache\CacheInterface;
 
 /**
  * Store the configuration of a provider
  *
  * Note: Do not create directly, use ProviderConfigPool::create methods instead
+ *
+ * @implements ArrayAccess<string, mixed>
  */
-final class ProviderConfig implements \ArrayAccess
+final class ProviderConfig implements ArrayAccess
 {
     /**
      * @var string
@@ -85,8 +88,7 @@ final class ProviderConfig implements \ArrayAccess
      *
      * @param string $offset
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->config[$offset];
     }
@@ -97,7 +99,7 @@ final class ProviderConfig implements \ArrayAccess
      * @param string $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->config[$offset] = $value;
         $this->save();
@@ -108,7 +110,7 @@ final class ProviderConfig implements \ArrayAccess
      *
      * @param string $offset
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->config[$offset]);
     }
@@ -127,9 +129,7 @@ final class ProviderConfig implements \ArrayAccess
      */
     public function save(): void
     {
-        if ($this->cache) {
-            $this->cache->set(ProviderConfigPool::urlToKey($this->url), $this);
-        }
+        $this->cache?->set(ProviderConfigPool::urlToKey($this->url), $this);
     }
 
     /**

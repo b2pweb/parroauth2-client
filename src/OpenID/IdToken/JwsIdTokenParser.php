@@ -43,11 +43,11 @@ final class JwsIdTokenParser implements IdTokenParserInterface
 
         // Add client secret key to the set for HMAC signature
         // @see https://openid.net/specs/openid-connect-core-1_0.html#rfc.section.10.1
-        if ($client->secret() && $hmacAlgorithms = $decoder->jwa()->algorithmsByType(JWA::TYPE_HMAC)) {
+        if (($secret = $client->secret()) !== null && $secret !== '' && $hmacAlgorithms = $decoder->jwa()->algorithmsByType(JWA::TYPE_HMAC)) {
             $keySet = $keySet->all();
 
             foreach ($hmacAlgorithms as $alg) {
-                $keySet[] = JWKFactory::createFromSecret($client->secret(), ['alg' => $alg, 'use' => 'sig']);
+                $keySet[] = JWKFactory::createFromSecret($secret, ['alg' => $alg, 'use' => 'sig']);
             }
 
             $keySet = new JWKSet($keySet);

@@ -46,7 +46,9 @@ final class RequiredScopeValidator extends AbstractEndPointTransformerExtension
      */
     public function validate(IntrospectionResponse $response): void
     {
-        if (empty($scopes = $response->scopes())) {
+        $scopes = $response->scopes();
+
+        if ($scopes === null || $scopes === []) {
             throw new AccessDeniedException("The introspection response has no scopes.");
         }
 

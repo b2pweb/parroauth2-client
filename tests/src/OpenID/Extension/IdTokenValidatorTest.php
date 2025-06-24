@@ -177,7 +177,7 @@ class IdTokenValidatorTest extends FunctionalTestCase
             $extension->validate($response);
             $this->fail('Expected InvalidClaimException not thrown');
         } catch (InvalidClaimException $e) {
-            $this->assertRegExp('(The JWT has expired.|The token expired.)', $e->getMessage());
+            $this->assertMatchesRegularExpression('(The JWT has expired.|The token expired.)', $e->getMessage());
         }
     }
 

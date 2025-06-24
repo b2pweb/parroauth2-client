@@ -108,7 +108,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
             throw new InvalidClaimException('The issuer is invalid', 'iss', $idToken->issuer());
         }
 
-        if (is_array($idToken->audience()) && count($idToken->audience()) > 0 && !$idToken->authorizedParty()) {
+        if (is_array($idToken->audience()) && count($idToken->audience()) > 0 && $idToken->authorizedParty() === null) {
             throw new InvalidClaimException(
                 'The authorized party is required when multiple audience are provided',
                 'azp',
@@ -116,7 +116,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
             );
         }
 
-        if ($idToken->authorizedParty() && $idToken->authorizedParty() !== $client->clientId()) {
+        if ($idToken->authorizedParty() !== null && $idToken->authorizedParty() !== $client->clientId()) {
             throw new InvalidClaimException(
                 'The authorized party must be identically to the current client id',
                 'azp',

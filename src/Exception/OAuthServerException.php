@@ -85,51 +85,30 @@ class OAuthServerException extends Parroauth2Exception
      *
      * @return OAuthServerException
      */
-    public static function create($type, $message, $hint = null, ?\Exception $previous = null, $code = 0)
+    public static function create(string $type, ?string $message, ?string $hint = null, ?\Exception $previous = null, int $code = 0): self
     {
-        switch ($type) {
-            case AccessDeniedException::ERROR_TYPE:
-                return new AccessDeniedException($message ?: 'Access denied', $hint, $previous, $code);
-
-            case InvalidClientException::ERROR_TYPE:
-                return new InvalidClientException($message ?: 'Invalid client', $hint, $previous, $code);
-
-            case InvalidGrantException::ERROR_TYPE:
-                return new InvalidGrantException($message ?: 'Invalid grant', $hint, $previous, $code);
-
-            case InvalidRequestException::ERROR_TYPE:
-                return new InvalidRequestException($message ?: 'Invalid request', $hint, $previous, $code);
-
-            case InvalidScopeException::ERROR_TYPE:
-                return new InvalidScopeException($message ?: 'Invalid scope', $hint, $previous, $code);
-
-            case ServerErrorException::ERROR_TYPE:
-                return new ServerErrorException($message ?: 'Server error', $hint, $previous, $code);
-
-            case TemporarilyUnavailableException::ERROR_TYPE:
-                return new TemporarilyUnavailableException(
-                    $message ?: 'Temporarily unavailable',
-                    $hint,
-                    $previous,
-                    $code
-                );
-
-            case UnauthorizedClientException::ERROR_TYPE:
-                return new UnauthorizedClientException($message ?: 'Unauthorized client', $hint, $previous, $code);
-
-            case UnsupportedGrantTypeException::ERROR_TYPE:
-                return new UnsupportedGrantTypeException($message ?: 'Unsupported grant type', $hint, $previous, $code);
-
-            case UnsupportedResponseTypeException::ERROR_TYPE:
-                return new UnsupportedResponseTypeException(
-                    $message ?: 'Unsupported response type',
-                    $hint,
-                    $previous,
-                    $code
-                );
-
-            default:
-                return new self(400, $type, $message ?: 'An error has occurred', $hint, $previous, $code);
-        }
+        return match ($type) {
+            AccessDeniedException::ERROR_TYPE => new AccessDeniedException($message ?? 'Access denied', $hint, $previous, $code),
+            InvalidClientException::ERROR_TYPE => new InvalidClientException($message ?? 'Invalid client', $hint, $previous, $code),
+            InvalidGrantException::ERROR_TYPE => new InvalidGrantException($message ?? 'Invalid grant', $hint, $previous, $code),
+            InvalidRequestException::ERROR_TYPE => new InvalidRequestException($message ?? 'Invalid request', $hint, $previous, $code),
+            InvalidScopeException::ERROR_TYPE => new InvalidScopeException($message ?? 'Invalid scope', $hint, $previous, $code),
+            ServerErrorException::ERROR_TYPE => new ServerErrorException($message ?? 'Server error', $hint, $previous, $code),
+            TemporarilyUnavailableException::ERROR_TYPE => new TemporarilyUnavailableException(
+                $message ?? 'Temporarily unavailable',
+                $hint,
+                $previous,
+                $code
+            ),
+            UnauthorizedClientException::ERROR_TYPE => new UnauthorizedClientException($message ?? 'Unauthorized client', $hint, $previous, $code),
+            UnsupportedGrantTypeException::ERROR_TYPE => new UnsupportedGrantTypeException($message ?? 'Unsupported grant type', $hint, $previous, $code),
+            UnsupportedResponseTypeException::ERROR_TYPE => new UnsupportedResponseTypeException(
+                $message ?? 'Unsupported response type',
+                $hint,
+                $previous,
+                $code
+            ),
+            default => new self(400, $type, $message ?? 'An error has occurred', $hint, $previous, $code),
+        };
     }
 }

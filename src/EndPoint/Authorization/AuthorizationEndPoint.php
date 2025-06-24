@@ -80,7 +80,7 @@ class AuthorizationEndPoint implements EndPointInterface
         $endpoint->parameters['client_id'] = $endpoint->client->clientId();
         $endpoint->parameters['response_type'] = self::RESPONSE_TYPE_CODE;
 
-        if ($redirectUri) {
+        if ($redirectUri !== null) {
             $endpoint->parameters['redirect_uri'] = $redirectUri;
         }
 

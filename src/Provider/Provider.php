@@ -89,7 +89,7 @@ final class Provider implements ProviderInterface
      */
     public function issuer(): string
     {
-        return $this->metadata('issuer') ?: $this->config->url();
+        return $this->metadata('issuer', $this->config->url());
     }
 
     /**
@@ -125,7 +125,7 @@ final class Provider implements ProviderInterface
             return $baseUri;
         }
 
-        return $baseUri . (strpos($baseUri, '?') === false ? '?' : '&') . http_build_query($queryParameters);
+        return $baseUri . (str_contains($baseUri, '?') ? '&' : '?') . http_build_query($queryParameters);
     }
 
     /**
@@ -134,12 +134,13 @@ final class Provider implements ProviderInterface
     public function request(string $method, string $endpoint, array $queryParameters = [], $body = null): RequestInterface
     {
         if (is_array($body) || (is_object($body) && !$body instanceof StreamInterface)) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $body = http_build_query($body);
         }
 
         $request = $this->requestFactory->createRequest($method, $this->uri($endpoint, $queryParameters));
 
-        if (!$body) {
+        if ($body === null || $body === '') {
             return $request;
         }
 
@@ -175,7 +176,7 @@ final class Provider implements ProviderInterface
         $body = json_decode((string) $response->getBody(), true);
 
         if (!$body) {
-            throw new Parroauth2Exception('An error has occurred:' . PHP_EOL . $response->getBody());
+            throw new Parroauth2Exception('An error has occurred:' . PHP_EOL . (string) $response->getBody());
         }
 
         if (is_string($body)) {

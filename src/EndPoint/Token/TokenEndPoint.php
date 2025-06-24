@@ -94,7 +94,7 @@ class TokenEndPoint implements CallableEndPointInterface
         $endpoint->parameters['code'] = $authorizationCode;
         $endpoint->parameters['client_id'] = $this->client->clientId();
 
-        if ($redirectUri) {
+        if ($redirectUri !== null) {
             $endpoint->parameters['redirect_uri'] = $redirectUri;
         }
 
@@ -118,7 +118,7 @@ class TokenEndPoint implements CallableEndPointInterface
 
         $endpoint->parameters['grant_type'] = self::GRANT_TYPE_CLIENT_CREDENTIALS;
 
-        if ($scopes) {
+        if ($scopes !== null && $scopes !== []) {
             $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 
@@ -146,7 +146,7 @@ class TokenEndPoint implements CallableEndPointInterface
         $endpoint->parameters['username'] = $username;
         $endpoint->parameters['password'] = $password;
 
-        if ($scopes) {
+        if ($scopes !== null && $scopes !== []) {
             $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 
@@ -172,7 +172,7 @@ class TokenEndPoint implements CallableEndPointInterface
         $endpoint->parameters['grant_type'] = self::GRANT_TYPE_REFRESH;
         $endpoint->parameters['refresh_token'] = $token;
 
-        if ($scopes) {
+        if ($scopes !== null && $scopes !== []) {
             $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 

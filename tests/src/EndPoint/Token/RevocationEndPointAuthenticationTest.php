@@ -73,7 +73,7 @@ class RevocationEndPointAuthenticationTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/[a-zA-Z0-9-_]{32}/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/[a-zA-Z0-9-_]{32}/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($body['client_assertion'],
             new JWKSet([

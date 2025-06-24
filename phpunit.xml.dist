@@ -1,26 +1,28 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="tests/bootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      bootstrap="tests/bootstrap.php"
+      colors="true"
+      convertErrorsToExceptions="true"
+      convertNoticesToExceptions="true"
+      convertWarningsToExceptions="true"
+      processIsolation="false"
+      stopOnFailure="false"
+      xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
 >
-    <php>
-        <ini name="error_reporting" value="-1" />
-        <ini name="zend.enable_gc" value="false" />
-        <ini name="memory_limit" value="-1" />
-    </php>
-
-    <testsuites>
-        <testsuite name="All Test Suite">
-            <directory suffix="Test.php">tests</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </coverage>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <ini name="zend.enable_gc" value="false"/>
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <testsuites>
+    <testsuite name="All Test Suite">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>
