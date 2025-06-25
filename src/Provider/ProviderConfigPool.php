@@ -9,17 +9,14 @@ use Psr\SimpleCache\CacheInterface;
  */
 final class ProviderConfigPool
 {
-    /**
-     * @var CacheInterface|null
-     */
-    private $cache;
+    private readonly ?CacheInterface $cache;
 
     /**
      * Default provider config to apply
      *
      * @var array<string, mixed>
      */
-    private $defaults;
+    private readonly array $defaults;
 
     /**
      * ProviderConfigPool constructor.

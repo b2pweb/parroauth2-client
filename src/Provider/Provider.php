@@ -25,35 +25,16 @@ use Psr\Http\Message\StreamInterface;
  */
 final class Provider implements ProviderInterface
 {
-    /**
-     * @var ClientFactoryInterface
-     */
-    private $clientFactory;
-
-    /**
-     * @var PsrClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var RequestFactoryInterface
-     */
-    private $requestFactory;
-
-    /**
-     * @var StreamFactoryInterface
-     */
-    private $streamFactory;
-
-    /**
-     * @var ProviderConfig
-     */
-    private $config;
+    private readonly ClientFactoryInterface $clientFactory;
+    private readonly PsrClientInterface $httpClient;
+    private readonly RequestFactoryInterface $requestFactory;
+    private readonly StreamFactoryInterface $streamFactory;
+    private ProviderConfig $config;
 
     /**
      * @var ClientAuthenticationMethodInterface[]
      */
-    private $availableAuthenticationMethods;
+    private readonly array $availableAuthenticationMethods;
 
 
     /**
@@ -95,7 +76,7 @@ final class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function metadata(string $parameter, $default = null)
+    public function metadata(string $parameter, mixed $default = null): mixed
     {
         return $this->config[$parameter] ?? $default;
     }

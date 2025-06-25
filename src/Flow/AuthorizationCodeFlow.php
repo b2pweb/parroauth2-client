@@ -37,10 +37,7 @@ use Parroauth2\Client\Exception\OAuthServerException;
  */
 class AuthorizationCodeFlow implements AuthorizationFlowInterface
 {
-    /**
-     * @var ClientInterface
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
 
     /**

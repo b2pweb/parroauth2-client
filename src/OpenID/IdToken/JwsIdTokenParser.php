@@ -13,10 +13,7 @@ use Parroauth2\Client\ClientInterface;
  */
 final class JwsIdTokenParser implements IdTokenParserInterface
 {
-    /**
-     * @var JwtDecoder
-     */
-    private $decoder;
+    private readonly JwtDecoder $decoder;
 
 
     /**

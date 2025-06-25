@@ -16,7 +16,7 @@ class Claims implements ArrayAccess
     /**
      * @var array<string, mixed>
      */
-    private $claims;
+    private readonly array $claims;
 
 
     /**

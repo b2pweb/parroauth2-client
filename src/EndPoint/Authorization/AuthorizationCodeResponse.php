@@ -14,7 +14,7 @@ class AuthorizationCodeResponse
     /**
      * @var array<string, mixed>
      */
-    private $parameters;
+    private readonly array $parameters;
 
     /**
      * AuthorizationCodeResponse constructor.

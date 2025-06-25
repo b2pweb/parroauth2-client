@@ -23,23 +23,19 @@ use function in_array;
  */
 class EndPoints
 {
-    /**
-     * @var ProviderInterface
-     * @readonly
-     */
-    private $provider;
+    private readonly ProviderInterface $provider;
 
     /**
      * List of registered endpoints, indexed by name
      *
      * @var EndPointInterface[]
      */
-    private $endpoints = [];
+    private array $endpoints = [];
 
     /**
      * @var EndPointTransformerInterface[]
      */
-    private $extensions = [];
+    private array $extensions = [];
 
     /**
      * EndPointsSet constructor.

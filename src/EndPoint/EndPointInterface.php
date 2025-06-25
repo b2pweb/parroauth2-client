@@ -30,7 +30,7 @@ interface EndPointInterface
      *
      * @psalm-mutation-free
      */
-    public function set(string $parameter, $value);
+    public function set(string $parameter, mixed $value);
 
     /**
      * Get an endpoint parameter

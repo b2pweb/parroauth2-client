@@ -14,25 +14,14 @@ use Psr\SimpleCache\CacheInterface;
  */
 final class ProviderConfig implements ArrayAccess
 {
-    /**
-     * @var string
-     */
-    private $url;
+    private readonly string $url;
 
     /**
      * @var array<string, mixed>
      */
-    private $config;
-
-    /**
-     * @var bool
-     */
-    private $openid;
-
-    /**
-     * @var CacheInterface|null
-     */
-    private $cache;
+    private array $config;
+    private readonly bool $openid;
+    private ?CacheInterface $cache = null;
 
 
     /**
@@ -78,7 +67,7 @@ final class ProviderConfig implements ArrayAccess
      *
      * @param string $offset
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->config[$offset]);
     }

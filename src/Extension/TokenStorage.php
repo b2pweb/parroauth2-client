@@ -28,7 +28,7 @@ final class TokenStorage extends AbstractEndPointTransformerExtension
 {
     use EndPointTransformerTrait;
 
-    private ?ClockInterface $clock;
+    private readonly ClockInterface $clock;
 
     public function __construct(?ClockInterface $clock = null)
     {

@@ -14,21 +14,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class ProxyProvider implements ProviderInterface
 {
-    /**
-     * @var string|null
-     */
-    private $url;
-
-    /**
-     * @var ProviderLoader|null
-     */
-    private $loader;
-
-    /**
-     * @var ProviderInterface|null
-     */
-    private $provider;
-
+    private ?string $url;
+    private ?ProviderLoader $loader;
+    private ?ProviderInterface $provider = null;
 
     /**
      * ProxyProvider constructor.
@@ -61,7 +49,7 @@ final class ProxyProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function metadata(string $parameter, $default = null)
+    public function metadata(string $parameter, mixed $default = null): mixed
     {
         return $this->provider()->metadata($parameter, $default);
     }

@@ -12,10 +12,7 @@ use Base64Url\Base64Url;
  */
 final class AccessTokenHash
 {
-    /**
-     * @var JWA
-     */
-    private $jwa;
+    private readonly JWA $jwa;
 
     /**
      * AccessTokenHash constructor.
@@ -24,7 +21,7 @@ final class AccessTokenHash
      */
     public function __construct(?JWA $jwa = null)
     {
-        $this->jwa = $jwa ?: new JWA();
+        $this->jwa = $jwa ?? new JWA();
     }
 
     /**

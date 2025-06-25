@@ -15,30 +15,15 @@ use Jose\Component\KeyManagement\JWKFactory;
  */
 final class ProviderBuilder
 {
-    /**
-     * @var ProviderLoader
-     */
-    private $loader;
-
-    /**
-     * @var ProviderConfigPool
-     */
-    private $configPool;
-
-    /**
-     * @var string
-     */
-    private $url;
+    private readonly ProviderLoader $loader;
+    private readonly ProviderConfigPool $configPool;
+    private readonly string $url;
 
     /**
      * @var array<string, mixed>
      */
-    private $config = [];
-
-    /**
-     * @var bool
-     */
-    private $openid = false;
+    private array $config = [];
+    private bool $openid = false;
 
 
     /**
@@ -166,7 +151,7 @@ final class ProviderBuilder
      * @see https://openid.net/specs/openid-connect-discovery-1_0.html The OpenID Connect options
      * @see https://tools.ietf.org/html/rfc8414 The OAuth 2.0 options
      */
-    public function option(string $name, $value): self
+    public function option(string $name, mixed $value): self
     {
         $this->config[$name] = $value;
 
@@ -180,7 +165,7 @@ final class ProviderBuilder
      *
      * @return $this
      */
-    public function keySet($keys): self
+    public function keySet(array|JWK|JWKSet $keys): self
     {
         switch (true) {
             case $keys instanceof JWKSet:

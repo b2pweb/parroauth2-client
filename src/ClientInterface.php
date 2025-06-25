@@ -70,7 +70,7 @@ interface ClientInterface
      *
      * @return mixed
      */
-    public function option(string $name, $default = null);
+    public function option(string $name, mixed $default = null);
 
     /**
      * Register extension

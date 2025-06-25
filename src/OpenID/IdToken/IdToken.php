@@ -13,15 +13,8 @@ use Parroauth2\Client\Claim\Claims;
  */
 final class IdToken extends Claims
 {
-    /**
-     * @var string
-     */
-    private $raw;
-
-    /**
-     * @var array
-     */
-    private $headers;
+    private readonly string $raw;
+    private readonly array $headers;
 
     /**
      * IdToken constructor.
@@ -54,7 +47,7 @@ final class IdToken extends Claims
      *
      * @return string|string[]
      */
-    public function audience()
+    public function audience(): string|array
     {
         return $this['aud'];
     }
@@ -138,7 +131,7 @@ final class IdToken extends Claims
      *
      * @return mixed
      */
-    public function header(string $name, $default = null)
+    public function header(string $name, mixed $default = null): mixed
     {
         return $this->headers[$name] ?? $default;
     }

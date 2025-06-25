@@ -27,11 +27,7 @@ class AuthorizationEndPoint implements EndPointInterface
     public const RESPONSE_TYPE_CODE = 'code';
     public const RESPONSE_TYPE_TOKEN = 'token';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * AuthorizationEndPoint constructor.

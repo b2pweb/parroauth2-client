@@ -21,11 +21,7 @@ class EndSessionEndPoint implements EndPointInterface
 
     public const NAME = 'end_session';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * EndSessionEndPoint constructor.

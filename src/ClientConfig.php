@@ -15,27 +15,27 @@ class ClientConfig
      * @var string
      * @readonly
      */
-    private $clientId;
+    private readonly string $clientId;
 
     /**
      * @var string|null
      */
-    private $secret = null;
+    private ?string $secret = null;
 
     /**
      * @var bool
      */
-    private $openid = true;
+    private bool $openid = true;
 
     /**
      * @var string[]
      */
-    private $scopes = [];
+    private array $scopes = [];
 
     /**
      * @var array
      */
-    private $options = [];
+    private array $options = [];
 
 
     /**

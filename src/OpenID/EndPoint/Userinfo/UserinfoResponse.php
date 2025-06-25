@@ -14,7 +14,7 @@ class UserinfoResponse
     /**
      * @var array<string, mixed>
      */
-    private $data;
+    private readonly array $data;
 
     /**
      * UserinfoResponse constructor.

@@ -16,10 +16,7 @@ use Parroauth2\Client\OpenID\IdToken\IdToken;
  */
 class TokenResponse extends BaseTokenResponse
 {
-    /**
-     * @var IdToken|null
-     */
-    private $idToken;
+    private readonly ?IdToken $idToken;
 
 
     /**

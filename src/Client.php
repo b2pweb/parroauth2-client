@@ -116,7 +116,7 @@ class Client implements ClientInterface
      *
      * @template T
      */
-    public function option(string $name, $default = null)
+    public function option(string $name, mixed $default = null)
     {
         return $this->clientConfig->option($name, $this->provider->metadata($name, $default));
     }

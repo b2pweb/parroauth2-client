@@ -46,7 +46,7 @@ interface ProviderInterface extends PsrClientInterface
      *
      * @template T
      */
-    public function metadata(string $parameter, $default = null);
+    public function metadata(string $parameter, mixed $default = null);
 
     /**
      * Check if the provider supports the given endpoint

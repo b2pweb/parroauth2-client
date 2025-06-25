@@ -30,11 +30,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
     public const AUTH_METHOD_BODY = 'body';
     public const AUTH_METHOD_QUERY = 'query';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * The current access token
@@ -42,7 +38,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
      * @var string|null
      * @readonly
      */
-    private $accessToken = null;
+    private ?string $accessToken = null;
 
     /**
      * The authentication method to use
@@ -51,7 +47,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
      * @var string
      * @readonly
      */
-    private $method = self::AUTH_METHOD_HEADER;
+    private string $method = self::AUTH_METHOD_HEADER;
 
 
     /**

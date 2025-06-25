@@ -13,7 +13,7 @@ trait EndPointParametersTrait
      * @var array
      * @readonly
      */
-    private $parameters = [];
+    private array $parameters = [];
 
 
     /**
@@ -45,7 +45,7 @@ trait EndPointParametersTrait
      *
      * @psalm-mutation-free
      */
-    public function set(string $parameter, $value): self
+    public function set(string $parameter, mixed $value): self
     {
         $endpoint = clone $this;
 

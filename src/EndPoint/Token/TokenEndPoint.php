@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\EndPoint\Token;
 
+use Closure;
 use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\CallableEndPointInterface;
@@ -35,10 +36,10 @@ class TokenEndPoint implements CallableEndPointInterface
     private readonly ClientInterface $client;
 
     /**
-     * @var callable(array):TokenResponse
+     * @var Closure(array):TokenResponse
      * @readonly
      */
-    private $responseFactory;
+    private Closure $responseFactory;
 
 
     /**
@@ -52,6 +53,11 @@ class TokenEndPoint implements CallableEndPointInterface
         if ($responseFactory === null) {
             @trigger_error('Not passing the responseFactory parameter is deprecated and will be removed in v3.', E_USER_DEPRECATED);
             $responseFactory = fn (array $response): TokenResponse => TokenResponse::create($response, NativeClock::instance());
+        }
+
+        if (!$responseFactory instanceof Closure) {
+            @trigger_error('The response factory should be a Closure. This will be enforced in the v3.0.', E_USER_DEPRECATED);
+            $responseFactory = $responseFactory(...);
         }
 
         $this->client = $client;
@@ -208,9 +214,15 @@ class TokenEndPoint implements CallableEndPointInterface
      * @return static
      *
      * @psalm-mutation-free
+     * @psalm-suppress ImpureFunctionCall
      */
     public function responseFactory(callable $factory): TokenEndPoint
     {
+        if (!$factory instanceof Closure) {
+            @trigger_error('The response factory should be a Closure. This will be enforced in the v3.0.', E_USER_DEPRECATED);
+            $factory = $factory(...);
+        }
+
         $endpoint = clone $this;
         $endpoint->responseFactory = $factory;
 

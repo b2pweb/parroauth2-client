@@ -15,7 +15,7 @@ final class EndPointConfigurator
     /**
      * @var array<string, class-string<EndPointInterface>|callable(ClientInterface):EndPointInterface>
      */
-    private $endpoints;
+    private readonly array $endpoints;
 
 
     /**
