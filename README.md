@@ -1,7 +1,5 @@
 # Parroauth2 Client
 [![build](https://github.com/b2pweb/parroauth2-client/actions/workflows/php.yml/badge.svg)](https://github.com/b2pweb/parroauth2-client/actions/workflows/php.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/b2pweb/parroauth2-client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/parroauth2-client/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/b2pweb/parroauth2-client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/parroauth2-client/?branch=master)
 [![Packagist Version](https://img.shields.io/packagist/v/b2pweb/parroauth2-client.svg)](https://packagist.org/packages/b2pweb/parroauth2-client)
 [![Total Downloads](https://img.shields.io/packagist/dt/b2pweb/parroauth2-client.svg)](https://packagist.org/packages/b2pweb/parroauth2-client)
 [![Type Coverage](https://shepherd.dev/github/b2pweb/parroauth2-client/coverage.svg)](https://shepherd.dev/github/b2pweb/parroauth2-client)
