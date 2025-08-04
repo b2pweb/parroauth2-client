@@ -47,7 +47,7 @@ class AccessTokenHashTest extends TestCase
         $this->assertFalse($this->hash->check(new IdToken('', ['at_hash' => 'invalid'], ['alg' => 'RS256']), 'at'));
     }
 
-    public function provideAlg()
+    public static function provideAlg()
     {
         return [
             ['HS256', 'sda5G2fCr6XjIpiNlGJjjQ'],

@@ -21,10 +21,7 @@ final class RequestBodyClientAuthenticationMethod implements ClientAuthenticatio
 {
     public const NAME = 'client_secret_post';
 
-    /**
-     * @var StreamFactoryInterface
-     */
-    private $streamFactory;
+    private readonly StreamFactoryInterface $streamFactory;
 
     /**
      * @param StreamFactoryInterface $streamFactory

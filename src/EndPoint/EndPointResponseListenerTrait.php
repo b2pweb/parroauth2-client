@@ -13,7 +13,7 @@ trait EndPointResponseListenerTrait
      * @var list<callable(T):void>
      * @readonly
      */
-    private $responseListeners = [];
+    private array $responseListeners = [];
 
 
     /**

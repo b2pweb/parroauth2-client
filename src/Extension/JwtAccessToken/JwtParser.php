@@ -14,11 +14,7 @@ use Parroauth2\Client\ClientInterface;
  */
 final class JwtParser implements JwtParserInterface
 {
-    /**
-     * @var JwtDecoder
-     */
-    private $decoder;
-
+    private readonly JwtDecoder $decoder;
 
     /**
      * JwtParser constructor.
@@ -27,7 +23,7 @@ final class JwtParser implements JwtParserInterface
      */
     public function __construct(?JwtDecoder $decoder = null)
     {
-        $this->decoder = $decoder ?: new JwtDecoder();
+        $this->decoder = $decoder ?? new JwtDecoder();
     }
 
     /**

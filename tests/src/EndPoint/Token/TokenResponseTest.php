@@ -2,7 +2,9 @@
 
 namespace Parroauth2\Client\EndPoint\Token;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Psr\Clock\ClockInterface;
 
 /**
  * Class TokenResponseTest
@@ -23,6 +25,28 @@ class TokenResponseTest extends TestCase
     /**
      *
      */
+    public function test_expiresAt_with_clock()
+    {
+        $clock = new class implements ClockInterface
+        {
+            /**
+             * @inheritDoc
+             */
+            public function now(): DateTimeImmutable
+            {
+                return new DateTimeImmutable('2025-06-23 12:00:00');
+            }
+        };
+
+        $this->assertNull((TokenResponse::create([], $clock))->expiresAt());
+        $this->assertNull((TokenResponse::create(['expires_in' => -1], $clock))->expiresAt());
+        $this->assertEqualsWithDelta(new \DateTimeImmutable('2025-06-23 12:00:10'), (TokenResponse::create(['expires_in' => 10], $clock))->expiresAt(), 1);
+        $this->assertEqualsWithDelta(new \DateTimeImmutable('2025-06-23 12:00:00'), (TokenResponse::create(['expires_in' => 0], $clock))->expiresAt(), 1);
+    }
+
+    /**
+     *
+     */
     public function test_expired()
     {
         $this->assertFalse((new TokenResponse([]))->expired());
@@ -32,6 +56,31 @@ class TokenResponseTest extends TestCase
         sleep(1);
 
         $this->assertTrue($response->expired());
+    }
+
+    /**
+     *
+     */
+    public function test_expired_with_clock()
+    {
+        $clock = new class implements ClockInterface {
+            public DateTimeImmutable $date;
+
+            public function now(): DateTimeImmutable
+            {
+                return $this->date;
+            }
+        };
+
+        $clock->date = new DateTimeImmutable('2025-06-23 12:00:00');
+
+        $this->assertFalse((TokenResponse::create([], $clock))->expired($clock));
+        $this->assertFalse((TokenResponse::create(['expires_in' => 10], $clock))->expired($clock));
+
+        $response = TokenResponse::create(['expires_in' => 10], $clock);
+        $clock->date = new DateTimeImmutable('2025-06-23 12:00:11');
+
+        $this->assertTrue($response->expired($clock));
     }
 
     /**

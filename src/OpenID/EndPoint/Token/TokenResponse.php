@@ -2,6 +2,7 @@
 
 namespace Parroauth2\Client\OpenID\EndPoint\Token;
 
+use DateTimeInterface;
 use Parroauth2\Client\EndPoint\Token\TokenResponse as BaseTokenResponse;
 use Parroauth2\Client\OpenID\IdToken\IdToken;
 
@@ -15,10 +16,7 @@ use Parroauth2\Client\OpenID\IdToken\IdToken;
  */
 class TokenResponse extends BaseTokenResponse
 {
-    /**
-     * @var IdToken|null
-     */
-    private $idToken;
+    private readonly ?IdToken $idToken;
 
 
     /**
@@ -27,9 +25,9 @@ class TokenResponse extends BaseTokenResponse
      * @param array<string, mixed> $response
      * @param IdToken|null $idToken
      */
-    public function __construct(array $response, ?IdToken $idToken)
+    public function __construct(array $response, ?IdToken $idToken, ?DateTimeInterface $expiresAt = null)
     {
-        parent::__construct($response);
+        parent::__construct($response, $expiresAt);
 
         $this->idToken = $idToken;
     }

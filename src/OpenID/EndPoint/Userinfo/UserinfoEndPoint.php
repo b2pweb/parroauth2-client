@@ -30,11 +30,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
     public const AUTH_METHOD_BODY = 'body';
     public const AUTH_METHOD_QUERY = 'query';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * The current access token
@@ -42,7 +38,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
      * @var string|null
      * @readonly
      */
-    private $accessToken = null;
+    private ?string $accessToken = null;
 
     /**
      * The authentication method to use
@@ -51,7 +47,7 @@ class UserinfoEndPoint implements CallableEndPointInterface
      * @var string
      * @readonly
      */
-    private $method = self::AUTH_METHOD_HEADER;
+    private string $method = self::AUTH_METHOD_HEADER;
 
 
     /**
@@ -164,14 +160,10 @@ class UserinfoEndPoint implements CallableEndPointInterface
         $response = $this->client->provider()->sendRequest($this->request());
         $contentType = strtolower(trim(explode(';', $response->getHeaderLine('Content-Type'))[0]));
 
-        switch ($contentType) {
-            case 'application/json':
-                $response = new UserinfoResponse(json_decode((string) $response->getBody(), true));
-                break;
-
-            default:
-                throw new BadMethodCallException('The Content-Type ' . $contentType . ' is not supported');
-        }
+        $response = match ($contentType) {
+            'application/json' => new UserinfoResponse(json_decode((string)$response->getBody(), true)),
+            default => throw new BadMethodCallException('The Content-Type ' . $contentType . ' is not supported'),
+        };
 
         $this->callResponseListeners($response);
         return $response;
@@ -186,31 +178,26 @@ class UserinfoEndPoint implements CallableEndPointInterface
      */
     private function request(): RequestInterface
     {
-        if (!$this->accessToken) {
+        if ($this->accessToken === null || $this->accessToken === '') {
             throw new BadMethodCallException('No access token has been provided');
         }
 
-        switch ($this->method) {
+        return match ($this->method) {
             // @see https://tools.ietf.org/html/rfc6750#section-2.1
-            case self::AUTH_METHOD_HEADER:
-                return $this->client->endPoints()
+            self::AUTH_METHOD_HEADER => $this->client->endPoints()
                     ->request('GET', $this)
                     ->withHeader('Authorization', 'Bearer ' . $this->accessToken)
-                ;
-
+            ,
             // @see https://tools.ietf.org/html/rfc6750#section-2.2
-            case self::AUTH_METHOD_BODY:
-                return $this->client->endPoints()->request('POST', $this->set('access_token', $this->accessToken));
-
+            self::AUTH_METHOD_BODY => $this->client->endPoints()
+                ->request('POST', $this->set('access_token', $this->accessToken))
+            ,
             // @see https://tools.ietf.org/html/rfc6750#section-2.3
-            case self::AUTH_METHOD_QUERY:
-                return $this->client->endPoints()
+            self::AUTH_METHOD_QUERY => $this->client->endPoints()
                     ->request('GET', $this->set('access_token', $this->accessToken))
                     ->withHeader('Cache-Control', 'no-store')
-                ;
-
-            default:
-                throw new InvalidArgumentException('Unsupported authorization method ' . $this->method);
-        }
+            ,
+            default => throw new InvalidArgumentException('Unsupported authorization method ' . $this->method),
+        };
     }
 }

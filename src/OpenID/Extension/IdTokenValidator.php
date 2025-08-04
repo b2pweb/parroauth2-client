@@ -15,6 +15,8 @@ use Parroauth2\Client\Extension\AbstractEndPointTransformerExtension;
 use Parroauth2\Client\OpenID\EndPoint\AuthorizationEndPoint as OpenIdAuthorizationEndPoint;
 use Parroauth2\Client\OpenID\EndPoint\Token\TokenResponse as OpenIdTokenResponse;
 use Parroauth2\Client\OpenID\IdToken\AccessTokenHash;
+use Parroauth2\Client\Util\NativeClock;
+use Psr\Clock\ClockInterface;
 
 /**
  * Perform validation on the returned ID Token
@@ -29,20 +31,20 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
 {
     use EndPointTransformerTrait;
 
-    /**
-     * @var AccessTokenHash
-     */
-    private $accessTokenHash;
+    private readonly AccessTokenHash $accessTokenHash;
+    private readonly ClockInterface $clock;
 
 
     /**
      * IdTokenValidator constructor.
      *
      * @param AccessTokenHash|null $accessTokenHash
+     * @param ClockInterface|null $clock
      */
-    public function __construct(?AccessTokenHash $accessTokenHash = null)
+    public function __construct(?AccessTokenHash $accessTokenHash = null, ?ClockInterface $clock = null)
     {
         $this->accessTokenHash = $accessTokenHash ?: new AccessTokenHash();
+        $this->clock = $clock ?? NativeClock::instance();
     }
 
     /**
@@ -93,8 +95,8 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
         $idToken = $response->idToken();
 
         $checker = new ClaimCheckerManager([
-            new IssuedAtChecker(),
-            new ExpirationTimeChecker(),
+            new IssuedAtChecker(clock: $this->clock),
+            new ExpirationTimeChecker(clock: $this->clock),
             new AudienceChecker($this->client()->clientId()),
         ]);
 
@@ -106,7 +108,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
             throw new InvalidClaimException('The issuer is invalid', 'iss', $idToken->issuer());
         }
 
-        if (is_array($idToken->audience()) && count($idToken->audience()) > 0 && !$idToken->authorizedParty()) {
+        if (is_array($idToken->audience()) && count($idToken->audience()) > 0 && $idToken->authorizedParty() === null) {
             throw new InvalidClaimException(
                 'The authorized party is required when multiple audience are provided',
                 'azp',
@@ -114,7 +116,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
             );
         }
 
-        if ($idToken->authorizedParty() && $idToken->authorizedParty() !== $client->clientId()) {
+        if ($idToken->authorizedParty() !== null && $idToken->authorizedParty() !== $client->clientId()) {
             throw new InvalidClaimException(
                 'The authorized party must be identically to the current client id',
                 'azp',
@@ -122,7 +124,7 @@ final class IdTokenValidator extends AbstractEndPointTransformerExtension
             );
         }
 
-        if (time() - $idToken->issuedAt() > $client->clientConfig()->option('id_token_max_iat_interval', 30)) {
+        if ($this->clock->now()->getTimestamp() - $idToken->issuedAt() > $client->clientConfig()->option('id_token_max_iat_interval', 30)) {
             throw new InvalidClaimException('The ID Token is issued too far in the past', 'iat', $idToken->issuedAt());
         }
 

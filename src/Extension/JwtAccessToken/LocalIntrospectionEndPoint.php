@@ -5,6 +5,10 @@ namespace Parroauth2\Client\Extension\JwtAccessToken;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionEndPoint;
 use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
+use Parroauth2\Client\Util\NativeClock;
+use Psr\Clock\ClockInterface;
+
+use function trigger_error;
 
 /**
  * Try to perform a local introspection by deserialize a JWT access token
@@ -12,29 +16,30 @@ use Parroauth2\Client\EndPoint\Introspection\IntrospectionResponse;
  */
 class LocalIntrospectionEndPoint extends IntrospectionEndPoint
 {
-    /**
-     * @var JwtParserInterface
-     */
-    private $parser;
-
-    /**
-     * @var ClientInterface
-     */
-    private $client;
-
+    private readonly JwtParserInterface $parser;
+    private readonly ClientInterface $client;
+    private readonly ClockInterface $clock;
 
     /**
      * LocalIntrospectionEndPoint constructor.
      *
      * @param ClientInterface $client
      * @param JwtParserInterface $parser
+     * @param ClockInterface|null $clock
      */
-    public function __construct(ClientInterface $client, JwtParserInterface $parser)
+    public function __construct(ClientInterface $client, JwtParserInterface $parser, ?ClockInterface $clock = null)
     {
         parent::__construct($client);
 
         $this->parser = $parser;
         $this->client = $client;
+
+        if ($clock === null) {
+            @trigger_error('Not passing the clock parameter is deprecated and will be removed in v3.', E_USER_DEPRECATED);
+            $clock = NativeClock::instance();
+        }
+
+        $this->clock = $clock;
     }
 
     /**
@@ -61,7 +66,7 @@ class LocalIntrospectionEndPoint extends IntrospectionEndPoint
         }
 
         // We check here if the issuer is right and if the token is not expired
-        if ($claims['iss'] !== $this->client->provider()->issuer() || ($expired >= 0 && $expired < time())) {
+        if ($claims['iss'] !== $this->client->provider()->issuer() || ($expired >= 0 && $expired < $this->clock->now()->getTimestamp())) {
             $response = new IntrospectionResponse(['active' => false]);
         } else {
             $response = new IntrospectionResponse(['active' => true] + $claims);

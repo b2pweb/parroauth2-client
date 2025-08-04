@@ -19,7 +19,7 @@ class IntrospectionResponse extends Claims
      * If this value is false, the token should be considered as expired, and cannot be used,
      * and also all other claims may be null
      *
-     * @return boolean
+     * @return bool
      */
     public function active(): bool
     {

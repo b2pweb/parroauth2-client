@@ -27,11 +27,7 @@ class AuthorizationEndPoint implements EndPointInterface
     public const RESPONSE_TYPE_CODE = 'code';
     public const RESPONSE_TYPE_TOKEN = 'token';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * AuthorizationEndPoint constructor.
@@ -80,7 +76,7 @@ class AuthorizationEndPoint implements EndPointInterface
         $endpoint->parameters['client_id'] = $endpoint->client->clientId();
         $endpoint->parameters['response_type'] = self::RESPONSE_TYPE_CODE;
 
-        if ($redirectUri) {
+        if ($redirectUri !== null) {
             $endpoint->parameters['redirect_uri'] = $redirectUri;
         }
 

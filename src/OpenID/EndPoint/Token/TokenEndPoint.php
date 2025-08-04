@@ -2,10 +2,13 @@
 
 namespace Parroauth2\Client\OpenID\EndPoint\Token;
 
+use DateInterval;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\Token\TokenEndPoint as BaseTokenEndPoint;
 use Parroauth2\Client\OpenID\IdToken\IdTokenParserInterface;
+use Parroauth2\Client\Util\NativeClock;
+use Psr\Clock\ClockInterface;
 
 /**
  * Token endpoint for OpenID Connect provider
@@ -14,31 +17,24 @@ use Parroauth2\Client\OpenID\IdToken\IdTokenParserInterface;
  */
 class TokenEndPoint extends BaseTokenEndPoint
 {
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
-
-    /**
-     * @var IdTokenParserInterface
-     * @readonly
-     */
-    private $idTokenParser;
-
+    private readonly ClientInterface $client;
+    private readonly IdTokenParserInterface $idTokenParser;
+    private readonly ClockInterface $clock;
 
     /**
      * TokenEndPoint constructor.
      *
      * @param ClientInterface $client
      * @param IdTokenParserInterface $idTokenParser
+     * @param ClockInterface|null $clock
      */
-    public function __construct(ClientInterface $client, IdTokenParserInterface $idTokenParser)
+    public function __construct(ClientInterface $client, IdTokenParserInterface $idTokenParser, ?ClockInterface $clock = null)
     {
-        parent::__construct($client, [$this, 'parseResponse']);
+        parent::__construct($client, $this->parseResponse(...));
 
         $this->client = $client;
         $this->idTokenParser = $idTokenParser;
+        $this->clock = $clock ?? NativeClock::instance();
     }
 
     /**
@@ -50,10 +46,16 @@ class TokenEndPoint extends BaseTokenEndPoint
      */
     public function parseResponse(array $response): TokenResponse
     {
-        if (!isset($response['id_token'])) {
-            return new TokenResponse($response, null);
+        $expiresAt = null;
+
+        if (isset($response['expires_in']) && $response['expires_in'] >= 0) {
+            $expiresAt = $this->clock->now()->add(new DateInterval('PT' . (int) $response['expires_in'] . 'S'));
         }
 
-        return new TokenResponse($response, $this->idTokenParser->parse($this->client, $response['id_token']));
+        if (!isset($response['id_token'])) {
+            return new TokenResponse($response, null, $expiresAt);
+        }
+
+        return new TokenResponse($response, $this->idTokenParser->parse($this->client, $response['id_token']), $expiresAt);
     }
 }

@@ -3,13 +3,17 @@
 namespace Parroauth2\Client\Extension;
 
 use BadMethodCallException;
+use DateTimeImmutable;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\Token\RevocationEndPoint;
+use Parroauth2\Client\EndPoint\Token\TokenEndPoint;
+use Parroauth2\Client\EndPoint\Token\TokenResponse;
 use Parroauth2\Client\Exception\OAuthServerException;
 use Parroauth2\Client\Extension\JwtAccessToken\JwtParser;
 use Parroauth2\Client\Extension\JwtAccessToken\LocalIntrospectionEndPoint;
 use Parroauth2\Client\Tests\FunctionalTestCase;
+use Psr\Clock\ClockInterface;
 
 /**
  * Class TokenStorageTest
@@ -80,6 +84,42 @@ class TokenStorageTest extends FunctionalTestCase
         $this->extension->clear();
         $this->assertTrue($this->extension->expired());
         $this->assertNull($this->extension->token());
+    }
+
+    /**
+     *
+     */
+    public function test_token_with_clock()
+    {
+        $extension = new TokenStorage($clock = new class implements ClockInterface {
+            public DateTimeImmutable $date;
+            public function now(): DateTimeImmutable
+            {
+                return $this->date;
+            }
+        });
+
+        $client = $this->client(
+            (new ClientConfig('test'))
+                ->setSecret('my-secret')
+                ->enableOpenId(true)
+        );
+        $client->register($extension);
+        $clock->date = new DateTimeImmutable('2025-06-23 12:00:00');
+
+        $this->assertTrue($extension->expired());
+        $this->assertNull($extension->token());
+
+        $client->endPoints()->add(new TokenEndPoint($client, fn (array $response) => TokenResponse::create($response, $clock)));
+        $token = $client->endPoints()->token()->password('bob', '$bob')->call();
+
+        $this->assertFalse($extension->expired());
+        $this->assertSame($token, $extension->token());
+
+        $clock->date = new DateTimeImmutable('2025-06-23 13:00:01');
+
+        $this->assertTrue($extension->expired());
+        $this->assertSame($token, $extension->token());
     }
 
     /**

@@ -3,36 +3,20 @@
 namespace Parroauth2\Client\Provider;
 
 use Jose\Component\Core\JWKSet;
-use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
-use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\ProxyClient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-use function method_exists;
-
 /**
  * Lazy loading implementation of the provider
  */
 final class ProxyProvider implements ProviderInterface
 {
-    /**
-     * @var string|null
-     */
-    private $url;
-
-    /**
-     * @var ProviderLoader|null
-     */
-    private $loader;
-
-    /**
-     * @var ProviderInterface|null
-     */
-    private $provider;
-
+    private ?string $url;
+    private ?ProviderLoader $loader;
+    private ?ProviderInterface $provider = null;
 
     /**
      * ProxyProvider constructor.
@@ -65,7 +49,7 @@ final class ProxyProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function metadata(string $parameter, $default = null)
+    public function metadata(string $parameter, mixed $default = null): mixed
     {
         return $this->provider()->metadata($parameter, $default);
     }
@@ -127,10 +111,7 @@ final class ProxyProvider implements ProviderInterface
     {
         $provider = $this->provider();
 
-        return method_exists($provider, 'availableAuthenticationMethods')
-            ? $provider->availableAuthenticationMethods()
-            : []
-        ;
+        return $provider->availableAuthenticationMethods();
     }
 
     /**

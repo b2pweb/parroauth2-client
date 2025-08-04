@@ -6,6 +6,7 @@ use Base64Url\Base64Url;
 use Parroauth2\Client\EndPoint\Authorization\AuthorizationEndPoint as BaseAuthorizationEndPoint;
 
 use function implode;
+use function in_array;
 use function is_array;
 
 /**
@@ -75,7 +76,7 @@ class AuthorizationEndPoint extends BaseAuthorizationEndPoint
      */
     public function scope(array $scopes): BaseAuthorizationEndPoint
     {
-        if (!in_array('openid', $scopes)) {
+        if (!in_array('openid', $scopes, true)) {
             array_unshift($scopes, 'openid');
         }
 

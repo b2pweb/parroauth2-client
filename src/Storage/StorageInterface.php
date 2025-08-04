@@ -15,7 +15,7 @@ interface StorageInterface
      * @param string $key
      * @param mixed $value
      */
-    public function store(string $key, $value): void;
+    public function store(string $key, mixed $value): void;
 
     /**
      * Retrieve a value from the storage
@@ -25,7 +25,7 @@ interface StorageInterface
      *
      * @return mixed
      */
-    public function retrieve(string $key, $default = null);
+    public function retrieve(string $key, mixed $default = null);
 
     /**
      * Remove an iem from the storage

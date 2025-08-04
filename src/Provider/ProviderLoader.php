@@ -33,40 +33,21 @@ final class ProviderLoader
      *
      * @var list<array{0:string, 1:bool}>
      */
-    private $wellKnownUris = [
+    private array $wellKnownUris = [
         ['openid-configuration', true],
         ['oauth-authorization-server', false],
     ];
 
-    /**
-     * @var ClientFactoryInterface
-     */
-    private $clientFactory;
-
-    /**
-     * @var ClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var RequestFactoryInterface
-     */
-    private $messageFactory;
-
-    /**
-     * @var StreamFactoryInterface
-     */
-    private $streamFactory;
-
-    /**
-     * @var ProviderConfigPool
-     */
-    private $configPool;
+    private readonly ClientFactoryInterface $clientFactory;
+    private readonly ClientInterface $httpClient;
+    private readonly RequestFactoryInterface $messageFactory;
+    private readonly StreamFactoryInterface $streamFactory;
+    private readonly ProviderConfigPool $configPool;
 
     /**
      * @var ClientAuthenticationMethodInterface[]
      */
-    private $availableAuthenticationMethods;
+    private readonly array $availableAuthenticationMethods;
 
 
     /**
@@ -116,7 +97,7 @@ final class ProviderLoader
 
         $client = new HttpMethodsClient($this->httpClient, $this->messageFactory, $this->streamFactory);
 
-        foreach ($this->wellKnownUris as list($uri, $openid)) {
+        foreach ($this->wellKnownUris as [$uri, $openid]) {
             $response = $client->get($providerUrl . '/.well-known/' . $uri);
 
             if ($response->getStatusCode() !== 200) {
@@ -160,7 +141,7 @@ final class ProviderLoader
      * @see https://openid.net/specs/openid-connect-discovery-1_0.html The OpenID Connect metadata
      * @see https://tools.ietf.org/html/rfc8414 The OAuth 2.0 server metadata
      */
-    public function create($config, ?bool $openid = null): ProviderInterface
+    public function create(array|ProviderConfig $config, ?bool $openid = null): ProviderInterface
     {
         if (!$config instanceof ProviderConfig) {
             $config = $this->configPool->createFromArray($config, $openid);

@@ -18,7 +18,7 @@ final class RequiredScopeValidator extends AbstractEndPointTransformerExtension
     /**
      * @var string[]
      */
-    private $scopes;
+    private readonly array $scopes;
 
 
     /**
@@ -46,12 +46,14 @@ final class RequiredScopeValidator extends AbstractEndPointTransformerExtension
      */
     public function validate(IntrospectionResponse $response): void
     {
-        if (empty($scopes = $response->scopes())) {
+        $scopes = $response->scopes();
+
+        if ($scopes === null || $scopes === []) {
             throw new AccessDeniedException("The introspection response has no scopes.");
         }
 
         foreach ($this->scopes as $scope) {
-            if (!in_array($scope, $scopes)) {
+            if (!in_array($scope, $scopes, true)) {
                 throw new AccessDeniedException(
                     "The scope '$scope' is not present in introspection response. Available scopes are " . implode(', ', $scopes)
                 );

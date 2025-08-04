@@ -10,10 +10,7 @@ use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
  */
 abstract class AbstractEndPointTransformerExtension implements ExtensionInterface, EndPointTransformerInterface
 {
-    /**
-     * @var ClientInterface|null
-     */
-    private $client;
+    private ?ClientInterface $client = null;
 
     /**
      * {@inheritdoc}

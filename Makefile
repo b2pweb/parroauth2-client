@@ -2,7 +2,7 @@ ROOT_DIR=$(shell pwd)/
 TESTDIR=$(ROOT_DIR)/tests
 PHPS=php -S 127.0.0.1:5000
 PHPUNIT=vendor/bin/phpunit
-INFECTION_VERSION=0.15.3
+INFECTION_VERSION=0.29.14
 INFECTION_ARGS=
 
 all: install clean tests
@@ -42,14 +42,14 @@ infection.phar:
 infection: infection.phar test-server run-infection kill-test-server
 
 infection-ci: INFECTION_ARGS=--logger-github --git-diff-filter=AM
-infection-ci: INFECTION_VERSION=0.23.0
+infection-ci: INFECTION_VERSION=0.29.14
 infection-ci: infection
 
 phpcs:
 	vendor/bin/phpcs src/ --standard=psr12 --runtime-set ignore_warnings_on_exit true
 
 run-infection: infection.phar
-	./infection.phar $(INFECTION_ARGS)
+	XDEBUG_MODE=coverage ./infection.phar $(INFECTION_ARGS)
 
 php80_shell:
 	docker-compose -f docker-compose.php80.yaml build

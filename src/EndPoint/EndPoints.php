@@ -17,30 +17,25 @@ use Parroauth2\Client\Provider\ProviderInterface;
 use Psr\Http\Message\RequestInterface;
 
 use function in_array;
-use function method_exists;
 
 /**
  * Store endpoints
  */
 class EndPoints
 {
-    /**
-     * @var ProviderInterface
-     * @readonly
-     */
-    private $provider;
+    private readonly ProviderInterface $provider;
 
     /**
      * List of registered endpoints, indexed by name
      *
      * @var EndPointInterface[]
      */
-    private $endpoints = [];
+    private array $endpoints = [];
 
     /**
      * @var EndPointTransformerInterface[]
      */
-    private $extensions = [];
+    private array $extensions = [];
 
     /**
      * EndPointsSet constructor.
@@ -239,8 +234,9 @@ class EndPoints
     {
         $provider = $this->provider;
 
-        $methods = method_exists($provider, 'availableAuthenticationMethods') ? $provider->availableAuthenticationMethods() : [];
+        $methods = $provider->availableAuthenticationMethods();
         $supportedMethodNames = $provider->metadata($endPoint . '_endpoint_auth_methods_supported');
+        /** @var list<string>|null $supportedAlgorithms */
         $supportedAlgorithms = $provider->metadata($endPoint . '_endpoint_auth_signing_alg_values_supported');
 
         $supportedMethods = [];
@@ -252,7 +248,7 @@ class EndPoints
             }
         }
 
-        if ($preferredMethod && isset($supportedMethods[$preferredMethod])) {
+        if ($preferredMethod !== null && isset($supportedMethods[$preferredMethod])) {
             // If a preferred method is requested and is supported, use it
             $selectedMethod = $supportedMethods[$preferredMethod];
         } elseif (isset($supportedMethodNames[0]) && isset($supportedMethods[$supportedMethodNames[0]])) {
@@ -264,6 +260,6 @@ class EndPoints
         }
 
         // Specify supported algorithms, if any
-        return $supportedAlgorithms ? $selectedMethod->withSigningAlgorithms($supportedAlgorithms) : $selectedMethod;
+        return is_array($supportedAlgorithms) ? $selectedMethod->withSigningAlgorithms($supportedAlgorithms) : $selectedMethod;
     }
 }

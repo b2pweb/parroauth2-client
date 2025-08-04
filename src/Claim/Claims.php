@@ -9,13 +9,14 @@ use BadMethodCallException;
  * Read-only container for store claims
  *
  * @psalm-immutable
+ * @implements ArrayAccess<string, mixed>
  */
 class Claims implements ArrayAccess
 {
     /**
      * @var array<string, mixed>
      */
-    private $claims;
+    private readonly array $claims;
 
 
     /**
@@ -33,7 +34,7 @@ class Claims implements ArrayAccess
      *
      * @param string $offset
      */
-    final public function offsetExists($offset): bool
+    final public function offsetExists(mixed $offset): bool
     {
         return isset($this->claims[$offset]);
     }
@@ -43,8 +44,7 @@ class Claims implements ArrayAccess
      *
      * @param string $offset
      */
-    #[\ReturnTypeWillChange]
-    final public function offsetGet($offset)
+    final public function offsetGet(mixed $offset): mixed
     {
         return $this->claims[$offset];
     }
@@ -52,7 +52,7 @@ class Claims implements ArrayAccess
     /**
      * {@inheritdoc}
      */
-    final public function offsetSet($offset, $value): void
+    final public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new BadMethodCallException(static::class . ' is read-only');
     }
@@ -60,7 +60,7 @@ class Claims implements ArrayAccess
     /**
      * {@inheritdoc}
      */
-    final public function offsetUnset($offset): void
+    final public function offsetUnset(mixed $offset): void
     {
         throw new BadMethodCallException(static::class . ' is read-only');
     }
@@ -73,7 +73,7 @@ class Claims implements ArrayAccess
      *
      * @return mixed The claim value
      */
-    final public function claim(string $name, $default = null)
+    final public function claim(string $name, mixed $default = null): mixed
     {
         return $this->claims[$name] ?? $default;
     }
@@ -109,7 +109,7 @@ class Claims implements ArrayAccess
      *
      * @return bool
      */
-    final public function check(string $name, $expected): bool
+    final public function check(string $name, mixed $expected): bool
     {
         if (!isset($this->claims[$name])) {
             return $expected === null;

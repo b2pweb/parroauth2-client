@@ -79,7 +79,8 @@ final class Pkce extends AbstractEndPointTransformerExtension
         if (
             in_array(
                 self::METHOD_S256,
-                $this->client()->provider()->metadata('code_challenge_methods_supported', [self::METHOD_S256])
+                $this->client()->provider()->metadata('code_challenge_methods_supported', [self::METHOD_S256]),
+                true
             )
         ) {
             return self::METHOD_S256;

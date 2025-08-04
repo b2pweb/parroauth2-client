@@ -2,12 +2,14 @@
 
 namespace Parroauth2\Client\OpenID\EndPoint\Token;
 
+use DateTimeImmutable;
 use Parroauth2\Client\Client;
 use Parroauth2\Client\ClientConfig;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
 use Parroauth2\Client\OpenID\IdToken\IdToken;
 use Parroauth2\Client\OpenID\IdToken\JwsIdTokenParser;
 use Parroauth2\Client\Tests\FunctionalTestCase;
+use Psr\Clock\ClockInterface;
 
 /**
  * Class TokenEndPointTest
@@ -94,6 +96,31 @@ class TokenEndPointTest extends FunctionalTestCase
         $this->assertInstanceOf(TokenResponse::class, $response);
         $this->assertEquals('bearer', $response->type());
         $this->assertEqualsWithDelta(new \DateTime('+1 hour'), $response->expiresAt(), 10);
+        $this->assertNotEmpty($response->accessToken());
+        $this->assertNull($response->refreshToken());
+
+        $this->assertInstanceOf(IdToken::class, $response->idToken());
+        $this->assertEquals('test', $response->idToken()->audience());
+        $this->assertEquals('http://localhost:5000', $response->idToken()->issuer());
+    }
+
+    /**
+     *
+     */
+    public function test_code_functional_with_clock()
+    {
+        $clock = new class implements ClockInterface {
+            public function now(): DateTimeImmutable
+            {
+                return new DateTimeImmutable('2025-06-23 12:00:00');
+            }
+        };
+        $endPoint = new TokenEndPoint($this->client, new JwsIdTokenParser(), $clock);
+        $response = $endPoint->code($this->code())->call();
+
+        $this->assertInstanceOf(TokenResponse::class, $response);
+        $this->assertEquals('bearer', $response->type());
+        $this->assertEqualsWithDelta(new DateTimeImmutable('2025-06-23 13:00:00'), $response->expiresAt(), 10);
         $this->assertNotEmpty($response->accessToken());
         $this->assertNull($response->refreshToken());
 

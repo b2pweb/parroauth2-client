@@ -3,6 +3,7 @@
 namespace Parroauth2\Client\Extension\JwtAccessToken;
 
 use B2pweb\Jwt\JWA;
+use DateTimeImmutable;
 use Jose\Component\Core\AlgorithmManager;
 use Nyholm\Psr7\Response;
 use Jose\Component\KeyManagement\JWKFactory;
@@ -17,6 +18,7 @@ use Parroauth2\Client\Factory\BaseClientFactory;
 use Parroauth2\Client\Provider\ProviderLoader;
 use Parroauth2\Client\Tests\TestingDataSet;
 use Parroauth2\Client\Tests\UnitTestCase;
+use Psr\Clock\ClockInterface;
 
 /**
  * Class LocalIntrospectionEndPointTest
@@ -158,6 +160,49 @@ class LocalIntrospectionEndPointTest extends UnitTestCase
         $this->assertFalse($response->active());
         $this->assertNull($response->subject());
         $this->assertNull($response->jwtId());
+    }
+
+    /**
+     *
+     */
+    public function test_expiration_with_clock()
+    {
+        $clock = new class implements ClockInterface {
+            public DateTimeImmutable $date;
+            public function now(): DateTimeImmutable
+            {
+                return $this->date;
+            }
+        };
+        $clock->date = new DateTimeImmutable('2025-06-23 12:00:00');
+
+        $jwa = new JWA();
+        $key = JWKFactory::createFromKeyFile(__DIR__.'/../../../keys/oauth-private.key');
+        $builder = $this->jwsBuilder($jwa->manager());
+
+        $jws = $builder
+            ->withPayload(json_encode([
+                'iss' => 'http://op.example.com',
+                'sub' => '123',
+                'jti' => '789',
+                'exp' => $clock->date->getTimestamp() + 3600,
+            ]))
+            ->addSignature($key, ['alg' => 'RS256'])
+            ->build()
+        ;
+
+        $endPoint = new LocalIntrospectionEndPoint($this->client, new JwtParser(), $clock);
+        $response = $endPoint->accessToken((new CompactSerializer())->serialize($jws))->call();
+
+        $this->assertEmpty($this->httpClient->getRequests());
+        $this->assertTrue($response->active());
+        $this->assertSame('123', $response->subject());
+        $this->assertSame('789', $response->jwtId());
+
+        $clock->date = new DateTimeImmutable('2025-06-23 13:00:01');
+        $response = $endPoint->accessToken((new CompactSerializer())->serialize($jws))->call();
+        $this->assertEmpty($this->httpClient->getRequests());
+        $this->assertFalse($response->active());
     }
 
     /**

@@ -3,18 +3,19 @@
 namespace Parroauth2\Client\Authentication;
 
 use B2pweb\Jwt\EncodingOptions;
+use B2pweb\Jwt\JWA;
 use B2pweb\Jwt\JwtEncoder;
 use Base64Url\Base64Url;
 use InvalidArgumentException;
 use Jose\Component\KeyManagement\JWKFactory;
 use Parroauth2\Client\ClientInterface;
-use Parroauth2\Client\Jwt\JWA;
+use Parroauth2\Client\Util\NativeClock;
+use Psr\Clock\ClockInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 use function http_build_query;
 use function random_bytes;
-use function time;
 
 /**
  * Client authentication method using JWT bearer
@@ -47,24 +48,19 @@ final class JwtBearerClientAuthenticationMethod implements ClientAuthenticationM
     public const OPTION_EXPIRATION = 'jwt-bearer.expiration';
     public const OPTION_ALGORITHM = 'jwt-bearer.algorithm';
 
-    /**
-     * @var StreamFactoryInterface
-     */
-    private $streamFactory;
-
-    /**
-     * @var JwtEncoder
-     */
-    private $encoder;
+    private readonly StreamFactoryInterface $streamFactory;
+    private JwtEncoder $encoder;
+    private readonly ClockInterface $clock;
 
     /**
      * @param StreamFactoryInterface $streamFactory
      * @param JwtEncoder $encoder
      */
-    public function __construct(StreamFactoryInterface $streamFactory, JwtEncoder $encoder)
+    public function __construct(StreamFactoryInterface $streamFactory, JwtEncoder $encoder, ?ClockInterface $clock = null)
     {
         $this->streamFactory = $streamFactory;
         $this->encoder = $encoder;
+        $this->clock = $clock ?? NativeClock::instance();
     }
 
     /**
@@ -112,14 +108,14 @@ final class JwtBearerClientAuthenticationMethod implements ClientAuthenticationM
     {
         $secret = $client->secret();
 
-        if (!$secret) {
+        if ($secret === null || $secret === '') {
             throw new InvalidArgumentException('The client secret is required to use the JWT bearer authentication method');
         }
 
         $issuer = $client->option(self::OPTION_ISSUER, $client->clientId());
         $subject = $client->clientId();
         $audience = $client->option(self::OPTION_AUDIENCE, (string) $request->getUri()->withQuery('')->withFragment(''));
-        $iat = $nbf = time();
+        $iat = $nbf = $this->clock->now()->getTimestamp();
         $expiration = $iat + $client->option(self::OPTION_EXPIRATION, 30);
         $jti = Base64Url::encode(random_bytes(24));
         $algorithm = $client->option(self::OPTION_ALGORITHM, $this->encoder->jwa()->algorithmsByType(JWA::TYPE_HMAC)[0] ?? 'HS256');

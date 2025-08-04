@@ -28,11 +28,7 @@ class RevocationEndPoint implements CallableEndPointInterface
     public const TYPE_ACCESS_TOKEN = 'access_token';
     public const TYPE_REFRESH_TOKEN = 'refresh_token';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
 
     /**

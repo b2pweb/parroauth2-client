@@ -2,12 +2,15 @@
 
 namespace Parroauth2\Client;
 
+use Closure;
 use Jose\Component\Core\JWKSet;
 use Parroauth2\Client\EndPoint\EndPoints;
 use Parroauth2\Client\Extension\ExtensionInterface;
 use Parroauth2\Client\Provider\ProviderInterface;
 use Parroauth2\Client\Provider\ProxyProvider;
 use Parroauth2\Client\Storage\StorageInterface;
+
+use function trigger_error;
 
 /**
  * Lazy loading client implementation
@@ -16,25 +19,22 @@ use Parroauth2\Client\Storage\StorageInterface;
  */
 final class ProxyClient implements ClientInterface
 {
-    /**
-     * @var ClientConfig
-     */
-    private $config;
+    private readonly ClientConfig $config;
 
     /**
-     * @var callable(ClientConfig):ClientInterface
+     * @var Closure(ClientConfig):ClientInterface
      */
-    private $clientFactory;
+    private Closure $clientFactory;
 
     /**
      * @var list<ExtensionInterface>
      */
-    private $extensions = [];
+    private array $extensions = [];
 
     /**
      * @var ClientInterface|null
      */
-    private $client = null;
+    private ?ClientInterface $client = null;
 
     /**
      * ProxyClient constructor.
@@ -45,6 +45,12 @@ final class ProxyClient implements ClientInterface
     public function __construct(ClientConfig $config, callable $clientFactory)
     {
         $this->config = $config;
+
+        if (!$clientFactory instanceof Closure) {
+            @trigger_error('The client factory should be a Closure. This will be enforced in the v3.0.', E_USER_DEPRECATED);
+            $clientFactory = $clientFactory(...);
+        }
+
         $this->clientFactory = $clientFactory;
     }
 

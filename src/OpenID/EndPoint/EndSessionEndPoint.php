@@ -21,11 +21,7 @@ class EndSessionEndPoint implements EndPointInterface
 
     public const NAME = 'end_session';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
      * EndSessionEndPoint constructor.
@@ -76,7 +72,7 @@ class EndSessionEndPoint implements EndPointInterface
     {
         $endpoint = $this->set('post_logout_redirect_uri', $uri);
 
-        if ($state) {
+        if ($state !== null && $state !== '') {
             $endpoint = $endpoint->set('state', $state);
         }
 

@@ -2,12 +2,16 @@
 
 namespace Parroauth2\Client\EndPoint\Token;
 
+use Closure;
 use Parroauth2\Client\Authentication\ClientAuthenticationMethodInterface;
 use Parroauth2\Client\ClientInterface;
 use Parroauth2\Client\EndPoint\CallableEndPointInterface;
 use Parroauth2\Client\EndPoint\EndPointParametersTrait;
 use Parroauth2\Client\EndPoint\EndPointResponseListenerTrait;
 use Parroauth2\Client\EndPoint\EndPointTransformerInterface;
+use Parroauth2\Client\Util\NativeClock;
+
+use function trigger_error;
 
 /**
  * Endpoint for generates an access token
@@ -29,17 +33,13 @@ class TokenEndPoint implements CallableEndPointInterface
     public const GRANT_TYPE_REFRESH = 'refresh_token';
     public const GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
 
-    /**
-     * @var ClientInterface
-     * @readonly
-     */
-    private $client;
+    private readonly ClientInterface $client;
 
     /**
-     * @var callable(array):TokenResponse
+     * @var Closure(array):TokenResponse
      * @readonly
      */
-    private $responseFactory;
+    private Closure $responseFactory;
 
 
     /**
@@ -50,10 +50,18 @@ class TokenEndPoint implements CallableEndPointInterface
      */
     public function __construct(ClientInterface $client, ?callable $responseFactory = null)
     {
+        if ($responseFactory === null) {
+            @trigger_error('Not passing the responseFactory parameter is deprecated and will be removed in v3.', E_USER_DEPRECATED);
+            $responseFactory = fn (array $response): TokenResponse => TokenResponse::create($response, NativeClock::instance());
+        }
+
+        if (!$responseFactory instanceof Closure) {
+            @trigger_error('The response factory should be a Closure. This will be enforced in the v3.0.', E_USER_DEPRECATED);
+            $responseFactory = $responseFactory(...);
+        }
+
         $this->client = $client;
-        $this->responseFactory = $responseFactory ?: function (array $response): TokenResponse {
-            return new TokenResponse($response);
-        };
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -92,7 +100,7 @@ class TokenEndPoint implements CallableEndPointInterface
         $endpoint->parameters['code'] = $authorizationCode;
         $endpoint->parameters['client_id'] = $this->client->clientId();
 
-        if ($redirectUri) {
+        if ($redirectUri !== null) {
             $endpoint->parameters['redirect_uri'] = $redirectUri;
         }
 
@@ -116,7 +124,7 @@ class TokenEndPoint implements CallableEndPointInterface
 
         $endpoint->parameters['grant_type'] = self::GRANT_TYPE_CLIENT_CREDENTIALS;
 
-        if ($scopes) {
+        if ($scopes !== null && $scopes !== []) {
             $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 
@@ -144,7 +152,7 @@ class TokenEndPoint implements CallableEndPointInterface
         $endpoint->parameters['username'] = $username;
         $endpoint->parameters['password'] = $password;
 
-        if ($scopes) {
+        if ($scopes !== null && $scopes !== []) {
             $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 
@@ -170,7 +178,7 @@ class TokenEndPoint implements CallableEndPointInterface
         $endpoint->parameters['grant_type'] = self::GRANT_TYPE_REFRESH;
         $endpoint->parameters['refresh_token'] = $token;
 
-        if ($scopes) {
+        if ($scopes !== null && $scopes !== []) {
             $endpoint->parameters['scope'] = implode(' ', $scopes);
         }
 
@@ -206,9 +214,15 @@ class TokenEndPoint implements CallableEndPointInterface
      * @return static
      *
      * @psalm-mutation-free
+     * @psalm-suppress ImpureFunctionCall
      */
     public function responseFactory(callable $factory): TokenEndPoint
     {
+        if (!$factory instanceof Closure) {
+            @trigger_error('The response factory should be a Closure. This will be enforced in the v3.0.', E_USER_DEPRECATED);
+            $factory = $factory(...);
+        }
+
         $endpoint = clone $this;
         $endpoint->responseFactory = $factory;
 

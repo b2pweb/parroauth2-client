@@ -3,14 +3,16 @@
 namespace Parroauth2\Client\Authentication;
 
 use B2pweb\Jwt\JWT;
+use B2pweb\Jwt\JwtDecoder;
 use B2pweb\Jwt\JwtEncoder;
+use DateTimeImmutable;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\KeyManagement\JWKFactory;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
 use Parroauth2\Client\ClientConfig;
-use Parroauth2\Client\Jwt\JwtDecoder;
 use Parroauth2\Client\Tests\UnitTestCase;
+use Psr\Clock\ClockInterface;
 
 class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
 {
@@ -54,7 +56,46 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+
+        (new JwtDecoder())->decode($data['client_assertion'],
+            new JWKSet([
+                JWKFactory::createFromSecret($client->secret(), ['alg' => 'HS256'])
+            ])
+        );
+    }
+
+    public function test_with_clock()
+    {
+        $clock = new class implements ClockInterface {
+            public function now(): DateTimeImmutable
+            {
+                return new DateTimeImmutable('2025-06-23 12:00:00');
+            }
+        };
+        $method = new JwtBearerClientAuthenticationMethod(new Psr17Factory(), new JwtEncoder(), $clock);
+        $client = $this->provider()->client((new ClientConfig('my_client'))->setSecret('my-secretmy-secretmy-secretmy-secretmy-secretmy-secretmy-secret'));
+
+        $request = $method->apply($client, new Request('GET', 'http://foo.com?foo=bar&baz=qux'));
+
+        $body = (string) $request->getBody();
+        parse_str($body, $data);
+
+        $this->assertEquals('client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&client_assertion=' . $data['client_assertion'], $body);
+
+        $jwt = JWT::fromJwtUnsafe($data['client_assertion']);
+        $this->assertEquals(['alg' => 'HS256'], $jwt->headers());
+        $this->assertEqualsWithDelta([
+            'iss' => 'my_client',
+            'sub' => 'my_client',
+            'aud' => 'http://foo.com',
+            'exp' => $clock->now()->getTimestamp() + 30,
+            'iat' => $clock->now()->getTimestamp(),
+            'nbf' => $clock->now()->getTimestamp(),
+            'jti' => $jwt->payload()['jti'],
+        ], $jwt->payload(), 2);
+
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
@@ -86,7 +127,7 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
@@ -118,7 +159,7 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
@@ -158,7 +199,7 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
@@ -193,7 +234,7 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
@@ -228,7 +269,7 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
@@ -263,7 +304,7 @@ class JwtBearerClientAuthenticationMethodTest extends UnitTestCase
             'jti' => $jwt->payload()['jti'],
         ], $jwt->payload(), 2);
 
-        $this->assertRegExp('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9-_]{32}$/', $jwt->payload()['jti']);
 
         (new JwtDecoder())->decode($data['client_assertion'],
             new JWKSet([
