@@ -53,10 +53,10 @@ final class AccessTokenHash
      */
     public function check(IdToken $idToken, string $accessToken): bool
     {
-        if ($idToken->accessTokenHash() === null) {
+        if (($hash = $idToken->accessTokenHash()) === null) {
             return true;
         }
 
-        return hash_equals($this->compute($accessToken, $idToken->header('alg')), $idToken->accessTokenHash());
+        return hash_equals($this->compute($accessToken, $idToken->header('alg')), $hash);
     }
 }

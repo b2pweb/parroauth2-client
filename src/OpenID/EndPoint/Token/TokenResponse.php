@@ -12,7 +12,7 @@ use Parroauth2\Client\OpenID\IdToken\IdToken;
  *
  * @see https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
  *
- * @psalm-immutable
+ * @psalm-mutation-free
  */
 class TokenResponse extends BaseTokenResponse
 {
@@ -27,6 +27,7 @@ class TokenResponse extends BaseTokenResponse
      */
     public function __construct(array $response, ?IdToken $idToken, ?DateTimeInterface $expiresAt = null)
     {
+        /** @psalm-suppress ImpureMethodCall */
         parent::__construct($response, $expiresAt);
 
         $this->idToken = $idToken;

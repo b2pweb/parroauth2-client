@@ -116,7 +116,7 @@ final class Provider implements ProviderInterface
     {
         if (is_array($body) || (is_object($body) && !$body instanceof StreamInterface)) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $body = http_build_query($body);
+            $body = http_build_query((array) $body);
         }
 
         $request = $this->requestFactory->createRequest($method, $this->uri($endpoint, $queryParameters));

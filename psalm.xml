@@ -18,5 +18,6 @@
     </projectFiles>
     <issueHandlers>
         <ClassMustBeFinal errorLevel="suppress" />
+        <DeprecatedSyntax errorLevel="suppress" />
     </issueHandlers>
 </psalm>
